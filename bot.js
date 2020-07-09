@@ -14,7 +14,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     prompts.forEach(val => {
-        bot.equalsAndResponse(msg, val[0], val[1]);
+        bot.includesAndResponse(msg, val[0], val[1]);
     });
 });
 
