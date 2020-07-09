@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const equalsAndResponse = require('./messages');
+const bot = require('./messages');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
@@ -14,7 +14,7 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     prompts.forEach(val => {
-        equalsAndResponse(msg, val[0], val[1]);
+        bot.equalsAndResponse(msg, val[0], val[1]);
     });
 });
 
