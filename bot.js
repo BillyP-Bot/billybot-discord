@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-import { equalsAndResponse } from './messages';
+const equalsAndResponse = require('./messages');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
