@@ -13,7 +13,7 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    prompts.foreach(val => {
+    prompts.forEach(val => {
         equalsAndResponse(msg, val[0], val[1]);
     });
 });
