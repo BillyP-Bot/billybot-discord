@@ -9,7 +9,8 @@ const townRoad = function(msg){
             dispatcher.on('finish', () => {
                 msg.reply("Hope you enjoyed!");
             });
-            
+
+            connection.disconnect();
         }
         else{
             msg.reply('You need to join a voice channel first!');
