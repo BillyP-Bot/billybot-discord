@@ -1,7 +1,9 @@
-const includesAndResponse = function(msg, equalWord, botResponse){
-    if((msg.content.includes(equalWord)) && !msg.author.bot){
-        msg.reply(botResponse);
-    }
+const includesAndResponse = function(msg, prompts){
+    prompts.forEach(val => {
+        if((msg.content.includes(val[0])) && !msg.author.bot){
+            msg.reply(val[1]);
+        }
+    });
 }
 
 module.exports = {includesAndResponse};

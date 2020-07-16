@@ -1,7 +1,8 @@
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-const bot = require('./messages');
+const message = require('./messages');
+const boyd = require('./boyd');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
@@ -13,9 +14,9 @@ client.on('ready', () => {
 });
 
 client.on('message', msg => {
-    prompts.forEach(val => {
-        bot.includesAndResponse(msg, val[0], val[1]);
-    });
+    message.includesAndResponse(msg, prompts);
+    boyd.townRoad(msg);
 });
+
 
 client.login(botToken);
