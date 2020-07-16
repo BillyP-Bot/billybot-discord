@@ -1,7 +1,7 @@
 const townRoad = function(msg){
     if(msg.content == '!boydTownRoad' && !msg.author.bot){
-        if(msg.member.voice.channel){
-            const connection = msg.member.voice.channel.join();
+        if(msg.member.voiceChannel){
+            const connection = msg.member.voiceChannel.join();
         }
         else{
             msg.reply('You need to join a voice channel first!');
