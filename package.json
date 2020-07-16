@@ -9,6 +9,7 @@
   "dependencies": {
     "discord.js": "11.1.0",
     "ffmpeg-static": "^4.2.5",
-    "request": "2.81.0"
+    "request": "2.81.0",
+    "ytdl-core": "^3.1.2"
   }
 }
