@@ -1,4 +1,4 @@
-const ytdl = require('ytdl-core');
+const ytdl = require('ytdl-core-discord');
 
 const townRoad = function(msg){
     if(msg.content == '!boydTownRoad' && !msg.author.bot){
