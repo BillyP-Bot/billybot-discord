@@ -3,18 +3,22 @@ const fetch = require('node-fetch');
 // Meme API: https://github.com/R3l3ntl3ss/Meme_Api
 
 const fridayFunny = function(msg){
-    if(msg.content == '!fridayFunny' || msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
-        fetch('https://meme-api.herokuapp.com/gimme/boomershumor')
+    if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
+        fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=1&over_18=false')
             .then(response => response.json())
             .then(data =>  {
-                msg.reply(data.url);
+                data.data.children.forEach(redditPost => {
+                    fridayFunnies.push(redditPost.data.url);
+                })
+
+                msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunnies});
             });
     }
 }
 
-const redditAPIFridayFunny = function(msg){
+const fridayFunnies = function(msg){
     
-    if(msg.content == '!redditFridayFunny' && !msg.author.bot){
+    if(msg.content == '!FridayFunnies' && !msg.author.bot){
         var fridayFunnies = []
         fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=10&over_18=false')
             .then(response => response.json())
@@ -28,4 +32,4 @@ const redditAPIFridayFunny = function(msg){
     }
 }
 
-module.exports = { fridayFunny, redditAPIFridayFunny };
+module.exports = { fridayFunny, fridayFunnies };
