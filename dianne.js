@@ -6,7 +6,7 @@ var cachedImages = [];
 const fridayFunny = function(msg){
     if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
         if(cachedImages.length == 0){
-            fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=50&over_18=False')
+            fetch('https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=False')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
@@ -35,11 +35,13 @@ const fridayFunnies = function(msg){
     
     if(msg.content == '!FridayFunnies' && !msg.author.bot){
         var fridayFunnies = []
-        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=10&over_18=False')
+        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    fridayFunnies.push(redditPost.data.url);
+                    if(redditPost.data.over_18 == 'false'){
+                        fridayFunnies.push(redditPost.data.url);
+                    }
                 })
 
                 msg.reply("Here's your Friday Funnies!\n\n", {files: fridayFunnies});
