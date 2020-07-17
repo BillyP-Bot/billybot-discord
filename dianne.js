@@ -12,19 +12,18 @@ const fridayFunny = function(msg){
                 data.data.children.forEach(redditPost => {
                     if(redditPost.data.selftext == ""){
                         cachedImages.push(redditPost.data.url);
-                        console.log('Populated cachedImages');
                     }
                 })
+                console.log('Populated cachedImages');
+                fridayFunny = [getRandomMeme(cachedImages)];
+                msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
             });
         }
         else{
             console.log('cachedImages contains content');
+            fridayFunny = [getRandomMeme(cachedImages)];
+            msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
         }
-        var randomInt = getRandomIntInclusive(0, cachedImages.length);
-        console.log('randomInt = ' + randomInt);
-        var fridayFunny = cachedImages.splice(randomInt, 1);
-        console.log('fridayFunny = ' + fridayFunny[0]);
-        msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
     }
 }
 
@@ -48,6 +47,12 @@ const getRandomIntInclusive = function(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+}
+
+const getRandomMeme = function(memes){
+    var randomInt = getRandomIntInclusive(0, memes.length);
+    var meme = memes.splice(randomInt, 1);
+    return meme;
+}
 
 module.exports = { fridayFunny, fridayFunnies };
