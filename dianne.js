@@ -12,4 +12,21 @@ const fridayFunny = function(msg){
     }
 }
 
-module.exports = { fridayFunny };
+const redditAPIFridayFunny = function(msg){
+    
+    if(msg.content == '!redditFridayFunny' && !msg.author.bot){
+        var fridayFunnies = "Here's your Friday Funnies!\n\n";
+        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=7&over_18=false')
+            .then(response => response.json())
+            .then(data =>  {
+                
+                data.children.forEach(redditPost => {
+                    fridayFunnies.concat('\n', redditPost.data.url);
+                })
+                
+                msg.reply(fridayFunnies);
+            });
+    }
+}
+
+module.exports = { fridayFunny, redditAPIFridayFunny };

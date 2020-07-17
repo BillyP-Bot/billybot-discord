@@ -18,6 +18,7 @@ client.on('message', msg => {
     message.includesAndResponse(msg, prompts);
     boyd.townRoad(msg);
     dianne.fridayFunny(msg);
+    dianne.redditAPIFridayFunny(msg);
 });
 
 
