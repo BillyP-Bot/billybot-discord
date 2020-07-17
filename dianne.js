@@ -22,7 +22,7 @@ const redditAPIFridayFunny = function(msg){
                 console.log(data);
                 data.data.children.forEach(redditPost => {
                     console.log(redditPost);
-                    fridayFunnies.concat('\n', redditPost.data.url);
+                    console.log(fridayFunnies.concat('\n', redditPost.data.url));
                 })
 
                 msg.reply(fridayFunnies);
