@@ -5,7 +5,7 @@ var cachedImages = [];
 
 const fridayFunny = function(msg){
     if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
-        if(cachedImages.length = 0){
+        if(cachedImages.length == 0){
             fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=50&over_18=false')
             .then(response => response.json())
             .then(data =>  {
