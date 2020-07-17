@@ -4,11 +4,12 @@ const fetch = require('node-fetch');
 
 const fridayFunny = function(msg){
     if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
+        var fridayFunny = []
         fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=1&over_18=false')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    fridayFunnies.push(redditPost.data.url);
+                    fridayFunny.push(redditPost.data.url);
                 })
 
                 msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunnies});
