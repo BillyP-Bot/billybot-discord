@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 var cachedImages = [];
 
 const fridayFunny = function(msg){
-    if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
+    if(msg.content == '!Diane' || msg.content == '!diane'  && !msg.author.bot){
         if(cachedImages.length == 0){
             fetch('https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=False')
             .then(response => response.json())
