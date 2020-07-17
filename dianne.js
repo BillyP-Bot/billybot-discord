@@ -15,13 +15,17 @@ const fridayFunny = function(msg){
                     }
                 })
                 console.log('Populated cachedImages');
-                var fridayFunny = [getRandomMeme(cachedImages)];
+                var fridayFunny = [];
+                fridayFunny.push(getRandomMeme(cachedImages));
+                console.log(fridayFunny[0]);
                 msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
             });
         }
         else{
             console.log('cachedImages contains content');
-            var fridayFunny = [getRandomMeme(cachedImages)];
+            var fridayFunny = [];
+            fridayFunny.push(getRandomMeme(cachedImages));
+            console.log(fridayFunny[0]);
             msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
         }
     }
