@@ -19,7 +19,7 @@ const redditAPIFridayFunny = function(msg){
         fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=7&over_18=false')
             .then(response => response.json())
             .then(data =>  {
-                console.log(response);
+                console.log(data);
                 data.data.children.forEach(redditPost => {
                     fridayFunnies.concat('\n', redditPost.data.url);
                 })
