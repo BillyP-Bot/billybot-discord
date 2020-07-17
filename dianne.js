@@ -35,12 +35,15 @@ const fridayFunnies = function(msg){
     
     if(msg.content == '!FridayFunnies' && !msg.author.bot){
         var fridayFunnies = []
+        var attachmentCount = 0
         fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    console.log(redditPost.data.over_18);
-                    fridayFunnies.push(redditPost.data.url);
+                    if(redditPost.data.over_18 == 'false' && attachmentCount < 10){
+                        fridayFunnies.push(redditPost.data.url);
+                        attachmentCount += 1;
+                    }
                 })
 
                 msg.reply("Here's your Friday Funnies!\n\n", {files: fridayFunnies});
