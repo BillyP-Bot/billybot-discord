@@ -15,15 +15,15 @@ const fridayFunny = function(msg){
 const redditAPIFridayFunny = function(msg){
     
     if(msg.content == '!redditFridayFunny' && !msg.author.bot){
-        var fridayFunnies = "Here's your Friday Funnies!\n\n";
-        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=7&over_18=false')
+        var fridayFunnies = []
+        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=10&over_18=false')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    fridayFunnies = fridayFunnies.concat('\n', redditPost.data.url);
+                    fridayFunnies.push(redditPost.data.url);
                 })
 
-                msg.reply(fridayFunnies);
+                msg.reply("Here's your Friday Funnies!\n\n", {files: fridayFunnies});
             });
     }
 }
