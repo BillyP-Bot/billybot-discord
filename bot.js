@@ -3,6 +3,7 @@ const client = new Discord.Client();
 
 const message = require('./messages');
 const boyd = require('./boyd');
+const dianne = require('./dianne');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
@@ -16,6 +17,7 @@ client.on('ready', () => {
 client.on('message', msg => {
     message.includesAndResponse(msg, prompts);
     boyd.townRoad(msg);
+    dianne.fridayFunny(msg);
 });
 
 
