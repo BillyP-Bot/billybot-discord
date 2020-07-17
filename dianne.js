@@ -6,15 +6,15 @@ var cachedImages = [];
 const fridayFunny = function(msg){
     if(msg.content == '!Dianne' || msg.content == '!dianne'  && !msg.author.bot){
         if(cachedImages.length == 0){
-            fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=50&over_18=false')
+            fetch('https://www.reddit.com/r/boomershumor/hot.json?limit=50&over_18=False')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    if(redditPost.data.selftext == ""){
+                    if(redditPost.data.selftext == "" && redditPost.data.over_18 == 'false'){
                         cachedImages.push(redditPost.data.url);
                     }
                 })
-                console.log('Populated cachedImages');
+                console.log('Populated cachedImages. Length: ' + cachedImages.length);
                 var fridayFunny = [];
                 fridayFunny.push(getRandomMeme(cachedImages));
                 console.log(fridayFunny[0]);
@@ -22,7 +22,7 @@ const fridayFunny = function(msg){
             });
         }
         else{
-            console.log('cachedImages contains content');
+            console.log('cachedImages contains content: Length: ' + cachedImages.length);
             var fridayFunny = [];
             fridayFunny.push(getRandomMeme(cachedImages));
             console.log(fridayFunny[0]);
@@ -35,7 +35,7 @@ const fridayFunnies = function(msg){
     
     if(msg.content == '!FridayFunnies' && !msg.author.bot){
         var fridayFunnies = []
-        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=10&over_18=false')
+        fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=10&over_18=False')
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
