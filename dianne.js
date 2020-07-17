@@ -9,7 +9,9 @@ const fridayFunny = function(msg){
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    fridayFunny.push(redditPost.data.url);
+                    if(redditPost.data.selftext == ""){
+                        fridayFunny.push(redditPost.data.url);
+                    }
                 })
 
                 msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunnies});
