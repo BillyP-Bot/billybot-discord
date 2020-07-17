@@ -20,10 +20,10 @@ const redditAPIFridayFunny = function(msg){
             .then(response => response.json())
             .then(data =>  {
                 
-                data.children.forEach(redditPost => {
+                data.data.children.forEach(redditPost => {
                     fridayFunnies.concat('\n', redditPost.data.url);
                 })
-                
+
                 msg.reply(fridayFunnies);
             });
     }
