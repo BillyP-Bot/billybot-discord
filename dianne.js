@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 const fridayFunny = function(msg){
     if(msg.content == '!fridayFunny' && !msg.author.bot){
         fetch('https://meme-api.herokuapp.com/gimme/boomershumor')
