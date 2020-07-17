@@ -18,7 +18,7 @@ const fridayFunny = function(msg){
                 var fridayFunny = [];
                 fridayFunny.push(getRandomMeme(cachedImages));
                 console.log(fridayFunny[0]);
-                msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
+                msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny[0]});
             });
         }
         else{
@@ -26,7 +26,7 @@ const fridayFunny = function(msg){
             var fridayFunny = [];
             fridayFunny.push(getRandomMeme(cachedImages));
             console.log(fridayFunny[0]);
-            msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
+            msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny[0]});
         }
     }
 }
