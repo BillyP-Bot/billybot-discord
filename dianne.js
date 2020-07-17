@@ -9,7 +9,7 @@ const fridayFunny = function(msg){
                     msg.reply(data.url);
                 }
                 else{
-                    fridayFunny(msg);
+                    this.fridayFunny(msg);
                 }
             });
     }
