@@ -10,7 +10,7 @@ const fridayFunny = function(msg){
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    if(redditPost.data.selftext == "" && redditPost.data.over_18 == 'false'){
+                    if(redditPost.data.selftext == "" && redditPost.data.over_18 == false){
                         cachedImages.push(redditPost.data.url);
                     }
                 })
@@ -40,7 +40,7 @@ const fridayFunnies = function(msg){
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    if(redditPost.data.over_18 == 'false' && attachmentCount < 10){
+                    if(redditPost.data.over_18 == false && attachmentCount < 10){
                         fridayFunnies.push(redditPost.data.url);
                         attachmentCount += 1;
                     }
