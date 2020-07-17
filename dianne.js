@@ -39,9 +39,8 @@ const fridayFunnies = function(msg){
             .then(response => response.json())
             .then(data =>  {
                 data.data.children.forEach(redditPost => {
-                    if(redditPost.data.over_18 == 'false'){
-                        fridayFunnies.push(redditPost.data.url);
-                    }
+                    console.log(redditPost.data.over_18);
+                    fridayFunnies.push(redditPost.data.url);
                 })
 
                 msg.reply("Here's your Friday Funnies!\n\n", {files: fridayFunnies});
