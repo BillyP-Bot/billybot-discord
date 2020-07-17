@@ -20,8 +20,10 @@ const fridayFunny = function(msg){
         else{
             console.log('cachedImages contains content');
         }
-        var randomInt = getRandomIntInclusive(0, cachedImages.length)
+        var randomInt = getRandomIntInclusive(0, cachedImages.length);
+        console.log('randomInt = ' + randomInt);
         var fridayFunny = cachedImages.splice(randomInt, 1);
+        console.log('fridayFunny = ' + fridayFunny[0]);
         msg.reply("I just found this great meme on my Facebook feed!\n\n", {files: fridayFunny});
     }
 }
