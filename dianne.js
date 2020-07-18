@@ -63,4 +63,4 @@ const getRandomMeme = function(memes){
     return meme;
 }
 
-module.exports = { fridayFunny, fridayFunnies };
+module.exports = { fridayFunny, fridayFunnies, getRandomIntInclusive };

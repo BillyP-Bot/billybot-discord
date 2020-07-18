@@ -9,11 +9,13 @@ const whatshowardupto = require('./whatshowardupto');
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
 
-triggersAndResponses = [['vendor', 'Don\'t blame the vendor!'], ['linear', 'We have to work exponentially, not linearly!']];
-commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFunnies', 'Posts a bunch of boomer memes'], ['!whereshowwie?', 'Gets Employment Status of Howard']];
+var channels = {};
+var triggersAndResponses = [['vendor', 'Don\'t blame the vendor!'], ['linear', 'We have to work exponentially, not linearly!']];
+var commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFunnies', 'Posts a bunch of boomer memes'], ['!whereshowwie?', 'Gets Employment Status of Howard']];
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
+    channels = populateChannels(client, channels);
 });
 
 client.on('message', msg => {
@@ -24,5 +26,15 @@ client.on('message', msg => {
     whatshowardupto.howardUpdate(msg);
 });
 
+const populateChannels = function(client, channels){
+    var serverChannels = client.guilds.channels;
+    for(const channel of serverChannels.values()){
+        channels[channel.name] = channel.id;
+        console.log('Added channel ' + channel.name + ' with ID: ' + channel.id);
+    }
+    return channels;
+}
+
+module.exports = { channels, client };
 
 client.login(botToken);
