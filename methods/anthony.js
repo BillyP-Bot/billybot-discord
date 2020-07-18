@@ -1,5 +1,5 @@
 const dianne = require('./dianne');
-const bot = require('./bot')
+const bot = require('../bot')
 
 var kanyeVideoIDs = [];
 
