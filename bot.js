@@ -4,6 +4,7 @@ const client = new Discord.Client();
 const message = require('./messages');
 const boyd = require('./boyd');
 const dianne = require('./dianne');
+const whatshowardupto = require('./whatshowardupto');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
