@@ -1,6 +1,6 @@
 {
-  "name": "BillyPBot",
-  "description": "Billy-P Bot",
+  "name": "billypbot",
+  "description": "billypbot",
   "version": "0.0.0",
   "main": "bot.js",
   "scripts": {
