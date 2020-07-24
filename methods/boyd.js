@@ -10,7 +10,7 @@ const townRoad = async function(msg, client){
             const channel = msg.member.voice.channel;
             const connection = await channel.join();
             const dispatcher = connection.play(ytdl('https://www.youtube.com/watch?v=GngH-vNbDgI', {filter:'audioonly'}));
-            dispatcher.setVolume(0.5);
+            dispatcher.setVolume(0.2);
 
             dispatcher.on('finish', () => {
                 msg.channel.send('That\'s it! Hope you enjoyed!');
