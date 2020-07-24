@@ -28,7 +28,8 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     message.includesAndResponse(msg, triggersAndResponses);
-    boyd.townRoad(msg);
+    boyd.townRoad(msg, client);
+    boyd.exitStream(msg, client);
     dianne.fridayFunny(msg);
     dianne.fridayFunnies(msg);
     whatshowardupto.howardUpdate(msg, googleAPIKey, googleCXKey);
@@ -44,5 +45,7 @@ client.on('unhandledRejection', error => {
 module.exports = { channels, client };
 
 client.login(botToken);
+
+
 
 
