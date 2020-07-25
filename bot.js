@@ -7,15 +7,11 @@ const boyd = require('./methods/boyd');
 const dianne = require('./methods/dianne');
 const whatshowardupto = require('./methods/whatshowardupto');
 const anthony = require('./methods/anthony');
-const server = require('./methods/discordServer');
 
 // Environment variables:
 const botToken = process.env.BOT_TOKEN;
 const googleAPIKey = process.env.GOOGLE_API_KEY;
 const googleCXKey = process.env.GOOGLE_CX_KEY;
-
-// TODO: Programatically grab all channel names + ID's and store in channels dictionary (use populateChannels func below).
-const channels = server.populateChannels(client);
 
 var triggersAndResponses = [['vendor', 'Don\'t blame the vendor!'], ['linear', 'We have to work exponentially, not linearly!']];
 var commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFunnies', 'Posts a bunch of boomer memes'], ['!whereshowwie?', 'Gets Employment Status of Howard']];
@@ -42,9 +38,11 @@ client.on('unhandledRejection', error => {
     console.error("Unhanded promise rejection: ", error);
 });
 
-module.exports = { channels, client };
+module.exports = { client };
 
 client.login(botToken);
+
+client.boydTownRoad = null;
 
 
 
