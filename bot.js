@@ -18,7 +18,7 @@ var commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFun
 
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    //channels = populateChannels(client, channels);
+    client.user.setActivity('Farmville');
 });
 
 
