@@ -22,7 +22,6 @@ const townRoad = async function(msg, client){
     }
 }
 
-// TODO: Finish !stop command
 const exitStream = function(msg, client){
     if(msg.content == '!stop'){
         if(client.boydTownRoad != null){

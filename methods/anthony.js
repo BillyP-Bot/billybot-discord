@@ -1,31 +1,33 @@
 const dianne = require('./dianne');
-const bot = require('../bot')
+const bot = require('../bot');
+const fetch = require('node-fetch');
 
 var kanyeVideoIDs = [];
 
-const goodFriday = function(msg){
-    if(kanyeVideoIDs.length == 0){
-        // Request youtube API to populate videoIDs list
-        msg.channel.send('testing good friday func')
-            .catch(console.error);
-    }
-    else{
-        // Post random video from list
-        console.log('Kanye videos list length: ' + kanyeVideoIDs.length);
-        var randomInt = dianne.getRandomIntInclusive(0, kanyeVideoIDs.length);
-        var videoID = kanyeVideoIDs.splice(randomInt, 1);
-        console.log('Kanye videos list length: ' + kanyeVideoIDs.length);
-
-        msg.channel.send('testing good friday func')
-            .catch(console.error);
-            
+const goodFriday = function(msg, googleAPIKey){
+    if(msg.content == '!tobyFriday' && !msg.author.bot){
+        fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=80&playlistId=PLdYwhvDpx0FLEfzLe3BVZip4V4kAF1g1H&key=' + googleAPIKey)
+            .then(response => response.json())
+            .then(data => {
+                var randomInt = dianne.getRandomIntInclusive(0, data.items.length);
+                var yeezus = data.items[randomInt].snippet.resourceId.videoId;
+                
+                msg.channel.send('G.O.O.D. FRIDAYS, I HOPE YOU HAVE A NICE WEEKEND! \n\nhttps://www.youtube.com/watch?v=' + yeezus);
+            });
     }
 }
 
-module.exports = { goodFriday };
+const goodFridayBot = function(client, googleAPIKey){
+    var generalChannel = '733810168302796850';
+    fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=80&playlistId=PLdYwhvDpx0FLEfzLe3BVZip4V4kAF1g1H&key=' + googleAPIKey)
+        .then(response => response.json())
+        .then(data => {
+            var randomInt = dianne.getRandomIntInclusive(0, data.items.length);
+            var yeezus = data.items[randomInt].snippet.resourceId.videoId;
+            
+            client.channels.cache.get(generalChannel).send('G.O.O.D. FRIDAYS, I HOPE YOU HAVE A NICE WEEKEND! \n\nhttps://www.youtube.com/watch?v=' + yeezus);
+        });
+}
 
-// kanyewest channel id: UCs6eXM7s8Vl5WcECcRHc2qQ
 
-// kanyeVevo channel ID: UChpJbg7zMbi5jx9Gdjaxa9g
-
-// kanye west videos playlist ID: PLdYwhvDpx0FLEfzLe3BVZip4V4kAF1g1H
+module.exports = { goodFriday, goodFridayBot };
