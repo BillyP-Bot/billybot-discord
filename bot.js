@@ -22,14 +22,14 @@ var commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFun
 var kanyePosted = 0;
 
 // Cron Jobs scheduled for tobyFriday method
-var clearKanyeFlagCronJob = new CronJob('0 0 2 * * 5', function() {
+var clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function() {
     kanyePosted = 0;
     console.log('Kanye flag cleared');
 });
 
 clearKanyeFlagCronJob.start();
 
-var postKanyeCronJob = new CronJob('0 0 7 * * 5', function() {
+var postKanyeCronJob = new CronJob('0 0 16 * * 5', function() {
     if(kanyePosted === 0){
         anthony.goodFridayBot(client, youtubeAPIKey);
     }
