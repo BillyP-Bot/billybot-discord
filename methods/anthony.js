@@ -18,7 +18,7 @@ const goodFriday = function(msg, googleAPIKey){
 }
 
 const goodFridayBot = function(client, googleAPIKey){
-    var generalChannel = '733810168302796850';
+    var generalChannel = '689463685571149933';
     fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=80&playlistId=PLdYwhvDpx0FLEfzLe3BVZip4V4kAF1g1H&key=' + googleAPIKey)
         .then(response => response.json())
         .then(data => {
