@@ -17,7 +17,7 @@ const googleAPIKey = process.env.GOOGLE_API_KEY;
 const googleCXKey = process.env.GOOGLE_CX_KEY;
 const youtubeAPIKey = process.env.YOUTUBE_API_KEY;
 
-var triggersAndResponses = [['vendor', 'Don\'t blame the vendor!'], ['linear', 'We have to work exponentially, not linearly!']];
+var triggersAndResponses = [['vendor', 'Don\'t blame the vendor!'], ['Vendor', 'Don\'t blame the vendor!'], ['linear', 'We have to work exponentially, not linearly!']];
 var commandsAndResponses = [['!Dianne', 'Posts just one bad meme'], ['!FridayFunnies', 'Posts a bunch of boomer memes'], ['!whereshowwie?', 'Gets Employment Status of Howard']];
 var kanyePosted = 0;
 
