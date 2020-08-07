@@ -27,7 +27,7 @@ var clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function() {
     console.log('Kanye flag cleared');
 });
 
-clearKanyeFlagCronJob.start();
+//clearKanyeFlagCronJob.start();
 
 var postKanyeCronJob = new CronJob('0 0 16 * * 5', function() {
     if(kanyePosted === 0){
@@ -38,7 +38,7 @@ var postKanyeCronJob = new CronJob('0 0 16 * * 5', function() {
     }
 });
 
-postKanyeCronJob.start();
+//postKanyeCronJob.start();
 
 
 client.on('ready', () => {
