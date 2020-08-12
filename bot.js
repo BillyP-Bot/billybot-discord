@@ -8,6 +8,7 @@ const boyd = require('./methods/boyd');
 const dianne = require('./methods/dianne');
 const whatshowardupto = require('./methods/whatshowardupto');
 const anthony = require('./methods/anthony');
+const kyle = require('./methods/kyle');
 const { job } = require('cron');
 const { post } = require('request');
 
@@ -55,6 +56,7 @@ client.on('message', msg => {
     dianne.fridayFunnies(msg);
     whatshowardupto.howardUpdate(msg, googleAPIKey, googleCXKey);
     anthony.goodFriday(msg, youtubeAPIKey);
+    kyle.kyleNoWorking(msg);
     if(msg.content.includes('G.O.O.D')){
         kanyePosted = 1;
     }
