@@ -1,6 +1,6 @@
 
-const kylesId = '187360505994674176';
-const workStuffChannel = '738194989917536317';
+const kylesId = '637446755897835556';
+const workStuffChannel = '689463821869383690';
 const billyMad = '694721037006405742';
 
 const kyleNoWorking = function(msg){
