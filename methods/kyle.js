@@ -21,6 +21,47 @@ const exampleDrink = {
     image: 'http://www.thecocktaildb.com/images/media/drink/uxywyw1468877224.jpg'
 }
 
+const listOfDrinks = {
+    drinks: [
+        {
+            drink: '1-900-FUK-MEUP',
+            drinkId: '420',
+            alcoholic: 'Alchoholic',
+            category: 'Shot',
+            glass: 'Old-fashioned glass',
+            IBA: null,
+            ingredients: ['Absolut Kurant', 'Grand Marnier', 'Chambord raspberry liqueur', 'Midori melon liqueur', 'Malibu rum', 'Amaretto', 'Cranberry juice', 'Pineapple juice'],
+            measures: ['1/2 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/2 oz', '1/4 oz'],
+            instructions: 'Shake ingredients in a mixing tin filled with ice cubes. Strain into a rocks glass.',
+            image: 'http://www.thecocktaildb.com/images/media/drink/uxywyw1468877224.jpg'
+        },
+        {
+            drink: '1-900-FUK-MEUP',
+            drinkId: '420',
+            alcoholic: 'Alchoholic',
+            category: 'Shot',
+            glass: 'Old-fashioned glass',
+            IBA: null,
+            ingredients: ['Absolut Kurant', 'Grand Marnier', 'Chambord raspberry liqueur', 'Midori melon liqueur', 'Malibu rum', 'Amaretto', 'Cranberry juice', 'Pineapple juice'],
+            measures: ['1/2 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/2 oz', '1/4 oz'],
+            instructions: 'Shake ingredients in a mixing tin filled with ice cubes. Strain into a rocks glass.',
+            image: 'http://www.thecocktaildb.com/images/media/drink/uxywyw1468877224.jpg'
+        },
+        {
+            drink: '1-900-FUK-MEUP',
+            drinkId: '420',
+            alcoholic: 'Alchoholic',
+            category: 'Shot',
+            glass: 'Old-fashioned glass',
+            IBA: null,
+            ingredients: ['Absolut Kurant', 'Grand Marnier', 'Chambord raspberry liqueur', 'Midori melon liqueur', 'Malibu rum', 'Amaretto', 'Cranberry juice', 'Pineapple juice'],
+            measures: ['1/2 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/4 oz', '1/2 oz', '1/4 oz'],
+            instructions: 'Shake ingredients in a mixing tin filled with ice cubes. Strain into a rocks glass.',
+            image: 'http://www.thecocktaildb.com/images/media/drink/uxywyw1468877224.jpg'
+        }
+    ]
+}
+
 const kyleNoWorking = function(msg){
     if(msg.author.id == kylesId && msg.channel == workStuffChannel){
         msg.react(msg.guild.emojis.cache.get(billyMad))
@@ -56,21 +97,12 @@ const getDrinkByName = function(drink){
     const result = exampleDrink;
     const exampleEmbed = new Discord.MessageEmbed()
 	.setColor('#0099ff')
-	.setTitle(result.drink)
-	.setURL('https://discord.js.org/')
-	.setAuthor('Kyle', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
+	.setTitle('Drink Name: ' + result.drink)
 	.setDescription(result.instructions)
-	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
-	.addFields(
-		{ name: 'Alchoholic', value: 'Some value here' },
-		{ name: '\u200B', value: '\u200B' },
-		{ name: 'Inline field title', value: 'Some value here', inline: true },
-		{ name: 'Inline field title', value: 'Some value here', inline: true },
-	)
-	.addField('Inline field title', 'Some value here', true)
-	.setImage(result.image)
-	.setTimestamp()
-    .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    .setImage(result.image)
+    for(var i = 0; i < result.ingredients.length; i++){
+        exampleEmbed.addField(result.ingredients[i], result.measures[i], true)
+    }
     return exampleEmbed;
 }
 
@@ -80,6 +112,13 @@ const getDrinksByIngredients = function(ingredients){
     //     .then(data =>  {
     //         return data;
     //     });
+    const resultDrinks = listOfDrinks;
+    var messageReply = "Here's the list of drinks with the provided ingredient(s)!\n"
+    for(var i = 0; i < resultDrinks.drinks.length; i++){
+        messageReply += resultDrinks.drinks[i].drink + '\n';
+    }
+    messageReply += '\nRequest ingredients and instructions by typing !kyle followed by the desired drink name!';
+    return messageReply;
 }
 
 const getDrinksByCategory = function(category){
@@ -88,6 +127,13 @@ const getDrinksByCategory = function(category){
     //     .then(data =>  {
     //         return data;
     //     });
+    const resultDrinks = listOfDrinks;
+    var messageReply = "Here's the list of drinks with the provided category!\n"
+    for(var i = 0; i < resultDrinks.drinks.length; i++){
+        messageReply += resultDrinks.drinks[i].drink + '\n';
+    }
+    messageReply += '\nRequest ingredients and instructions by typing !kyle followed by the desired drink name!';
+    return messageReply;
 }
 
 
