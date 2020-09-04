@@ -57,6 +57,7 @@ client.on('message', msg => {
     whatshowardupto.howardUpdate(msg, googleAPIKey, googleCXKey);
     anthony.goodFriday(msg, youtubeAPIKey);
     kyle.kyleNoWorking(msg);
+    kyle.getKyleCommand(msg);
     if(msg.content.includes('G.O.O.D')){
         kanyePosted = 1;
     }
