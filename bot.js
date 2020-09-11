@@ -41,7 +41,6 @@ var postKanyeCronJob = new CronJob('0 0 16 * * 5', function() {
 
 //postKanyeCronJob.start();
 
-
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
     client.user.setActivity('Farmville');
