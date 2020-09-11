@@ -25,7 +25,7 @@ const getKyleCommand = function(msg){
             .then(returnedDrinks => {
                 var addedDrinks = 0;
                 var messageReply = "Here's the list of drinks with " + command + " in the name!\n"
-                for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1800); i++){
+                for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1200); i++){
                     messageReply += returnedDrinks[i].drink + '\n';
                     addedDrinks += 1;
                 }
@@ -65,7 +65,7 @@ const getKyleCommand = function(msg){
                 if(returnedDrinks.length > 0){
                     var addedDrinks = 0;
                     var messageReply = "Here's the list of drinks with the provided ingredient(s)!\n"
-                    for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1800); i++){
+                    for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1200); i++){
                         messageReply += returnedDrinks[i].drink + '\n';
                         addedDrinks += 1;
                     }
