@@ -4,6 +4,7 @@ const fetch = require('node-fetch');
 const kylesId = '637446755897835556';
 const workStuffChannel = '689463821869383690';
 const billyMad = '694721037006405742';
+const discordMsgLmt = 1200;
 
 const drinkPrefix = '!drink ';
 const drinkSearchPrefix = '!searchDrinks ';
@@ -25,7 +26,7 @@ const getKyleCommand = function(msg){
             .then(returnedDrinks => {
                 var addedDrinks = 0;
                 var messageReply = "Here's the list of drinks with " + command + " in the name!\n"
-                for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1200); i++){
+                for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++){
                     messageReply += returnedDrinks[i].drink + '\n';
                     addedDrinks += 1;
                 }
@@ -65,7 +66,7 @@ const getKyleCommand = function(msg){
                 if(returnedDrinks.length > 0){
                     var addedDrinks = 0;
                     var messageReply = "Here's the list of drinks with the provided ingredient(s)!\n"
-                    for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1200); i++){
+                    for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++){
                         messageReply += returnedDrinks[i].drink + '\n';
                         addedDrinks += 1;
                     }
