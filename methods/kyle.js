@@ -23,9 +23,14 @@ const getKyleCommand = function(msg){
         const command = msg.content.replace(drinkSearchPrefix, "").replace(" ", "%20");
         getDrinksByPartialName(command)
             .then(returnedDrinks => {
+                var addedDrinks = 0;
                 var messageReply = "Here's the list of drinks with " + command + " in the name!\n"
-                for(var i = 0; i < returnedDrinks.length; i++){
+                for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1800); i++){
                     messageReply += returnedDrinks[i].drink + '\n';
+                    addedDrinks += 1;
+                }
+                if(returnedDrinks.length > addedDrinks){
+                    messageReply += '\n... Too many to list them all! Discord limits my message size :( \n';
                 }
                 messageReply += '\nRequest ingredients and instructions by typing ' + drinkPrefix + ' followed by the desired drink name!';
                 msg.reply(messageReply)
@@ -58,9 +63,14 @@ const getKyleCommand = function(msg){
         getDrinksByIngredients(command)
             .then(returnedDrinks => {
                 if(returnedDrinks.length > 0){
+                    var addedDrinks = 0;
                     var messageReply = "Here's the list of drinks with the provided ingredient(s)!\n"
-                    for(var i = 0; i < returnedDrinks.length; i++){
+                    for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < 1800); i++){
                         messageReply += returnedDrinks[i].drink + '\n';
+                        addedDrinks += 1;
+                    }
+                    if(returnedDrinks.length > addedDrinks){
+                        messageReply += '\n... Too many to list them all! Discord limits my message size :( \n';
                     }
                     messageReply += '\nRequest ingredients and instructions by typing ' + drinkPrefix + ' followed by the desired drink name!';
                     msg.reply(messageReply)
