@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const fetch = require('node-fetch');
+const getColors = require('get-image-colors')
 
 const kylesId = '637446755897835556';
 const workStuffChannel = '689463821869383690';
@@ -43,16 +44,19 @@ const getKyleCommand = function(msg){
             .then(returnedDrink => {
                 if(returnedDrink.length > 0){
                     const drink = returnedDrink[0];
-                    const drinkEmbed = new Discord.MessageEmbed()
-                    .setColor('#0099ff')
-                    .addField('Glass:', drink.glass)
-                    .setTitle('Drink Name: ' + drink.drink)
-                    .setDescription(drink.instructions)
-                    .setImage(drink.drink_thumb)
-                    for(var i = 0; i < drink.ingredients.length; i++){
-                        drinkEmbed.addField(drink.ingredients[i] + ':', drink.measurement[i])
-                    }
-                    msg.reply(drinkEmbed);
+                    getPrimaryColor(drink.drink_thumb)
+                        .then(color => {
+                            const drinkEmbed = new Discord.MessageEmbed()
+                            .setColor(color)
+                            .addField('Glass:', drink.glass)
+                            .setTitle('Drink Name: ' + drink.drink)
+                            .setDescription(drink.instructions)
+                            .setImage(drink.drink_thumb)
+                            for(var i = 0; i < drink.ingredients.length; i++){
+                                drinkEmbed.addField(drink.ingredients[i] + ':', drink.measurement[i])
+                            }
+                            msg.reply(drinkEmbed);
+                        })
                 }
                 else{
                     msg.reply("Sorry, we don't have instructions for that one!");
@@ -134,5 +138,12 @@ const getDrinksByCategory = function(category){
     return "Feature is not yet implemented.";
 }
 
+const getPrimaryColor = async function(image){
+    const primaryColor = await getColors(image)
+        .then(colors => {
+            return colors[0].name();
+        })
+    return primaryColor;
+}
 
 module.exports = { kyleNoWorking, getKyleCommand };
