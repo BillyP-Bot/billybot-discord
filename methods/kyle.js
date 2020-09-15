@@ -54,7 +54,7 @@ const getKyleCommand = function(msg){
                             .setDescription(drink.instructions)
                             .setImage(drink.drink_thumb)
                             for(var i = 0; i < drink.ingredients.length; i++){
-                                drinkEmbed.addField(drink.ingredients[i] + ':', drink.measurement[i])
+                                drinkEmbed.addField(drink.ingredients[i] + ':', (drink.measurement[i] === '' || drink.measurement[i] === undefined ? 'Not specified' : drink.measurement[i]))
                             }
                             msg.reply(drinkEmbed);
                         })
