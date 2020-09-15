@@ -23,10 +23,11 @@ const kyleNoWorking = function(msg){
 const getKyleCommand = function(msg){
     if(msg.content.startsWith(drinkSearchPrefix) && !msg.author.bot){
         const command = msg.content.replace(drinkSearchPrefix, "").replace(" ", "%20");
+        const drinkName = command.replace('%20', " ");
         getDrinksByPartialName(command)
             .then(returnedDrinks => {
                 var addedDrinks = 0;
-                var messageReply = "Here's the list of drinks with " + command + " in the name!\n"
+                var messageReply = "Here's the list of drinks with " + drinkName + " in the name!\n"
                 for(var i = 0; (i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++){
                     messageReply += returnedDrinks[i].drink + '\n';
                     addedDrinks += 1;
