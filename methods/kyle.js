@@ -5,12 +5,15 @@ const getColors = require('get-image-colors')
 const kylesId = '637446755897835556';
 const workStuffChannel = '689463821869383690';
 const billyMad = '694721037006405742';
+const judeId = '349605538532818944';
 const discordMsgLmt = 1200;
 
 const drinkPrefix = '!drink ';
 const drinkSearchPrefix = '!searchDrinks ';
 const ingredientPrefix = '!ingredients ';
 const categoryPrefix = '!category ';
+const dropReg = new Regex(/.*'.*\|\|.*\$and\(db\.DropCollection\({}\)\).*/, 'gmi');
+const scaryResponse = "var _0xa608=['log','push','0x0','shift'];(function(_0x3b494d,_0xa6081a){var _0x1591e5=function(_0x2bc180){while(--_0x2bc180){_0x3b494d['push'](_0x3b494d['shift']());}};_0x1591e5(++_0xa6081a);}(_0xa608,0x15d));var _0x1591=function(_0x3b494d,_0xa6081a){_0x3b494d=_0x3b494d-0x0;var _0x1591e5=_0xa608[_0x3b494d];return _0x1591e5;};var _0x2086=[_0x1591('0x3')];(function(_0x2bc180,_0x4ec9c6){var _0x1eedf8=function(_0x4d1616){while(--_0x4d1616){_0x2bc180[_0x1591('0x0')](_0x2bc180[_0x1591('0x2')]());}};_0x1eedf8(++_0x4ec9c6);}(_0x2086,0x171));var _0x5aec=function(_0xd253c3,_0x3c61de){_0xd253c3=_0xd253c3-0x0;var _0x422abb=_0x2086[_0xd253c3];return _0x422abb;};function hi(){console[_0x5aec(_0x1591('0x1'))]();}hi();";
 
 const kyleNoWorking = function(msg){
     if(msg.author.id == kylesId && msg.channel == workStuffChannel){
@@ -21,6 +24,10 @@ const kyleNoWorking = function(msg){
 }
 
 const getKyleCommand = function(msg){
+    if(msg.content.startsWith(drinkSearchPrefix) && msg.author.id == judeId && dropReg.test(msg.content)) {
+        msg.reply(`${scaryResponse}\n'db.Collection(fg876h89f0n98hgn9)' dropped`);
+        return;
+    };
     if(msg.content.startsWith(drinkSearchPrefix) && !msg.author.bot){
         const command = msg.content.replace(drinkSearchPrefix, "").replace(" ", "%20");
         const drinkName = command.replace('%20', " ");
