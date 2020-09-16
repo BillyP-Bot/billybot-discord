@@ -24,10 +24,12 @@ const kyleNoWorking = function(msg){
 }
 
 const getKyleCommand = function(msg){
+    /*
     if(msg.content.startsWith(drinkSearchPrefix) && msg.author.id == judeId && dropReg.test(msg.content)) {
         msg.reply(`${scaryResponse}\n'db.Collection(fg876h89f0n98hgn9)' dropped`);
         return;
     };
+    */
     if(msg.content.startsWith(drinkSearchPrefix) && !msg.author.bot){
         const command = msg.content.replace(drinkSearchPrefix, "").replace(" ", "%20");
         const drinkName = command.replace('%20', " ");
