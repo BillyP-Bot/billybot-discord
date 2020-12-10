@@ -3,6 +3,7 @@
 		"msjsdiag.debugger-for-chrome",
 		"firefox-devtools.vscode-firefox-debug",
 		"humao.rest-client",
-		"icrawl.discord-vscode"
+		"icrawl.discord-vscode",
+		"eamodio.gitlens"
 	]
 }
