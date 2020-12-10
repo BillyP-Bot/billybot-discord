@@ -17,10 +17,12 @@ const {
 } = require('request');
 
 // Environment variables:
-const botToken = process.env.BOT_TOKEN;
-const googleAPIKey = process.env.GOOGLE_API_KEY;
-const googleCXKey = process.env.GOOGLE_CX_KEY;
-const youtubeAPIKey = process.env.YOUTUBE_API_KEY;
+const {
+	BOT_TOKEN,
+	GOOGLE_API_KEY,
+	GOOGLE_CX_KEY,
+	YOUTUBE_API_KEY
+} = process.env;
 
 var triggersAndResponses = [
 	['vendor', 'Don\'t blame the vendor!'],
@@ -44,7 +46,7 @@ var clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function () {
 
 var postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 	if (kanyePosted === 0) {
-		anthony.goodFridayBot(client, youtubeAPIKey);
+		anthony.goodFridayBot(client, YOUTUBE_API_KEY);
 	} else {
 		console.log('Kanye was already posted');
 	}
@@ -64,8 +66,8 @@ client.on('message', msg => {
 	boyd.exitStream(msg, client);
 	dianne.fridayFunny(msg);
 	dianne.fridayFunnies(msg);
-	whatshowardupto.howardUpdate(msg, googleAPIKey, googleCXKey);
-	anthony.goodFriday(msg, youtubeAPIKey);
+	whatshowardupto.howardUpdate(msg, GOOGLE_API_KEY, GOOGLE_CX_KEY);
+	anthony.goodFriday(msg, YOUTUBE_API_KEY);
 	kyle.kyleNoWorking(msg);
 	kyle.getKyleCommand(msg);
 	if (msg.content.includes('G.O.O.D')) {
@@ -81,6 +83,6 @@ module.exports = {
 	client
 };
 
-client.login(botToken);
+client.login(BOT_TOKEN);
 
 client.boydTownRoad = null;
