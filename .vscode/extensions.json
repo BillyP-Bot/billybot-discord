@@ -4,6 +4,8 @@
 		"firefox-devtools.vscode-firefox-debug",
 		"humao.rest-client",
 		"icrawl.discord-vscode",
-		"eamodio.gitlens"
+		"eamodio.gitlens",
+		"pkief.material-icon-theme",
+		"hookyqr.beautify"
 	]
 }
