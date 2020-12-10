@@ -2,6 +2,7 @@
 	"recommendations": [
 		"msjsdiag.debugger-for-chrome",
 		"firefox-devtools.vscode-firefox-debug",
-		"humao.rest-client"
+		"humao.rest-client",
+		"icrawl.discord-vscode"
 	]
 }

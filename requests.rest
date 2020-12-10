@@ -1,0 +1,11 @@
+// Must have humao.rest-client extension installed
+GET https://cocktails-heroku.herokuapp.com/cocktails/drink-search/
+?drink=blue
+
+###
+GET https://cocktails-heroku.herokuapp.com/cocktails/drink/
+?drink=Belgian Blue
+
+###
+GET https://cocktails-heroku.herokuapp.com/cocktails/ingredient/
+?ingredient=vodka
