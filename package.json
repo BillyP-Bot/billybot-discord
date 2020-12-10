@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "main": "bot.js",
   "scripts": {
+	"lint": "eslint --fix --ext .js,.jsx .",
     "start": "node bot.js",
     "dev": "nodemon bot.js"
   },
