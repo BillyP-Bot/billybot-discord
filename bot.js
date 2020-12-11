@@ -27,7 +27,6 @@ const {
 var triggersAndResponses = [
 	['!loop', 'no !loop please'],
 	['vendor', 'Don\'t blame the vendor!'],
-	['Vendor', 'Don\'t blame the vendor!'],
 	['linear', 'We have to work exponentially, not linearly!']
 ];
 var commandsAndResponses = [
