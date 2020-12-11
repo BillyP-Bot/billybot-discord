@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "main": "bot.js",
   "scripts": {
-	"lint": "eslint --fix --ext .js,.jsx .",
+    "lint": "eslint --fix --ext .js,.jsx .",
     "start": "node bot.js",
     "dev": "nodemon bot.js"
   },
@@ -21,6 +21,7 @@
     "ytdl-core-discord": "^1.2.1"
   },
   "devDependencies": {
-    "eslint": "^7.15.0"
+    "eslint": "^7.15.0",
+    "husky": "^4.3.5"
   }
 }
