@@ -1,6 +1,8 @@
 const includesAndResponse = function (msg, prompts) {
+	let m = msg.content.toUpperCase().trim();
 	prompts.forEach(val => {
-		if ((msg.content.includes(val[0])) && !msg.author.bot) {
+		let p = val[0].toUpperCase().trim();
+		if ((m.includes(p)) && !msg.author.bot) {
 			msg.reply(val[1]);
 		}
 	});
