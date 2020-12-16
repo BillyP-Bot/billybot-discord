@@ -23,6 +23,18 @@ const kyleNoWorking = function (msg) {
 	}
 };
 
+const getApi = endpoint => {
+	return new Promise((resolve, reject) => {
+		fetch(`https://cocktails-heroku.herokuapp.com/cocktails/${endpoint}`)
+			.then(r => r.json())
+			.then(data => {
+				return resolve(data);
+			}).catch(e => {
+				reject(e);
+			});
+	});
+};
+
 const getKyleCommand = function (msg) {
 	/*
 	if(msg.content.startsWith(drinkSearchPrefix) && msg.author.id == judeId && dropReg.test(msg.content)) {
@@ -33,10 +45,11 @@ const getKyleCommand = function (msg) {
 	if (msg.content.startsWith(drinkSearchPrefix) && !msg.author.bot) {
 		const command = msg.content.replace(drinkSearchPrefix, '').replace(' ', '%20');
 		const drinkName = command.replace('%20', ' ');
-		getDrinksByPartialName(command)
+		// fetch
+		getApi(`drink-search/?drink=${command}`)
 			.then(returnedDrinks => {
-				var addedDrinks = 0;
-				var messageReply = 'Here\'s the list of drinks with ' + drinkName + ' in the name!\n';
+				let addedDrinks = 0;
+				let messageReply = `Here is the list of drinks with ${drinkName} in the name!\n`;
 				for (var i = 0;
 					(i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++) {
 					messageReply += returnedDrinks[i].drink + '\n';
@@ -50,7 +63,8 @@ const getKyleCommand = function (msg) {
 			});
 	} else if (msg.content.startsWith(drinkPrefix) && !msg.author.bot && !msg.content.startsWith(drinkSearchPrefix)) {
 		const command = msg.content.replace(drinkPrefix, '').replace(' ', '%20');
-		getDrinkByName(command)
+		// fetch
+		getApi(`drink/?drink=${command}`)
 			.then(returnedDrink => {
 				if (returnedDrink.length > 0) {
 					const drink = returnedDrink[0];
@@ -73,7 +87,7 @@ const getKyleCommand = function (msg) {
 			});
 	} else if (msg.content.startsWith(ingredientPrefix) && !msg.author.bot) {
 		const command = msg.content.replace(ingredientPrefix, '').replace(' ', '%20');
-		getDrinksByIngredients(command)
+		getApi(`ingredient/?ingredient=${command}`)
 			.then(returnedDrinks => {
 				if (returnedDrinks.length > 0) {
 					var addedDrinks = 0;
@@ -97,36 +111,6 @@ const getKyleCommand = function (msg) {
 		const command = args.shift().toLowerCase();
 		msg.reply(getDrinksByCategory(command));
 	}
-};
-
-const getDrinksByPartialName = async function (drink) {
-	const returnedDrinks = fetch('https://cocktails-heroku.herokuapp.com/cocktails/drink-search/?drink=' + drink)
-		.then(response => response.json())
-		.then(data => {
-			return data;
-		});
-
-	return returnedDrinks;
-};
-
-const getDrinkByName = async function (drink) {
-	const returnedDrink = fetch('https://cocktails-heroku.herokuapp.com/cocktails/drink/?drink=' + drink)
-		.then(response => response.json())
-		.then(data => {
-			return data;
-		});
-
-	return returnedDrink;
-};
-
-const getDrinksByIngredients = function (ingredients) {
-	const returnedDrinks = fetch('https://cocktails-heroku.herokuapp.com/cocktails/ingredient/?ingredient=' + ingredients)
-		.then(response => response.json())
-		.then(data => {
-			return data;
-		});
-
-	return returnedDrinks;
 };
 
 const getDrinksByCategory = function (category) {

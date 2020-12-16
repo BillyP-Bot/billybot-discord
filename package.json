@@ -23,7 +23,8 @@
   },
   "devDependencies": {
     "eslint": "^7.15.0",
-    "husky": "^4.3.5"
+    "husky": "^4.3.5",
+    "nodemon": "^2.0.6"
   },
   "husky": {
     "hooks": {
