@@ -17,6 +17,7 @@
     "get-image-colors": "^2.0.1",
     "node-fetch": "^2.6.0",
     "request": "2.81.0",
+    "winston": "^3.3.3",
     "ytdl-core": "^3.2.0",
     "ytdl-core-discord": "^1.2.1"
   },

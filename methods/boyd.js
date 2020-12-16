@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const { Message } = require('discord.js');
+const logger = require('../services/logger');
 
 const ytdl = require('ytdl-core');
 
@@ -27,7 +28,7 @@ const townRoad = async function (msg, client) {
 const exitStream = function (msg, client) {
 	if (msg.content == '!stop') {
 		if (client.boydTownRoad != null) {
-			console.log('!stop command executed');
+			logger.info('!stop command executed');
 			client.boydTownRoad.end();
 		} else {
 			msg.channel.send('I\'m not in a voice channel!');

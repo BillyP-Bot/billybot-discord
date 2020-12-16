@@ -2,6 +2,7 @@
 const Discord = require('discord.js');
 const fetch = require('node-fetch');
 const getColors = require('get-image-colors');
+const logger = require('../services/logger');
 
 const kylesId = '637446755897835556';
 const workStuffChannel = '689463821869383690';
@@ -17,8 +18,8 @@ const categoryPrefix = '!category ';
 const kyleNoWorking = function (msg) {
 	if (msg.author.id == kylesId && msg.channel == workStuffChannel) {
 		msg.react(msg.guild.emojis.cache.get(billyMad))
-			.then(console.log)
-			.catch(console.error);
+			.then(logger.info)
+			.catch(logger.error);
 	}
 };
 

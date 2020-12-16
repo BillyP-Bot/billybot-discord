@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
+const logger = require('./services/logger');
 const client = new Discord.Client();
 require('dotenv').config();
 var CronJob = require('cron').CronJob;
@@ -37,7 +38,7 @@ var kanyePosted = 0;
 // Cron Jobs scheduled for tobyFriday method
 var clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function () {
 	kanyePosted = 0;
-	console.log('Kanye flag cleared');
+	logger.info('Kanye flag cleared');
 });
 
 //clearKanyeFlagCronJob.start();
@@ -46,14 +47,14 @@ var postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 	if (kanyePosted === 0) {
 		anthony.goodFridayBot(client, YOUTUBE_API_KEY);
 	} else {
-		console.log('Kanye was already posted');
+		logger.info('Kanye was already posted');
 	}
 });
 
 //postKanyeCronJob.start();
 
 client.on('ready', () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+	logger.info(`Logged in as ${client.user.tag}!`);
 	client.user.setActivity('Farmville');
 });
 
@@ -74,13 +75,14 @@ client.on('message', msg => {
 });
 
 client.on('unhandledRejection', error => {
-	console.error('Unhanded promise rejection: ', error);
+	logger.error('Unhanded promise rejection: ', error);
 });
 
 module.exports = {
 	client
 };
-
-client.login(BOT_TOKEN);
+client.login(BOT_TOKEN).catch(e => {
+	logger.error(e);
+});
 
 client.boydTownRoad = null;
