@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const dianne = require('./dianne');
 const bot = require('../bot');
 const fetch = require('node-fetch');
