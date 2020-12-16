@@ -1,6 +1,4 @@
-const {
-	Message
-} = require('discord.js');
+const { Message } = require('discord.js');
 
 const ytdl = require('ytdl-core');
 

@@ -6,6 +6,7 @@
 		"icrawl.discord-vscode",
 		"eamodio.gitlens",
 		"pkief.material-icon-theme",
-		"hookyqr.beautify"
+		"hookyqr.beautify",
+		"coenraads.bracket-pair-colorizer-2"
 	]
 }
