@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 const { Message } = require('discord.js');
 
 const ytdl = require('ytdl-core');

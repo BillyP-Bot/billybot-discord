@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
 const fetch = require('node-fetch');
 const getColors = require('get-image-colors');
@@ -5,7 +6,6 @@ const getColors = require('get-image-colors');
 const kylesId = '637446755897835556';
 const workStuffChannel = '689463821869383690';
 const billyMad = '694721037006405742';
-// eslint-disable-next-line no-unused-vars
 const judeId = '349605538532818944';
 const discordMsgLmt = 1200;
 
@@ -24,11 +24,11 @@ const kyleNoWorking = function (msg) {
 
 const getKyleCommand = function (msg) {
 	/*
-    if(msg.content.startsWith(drinkSearchPrefix) && msg.author.id == judeId && dropReg.test(msg.content)) {
-        msg.reply(`${scaryResponse}\n'db.Collection(fg876h89f0n98hgn9)' dropped`);
-        return;
-    };
-    */
+	if(msg.content.startsWith(drinkSearchPrefix) && msg.author.id == judeId && dropReg.test(msg.content)) {
+		msg.reply(`${scaryResponse}\n'db.Collection(fg876h89f0n98hgn9)' dropped`);
+		return;
+	};
+	*/
 	if (msg.content.startsWith(drinkSearchPrefix) && !msg.author.bot) {
 		const command = msg.content.replace(drinkSearchPrefix, '').replace(' ', '%20');
 		const drinkName = command.replace('%20', ' ');

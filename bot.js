@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 const Discord = require('discord.js');
 const client = new Discord.Client();
 require('dotenv').config();
@@ -9,12 +10,9 @@ const dianne = require('./methods/dianne');
 const whatshowardupto = require('./methods/whatshowardupto');
 const anthony = require('./methods/anthony');
 const kyle = require('./methods/kyle');
-const {
-	job
-} = require('cron');
-const {
-	post
-} = require('request');
+
+const { job } = require('cron');
+const { post } = require('request');
 
 // Environment variables:
 const {
