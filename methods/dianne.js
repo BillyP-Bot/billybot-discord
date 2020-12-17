@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const logger = require('../services/logger');
 
 // Meme API: https://github.com/R3l3ntl3ss/Meme_Api
 var cachedImages = [];
@@ -14,19 +15,19 @@ const fridayFunny = function (msg) {
 							cachedImages.push(redditPost.data.url);
 						}
 					});
-					console.log('Populated cachedImages. Length: ' + cachedImages.length);
+					logger.info('Populated cachedImages. Length: ' + cachedImages.length);
 					var fridayFunny = [];
 					fridayFunny.push(getRandomMeme(cachedImages));
-					console.log(fridayFunny[0]);
+					logger.info(fridayFunny[0]);
 					msg.reply('I just found this great meme on my Facebook feed!\n\n', {
 						files: fridayFunny[0]
 					});
 				});
 		} else {
-			console.log('cachedImages contains content: Length: ' + cachedImages.length);
+			logger.info('cachedImages contains content: Length: ' + cachedImages.length);
 			var fridayFunny = [];
 			fridayFunny.push(getRandomMeme(cachedImages));
-			console.log(fridayFunny[0]);
+			logger.info(fridayFunny[0]);
 			msg.reply('I just found this great meme on my Facebook feed!\n\n', {
 				files: fridayFunny[0]
 			});
