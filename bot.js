@@ -55,8 +55,7 @@ const postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 
 //postKanyeCronJob.start();
 
-const itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){
-	rockandroll.itsTime(client);},
+const itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){ rockandroll.itsTime(client); },
 	null, null, 'America/New_York');
 
 
