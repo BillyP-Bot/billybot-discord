@@ -64,6 +64,7 @@ client.on('guildCreate', guild => {
 
 client.on('ready', () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
+	client.user.setAvatar('https://cdn.discordapp.com/emojis/694721037006405742.png?v=1');
 	client.user.setActivity('Farmville');
 	itsTimeToRockandRoll.start();
 });
