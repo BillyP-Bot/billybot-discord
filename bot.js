@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const logger = require('./services/logger');
 const client = new Discord.Client();
 require('dotenv').config();
-var CronJob = require('cron').CronJob;
+const CronJob = require('cron').CronJob;
 
 const message = require('./methods/messages');
 const boyd = require('./methods/boyd');
@@ -25,27 +25,27 @@ const {
 	YOUTUBE_API_KEY
 } = process.env;
 
-var triggersAndResponses = [
+const triggersAndResponses = [
 	['!loop', 'no !loop please'],
 	['vendor', 'Don\'t blame the vendor!'],
 	['linear', 'We have to work exponentially, not linearly!']
 ];
-var commandsAndResponses = [
+const commandsAndResponses = [
 	['!Dianne', 'Posts just one bad meme'],
 	['!FridayFunnies', 'Posts a bunch of boomer memes'],
 	['!whereshowwie?', 'Gets Employment Status of Howard']
 ];
-var kanyePosted = 0;
+let kanyePosted = 0;
 
 // Cron Jobs scheduled for tobyFriday method
-var clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function () {
+const clearKanyeFlagCronJob = new CronJob('0 0 12 * * 5', function () {
 	kanyePosted = 0;
 	logger.info('Kanye flag cleared');
 });
 
 //clearKanyeFlagCronJob.start();
 
-var postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
+const postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 	if (kanyePosted === 0) {
 		anthony.goodFridayBot(client, YOUTUBE_API_KEY);
 	} else {
@@ -55,7 +55,7 @@ var postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 
 //postKanyeCronJob.start();
 
-var itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){
+const itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){
 	rockandroll.itsTime(client);},
 	null, null, 'America/New_York');
 
