@@ -8,6 +8,17 @@ const includesAndResponse = function (msg, prompts) {
 	});
 };
 
+const makeRole = (msg, roleName, roleColor) => {
+	msg.guild.roles.create({
+		data: {
+			name: roleName,
+			color: roleColor.toUpperCase(),
+		},
+		reason: 'This Role Must Exist',
+	}).catch(console.error);
+};
+
 module.exports = {
-	includesAndResponse
+	includesAndResponse,
+	makeRole
 };
