@@ -9,6 +9,10 @@ const includesAndResponse = function (msg, prompts) {
 };
 
 const makeRole = (msg, roleName, roleColor) => {
+	let role = msg.guild.roles.cache.find(role => role.name === roleName);
+	if (role || role != undefined) {
+		return;
+	}
 	msg.guild.roles.create({
 		data: {
 			name: roleName,
