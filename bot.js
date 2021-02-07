@@ -11,9 +11,11 @@ const dianne = require('./methods/dianne');
 const whatshowardupto = require('./methods/whatshowardupto');
 const anthony = require('./methods/anthony');
 const kyle = require('./methods/kyle');
+const rockandroll = require('./methods/rockandroll');
 
 const { job } = require('cron');
 const { post } = require('request');
+const { itsTime } = require('./methods/rockandroll');
 
 // Environment variables:
 const {
@@ -53,9 +55,16 @@ var postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 
 //postKanyeCronJob.start();
 
+var itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){
+	rockandroll.itsTime(client);},
+	null, null, 'America/New_York');
+
+
+
 client.on('ready', () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	client.user.setActivity('Farmville');
+	itsTimeToRockandRoll.start();
 });
 
 
