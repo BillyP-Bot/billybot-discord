@@ -55,13 +55,16 @@ const postKanyeCronJob = new CronJob('0 0 16 * * 5', function () {
 
 //postKanyeCronJob.start();
 
-const itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function (){ rockandroll.itsTime(client); },
+const itsTimeToRockandRoll = new CronJob('0 0 8 * * 1-5', function () { rockandroll.itsTime(client); },
 	null, null, 'America/New_York');
 
-
+client.on('guildCreate', guild => {
+	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
+});
 
 client.on('ready', () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
+	client.user.setAvatar('https://cdn.discordapp.com/emojis/694721037006405742.png?v=1');
 	client.user.setActivity('Farmville');
 	itsTimeToRockandRoll.start();
 });
