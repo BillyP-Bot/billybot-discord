@@ -4,10 +4,6 @@ const fetch = require('node-fetch');
 const getColors = require('get-image-colors');
 const logger = require('../services/logger');
 
-const kylesId = '637446755897835556';
-const nonFPIEmpIDs = ['637446755897835556', '696121098546315284', '349605538532818944', '153563479339433984', '334119054828896268'];
-const workStuffChannel = '689463821869383690';
-const billyMad = '694721037006405742';
 const judeId = '349605538532818944';
 const discordMsgLmt = 1200;
 
@@ -17,8 +13,8 @@ const ingredientPrefix = '!ingredients ';
 const categoryPrefix = '!category ';
 
 const kyleNoWorking = function (msg) {
-	if (msg.author.id in nonFPIEmpIDs && msg.channel == workStuffChannel) {
-		msg.react(msg.guild.emojis.cache.get(billyMad))
+	if (msg.member.roles.cache.find(r => r.name === 'FormerPartnerIncorporated') && msg.channel.name === 'work-stuff') {
+		msg.react(msg.guild.emojis.cache.find(e => e.name === 'BillyMad'))
 			.then(logger.info)
 			.catch(logger.error);
 	}
