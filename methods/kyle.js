@@ -13,7 +13,7 @@ const ingredientPrefix = '!ingredients ';
 const categoryPrefix = '!category ';
 
 const kyleNoWorking = function (msg) {
-	if (msg.member.roles.cache.find(r => r.name === 'FormerPartnerIncorporated') && msg.channel.name === 'work-stuff') {
+	if (!msg.channel.type === 'dm' && msg.member.roles.cache.find(r => r.name === 'FormerPartnerIncorporated') && msg.channel.name === 'work-stuff') {
 		msg.react(msg.guild.emojis.cache.find(e => e.name === 'BillyMad'))
 			.then(logger.info)
 			.catch(logger.error);
