@@ -12,11 +12,11 @@
         "indent": [
             "error",
             "tab"
-        ],
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
+		],
+		//"linebreak-style": [
+        //    "warn",
+        //    "windows"
+        //],
         "quotes": [
             "error",
             "single"

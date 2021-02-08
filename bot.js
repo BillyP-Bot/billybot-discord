@@ -11,6 +11,7 @@ const dianne = require('./methods/dianne');
 const whatshowardupto = require('./methods/whatshowardupto');
 const anthony = require('./methods/anthony');
 const kyle = require('./methods/kyle');
+const skistats = require('./methods/skiStats');
 const rockandroll = require('./methods/rockandroll');
 
 const { job } = require('cron');
@@ -73,6 +74,7 @@ client.on('ready', () => {
 client.on('message', msg => {
 	message.includesAndResponse(msg, triggersAndResponses);
 	boyd.townRoad(msg, client);
+	skistats.all(msg);
 	boyd.exitStream(msg, client);
 	dianne.fridayFunny(msg);
 	dianne.fridayFunnies(msg);
