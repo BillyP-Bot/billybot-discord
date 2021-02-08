@@ -47,7 +47,7 @@ const getKyleCommand = function (msg) {
 			.then(returnedDrinks => {
 				let addedDrinks = 0;
 				let messageReply = `Here is the list of drinks with ${drinkName} in the name!\n`;
-				for (var i = 0;
+				for (let i = 0;
 					(i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++) {
 					messageReply += returnedDrinks[i].drink + '\n';
 					addedDrinks += 1;
@@ -73,7 +73,7 @@ const getKyleCommand = function (msg) {
 								.setTitle('Drink Name: ' + drink.drink)
 								.setDescription(drink.instructions)
 								.setImage(drink.drink_thumb);
-							for (var i = 0; i < drink.ingredients.length; i++) {
+							for (let i = 0; i < drink.ingredients.length; i++) {
 								drinkEmbed.addField(drink.ingredients[i] + ':', (drink.measurement[i] === '' || drink.measurement[i] === undefined ? 'Not specified' : drink.measurement[i]));
 							}
 							msg.reply(drinkEmbed);
@@ -87,9 +87,9 @@ const getKyleCommand = function (msg) {
 		getApi(`ingredient/?ingredient=${command}`)
 			.then(returnedDrinks => {
 				if (returnedDrinks.length > 0) {
-					var addedDrinks = 0;
-					var messageReply = 'Here\'s the list of drinks with the provided ingredient(s)!\n';
-					for (var i = 0;
+					let addedDrinks = 0;
+					let messageReply = 'Here\'s the list of drinks with the provided ingredient(s)!\n';
+					for (let i = 0;
 						(i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++) {
 						messageReply += returnedDrinks[i].drink + '\n';
 						addedDrinks += 1;

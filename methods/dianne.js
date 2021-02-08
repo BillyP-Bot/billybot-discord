@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const logger = require('../services/logger');
 
 // Meme API: https://github.com/R3l3ntl3ss/Meme_Api
-var cachedImages = [];
+let cachedImages = [];
 
 const fridayFunny = function (msg) {
 	if (msg.content == '!Diane' || msg.content == '!diane' && !msg.author.bot) {
@@ -16,7 +16,7 @@ const fridayFunny = function (msg) {
 						}
 					});
 					logger.info('Populated cachedImages. Length: ' + cachedImages.length);
-					var fridayFunny = [];
+					let fridayFunny = [];
 					fridayFunny.push(getRandomMeme(cachedImages));
 					logger.info(fridayFunny[0]);
 					msg.reply('I just found this great meme on my Facebook feed!\n\n', {
@@ -25,7 +25,7 @@ const fridayFunny = function (msg) {
 				});
 		} else {
 			logger.info('cachedImages contains content: Length: ' + cachedImages.length);
-			var fridayFunny = [];
+			let fridayFunny = [];
 			fridayFunny.push(getRandomMeme(cachedImages));
 			logger.info(fridayFunny[0]);
 			msg.reply('I just found this great meme on my Facebook feed!\n\n', {
@@ -38,8 +38,8 @@ const fridayFunny = function (msg) {
 const fridayFunnies = function (msg) {
 
 	if (msg.content == '!FridayFunnies' && !msg.author.bot) {
-		var fridayFunnies = [];
-		var attachmentCount = 0;
+		let fridayFunnies = [];
+		let attachmentCount = 0;
 		fetch('https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False')
 			.then(response => response.json())
 			.then(data => {
@@ -64,8 +64,8 @@ const getRandomIntInclusive = function (min, max) {
 };
 
 const getRandomMeme = function (memes) {
-	var randomInt = getRandomIntInclusive(0, memes.length);
-	var meme = memes.splice(randomInt, 1);
+	let randomInt = getRandomIntInclusive(0, memes.length);
+	let meme = memes.splice(randomInt, 1);
 	return meme;
 };
 
