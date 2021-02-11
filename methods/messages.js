@@ -14,7 +14,7 @@ const adminMsg = (msg, client) => {
 		return generalChannel.send(card)
 			.then(console.log(`Sent Admin message: ${adminText}`))
 			.catch(function(e){
-				console.error(e)}
+				console.error(e);}
 			);
 	}
 };
