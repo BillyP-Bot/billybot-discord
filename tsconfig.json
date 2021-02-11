@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+		"experimentalDecorators": true,
+		"module": "commonjs",
+        "esModuleInterop": true,
+        "target": "ES2015",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "build",
+        "baseUrl": ".",
+	"skipLibCheck": true,
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
+}

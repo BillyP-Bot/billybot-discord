@@ -1,4 +1,4 @@
-name: bt-bot ci/cd
+name: bt-base ci/cd
 
 on:
   push:
@@ -21,4 +21,4 @@ jobs:
       run: npm ci
 
     - name: lint project
-      run: npm run lint
+      run: npm run postinstall

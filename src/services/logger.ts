@@ -1,32 +1,35 @@
-const { createLogger, format, transports } = require('winston');
+import { createLogger, format, transports } from "winston";
+
+import config from "../helpers/config";
+
 const { combine, timestamp, json, prettyPrint } = format;
 
 const logger = createLogger({
-	level: 'info',
+	level: "info",
 	format: combine(
 		json(),
 		timestamp(),
 		prettyPrint()
 	),
 	defaultMeta: {
-		service: 'user-service'
+		service: "user-service"
 	},
 	transports: [
 		new transports.File({
-			filename: 'error.log',
-			level: 'error'
+			filename: "error.log",
+			level: "error"
 		}),
 		new transports.File({
-			filename: 'combined.log',
-			level: 'info'
+			filename: "combined.log",
+			level: "info"
 		}),
 	],
 });
 
-if (process.env.NODE_ENV !== 'production') {
+if (!config.IS_PROD) {
 	logger.add(new transports.Console({
 		format: format.simple(),
 	}));
 }
 
-module.exports = logger;
+export default logger;
