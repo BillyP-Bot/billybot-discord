@@ -72,6 +72,7 @@ client.on('ready', () => {
 
 
 client.on('message', msg => {
+	message.adminMsg(msg, client);
 	message.includesAndResponse(msg, triggersAndResponses);
 	boyd.townRoad(msg, client);
 	skistats.all(msg);

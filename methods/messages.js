@@ -1,3 +1,22 @@
+const Discord = require('discord.js');
+
+const adminMsgPrefix = '!adminMsg';
+
+const adminMsg = function (msg, client) {
+	if (msg.content.startsWith(adminMsgPrefix) && msg.channel.type === 'dm'){
+		const adminText = msg.content.replace(adminMsgPrefix, '').trim();
+		const generalChannel = client.channels.cache.find(TextChannel => TextChannel.name === 'general');
+		const card = new Discord.MessageEmbed()
+			.setColor('#1bb0a2')
+			.setTitle('Admin Update')
+			.addField(`Update from ${msg.author.username}`, adminText);
+		
+		generalChannel.send(card)
+			.then(console.log(`Sent Admin message: ${adminText}`))
+			.catch(console.error);
+	}
+};
+
 const includesAndResponse = function (msg, prompts) {
 	let m = msg.content.toUpperCase().trim();
 	prompts.forEach(val => {
@@ -24,6 +43,7 @@ const makeRole = (msg, roleName, roleColor) => {
 };
 
 module.exports = {
+	adminMsg,
 	includesAndResponse,
 	makeRole
 };
