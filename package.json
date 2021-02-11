@@ -2,6 +2,8 @@
   "name": "billypbot",
   "description": "billypbot",
   "version": "1.0.0",
+  "engines": { "node": "14.15.1" },
+  "main": "./build/index.js",
   "scripts": {
     "prebuild": "eslint --fix --ext .ts,.tsx .",
     "postinstall": "npm run build",
