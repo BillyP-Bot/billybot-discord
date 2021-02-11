@@ -27,19 +27,21 @@ const adminMsg = (msg, client) => {
 		const adminText = msg.content.replace(adminMsgPrefix, '').trim();
 		const generalChannel = client.channels.cache.find(TextChannel => TextChannel.name === 'general');
 
-		postLog(adminText, msg.author.username).then(r => console.log(r));
+		postLog(adminText, msg.author.username).then(r => {
+			console.log(r);
+			const card = new Discord.MessageEmbed()
+				.setColor('#1bb0a2')
+				.setTitle('Admin Update')
+				.addField(`Update From ${msg.author.username}`, adminText)
+				.addField('Rolling Log', 'See all changelogs [here](https://btbackend.herokuapp.com/api/logs)!');
 
-		const card = new Discord.MessageEmbed()
-			.setColor('#1bb0a2')
-			.setTitle('Admin Update')
-			.addField(`Update From ${msg.author.username}`, adminText)
-			.addField('Rolling Log', 'See all changelogs [here](https://btbackend.herokuapp.com/api/logs)!');
+			return generalChannel.send(card)
+				.then(console.log(`Sent Admin message: ${adminText}`))
+				.catch((e) => {
+					console.error(e);
+				});
+		});
 
-		return generalChannel.send(card)
-			.then(console.log(`Sent Admin message: ${adminText}`))
-			.catch((e) => {
-				console.error(e);
-			});
 	}
 };
 
