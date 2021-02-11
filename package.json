@@ -2,7 +2,7 @@
   "name": "billypbot",
   "description": "billypbot",
   "version": "1.0.0",
-  "main": "./build/index.js",
+  "main": "build/index.js",
   "scripts": {
     "prebuild": "eslint --fix --ext .ts,.tsx .",
     "postinstall": "npm run build",
