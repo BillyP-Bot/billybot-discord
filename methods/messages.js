@@ -2,18 +2,20 @@ const Discord = require('discord.js');
 
 const adminMsgPrefix = '!adminMsg';
 
-const adminMsg = function (msg, client) {
+const adminMsg = (msg, client) => {
 	if (msg.content.startsWith(adminMsgPrefix) && msg.channel.type === 'dm'){
 		const adminText = msg.content.replace(adminMsgPrefix, '').trim();
 		const generalChannel = client.channels.cache.find(TextChannel => TextChannel.name === 'general');
 		const card = new Discord.MessageEmbed()
 			.setColor('#1bb0a2')
 			.setTitle('Admin Update')
-			.addField(`Update from ${msg.author.username}`, adminText);
+			.addField(`Update From ${msg.author.username}`, adminText);
 		
-		generalChannel.send(card)
+		return generalChannel.send(card)
 			.then(console.log(`Sent Admin message: ${adminText}`))
-			.catch(console.error);
+			.catch(function(e){
+				console.error(e)}
+			);
 	}
 };
 
