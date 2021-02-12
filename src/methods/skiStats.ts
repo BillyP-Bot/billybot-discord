@@ -1,10 +1,8 @@
 import { Message, MessageEmbed } from "discord.js";
 import axios from "axios";
 
-const skiReg: RegExp = /.*(!skistats).*/gmi;
-
 export const all = (msg: Message): void => {
-	if (skiReg.test(msg.content) && !msg.author.bot) {
+	if (!msg.author.bot) {
 		axios.get("https://skifreejs.herokuapp.com/api/leaderboard/10").then(r => {
 			const card: MessageEmbed = new MessageEmbed()
 				.setColor("#1bb0a2")

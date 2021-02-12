@@ -7,7 +7,7 @@ import logger from "../services/logger";
 let cachedImages: any = [];
 
 export const fridayFunny = (msg: Message): void => {
-	if (msg.content == "!Diane" || msg.content == "!diane" && !msg.author.bot) {
+	if (!msg.author.bot) {
 		if (cachedImages.length == 0) {
 			fetch("https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=False")
 				.then(response => response.json())
@@ -39,7 +39,7 @@ export const fridayFunny = (msg: Message): void => {
 
 export const fridayFunnies = (msg: Message): void => {
 
-	if (msg.content == "!FridayFunnies" && !msg.author.bot) {
+	if (!msg.author.bot) {
 		let fridayFunnies: any = [];
 		let attachmentCount: number = 0;
 		fetch("https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False")
