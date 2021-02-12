@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import logger from "../services/logger";
 
 export const howardUpdate = (msg: Message, googleAPIKey: string, googleCXKey: string) => {
-	if (msg.content == "!WheresHoward?" || msg.content == "!whereshoward?" || msg.content == "!whereshowwie?" && !msg.author.bot) {
+	if (!msg.author.bot) {
 		fetch("https://www.googleapis.com/customsearch/v1?key=" + googleAPIKey + "&cx=" + googleCXKey + "&q=howard+bruck+linkedin&num=1")
 			.then(response => response.json())
 			.then(data => {
