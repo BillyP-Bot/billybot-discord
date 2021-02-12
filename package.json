@@ -8,10 +8,9 @@
   },
   "main": "build/index.js",
   "scripts": {
-	"prebuild": "npm i",
-	"lint": "eslint --fix --ext .ts,.tsx .",
-    "build": "tsc",
-    "prestart": "npm run build",
+    "tsc": "tsc",
+    "postinstall": "npm run tsc",
+    "lint": "eslint --fix --ext .ts,.tsx .",
     "watch": "tsc --watch",
     "start": "node ."
   },
