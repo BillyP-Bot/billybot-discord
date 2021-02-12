@@ -10,7 +10,6 @@ import * as dianne from "./methods/dianne";
 import * as rockandroll from "./methods/rockandroll";
 import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
-import * as anthony from "./methods/anthony";
 import * as kyle from "./methods/kyle";
 
 const client: Client = new Client();
@@ -20,31 +19,6 @@ const triggersAndResponses: string[][] = [
 	["vendor", "Don't blame the vendor!"],
 	["linear", "We have to work exponentially, not linearly!"]
 ];
-
-//const commandsAndResponses: string[][] = [
-//	["!Dianne", "Posts just one bad meme"],
-//	["!FridayFunnies", "Posts a bunch of boomer memes"],
-//	["!whereshowwie?", "Gets Employment Status of Howard"]
-//];
-
-let kanyePosted: number = 0;
-
-//const clearKanyeFlagCronJob: CronJob = new CronJob("0 0 12 * * 5", function () {
-//	kanyePosted = 0;
-//	logger.info("Kanye flag cleared");
-//});
-
-//clearKanyeFlagCronJob.start();
-
-//const postKanyeCronJob: CronJob = new CronJob("0 0 16 * * 5", function () {
-//	if (kanyePosted === 0) {
-//		anthony.goodFridayBot(client, YOUTUBE_API_KEY);
-//	} else {
-//		logger.info("Kanye was already posted");
-//	}
-//});
-
-//postKanyeCronJob.start();
 
 const itsTimeToRockandRoll: CronJob = new CronJob("0 0 9 * * 1", () => {
 	rockandroll.itsTime(client);
@@ -61,21 +35,35 @@ client.on("ready", () => {
 	itsTimeToRockandRoll.start();
 });
 
+const adminMsg : RegExp = /.*(!adminmsg).*/gmi;
+const townRoad : RegExp = /.*!boydTownRoad.*/gmi;
+const exitStream : RegExp = /.*!stop.*/gmi;
+const skiStats : RegExp = /.*(!skistats).*/gmi;
+const fridayFunny : RegExp = /.*!diane.*/gmi;
+const fridayFunnies : RegExp = /.*!fridayfunnies*/gmi;
+const howardUpdate : RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
+//const kyleCommand : RegExp = /.*!drink*/gmi; TODO
+//TODO Includes and responses
+
 client.on("message", (msg: Message) => {
-	message.adminMsg(msg, client);
-	message.includesAndResponse(msg, triggersAndResponses);
-	boyd.townRoad(msg);
-	skistats.all(msg);
-	boyd.exitStream(msg);
-	dianne.fridayFunny(msg);
-	dianne.fridayFunnies(msg);
-	whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-	anthony.goodFriday(msg, config.YOUTUBE_API_KEY);
-	kyle.kyleNoWorking(msg);
-	kyle.getKyleCommand(msg);
-	if (msg.content.includes("G.O.O.D")) {
-		// eslint-disable-next-line no-unused-vars
-		kanyePosted = 1;
+	if (adminMsg.test(msg.content)){
+		message.adminMsg(msg, client);
+	} else if (skiStats.test(msg.content)){
+		skistats.all(msg);
+	} else if (townRoad.test(msg.content)){
+		boyd.townRoad(msg);
+	} else if (exitStream.test(msg.content)){
+		boyd.exitStream(msg);
+	} else if (fridayFunny.test(msg.content)){
+		dianne.fridayFunny(msg);
+	} else if (fridayFunnies.test(msg.content)){
+		dianne.fridayFunnies(msg);
+	} else if (howardUpdate.test(msg.content)){
+		whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
+	} else {
+		message.includesAndResponse(msg, triggersAndResponses);
+		kyle.kyleNoWorking(msg);
+		kyle.getKyleCommand(msg);
 	}
 });
 
