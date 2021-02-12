@@ -8,7 +8,7 @@
     "prebuild": "eslint --fix --ext .ts,.tsx .",
     "postinstall": "ls",
     "build": "tsc",
-    "prestart": "npm run build",
+    "prestart": "npm run build && ls",
     "watch": "tsc --watch",
     "start": "node ."
   },
