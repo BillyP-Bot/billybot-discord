@@ -8,7 +8,8 @@
   },
   "main": "build/index.js",
   "scripts": {
-    "prebuild": "npm i && eslint --fix --ext .ts,.tsx .",
+	"prebuild": "npm i",
+	"lint": "eslint --fix --ext .ts,.tsx .",
     "build": "tsc",
     "prestart": "npm run build",
     "watch": "tsc --watch",
