@@ -18,7 +18,5 @@ else if (config.GOOGLE_API_KEY === undefined)
 	throw Error("GOOGLE_API_KEY not specified");
 else if (config.GOOGLE_CX_KEY === undefined)
 	throw Error("GOOGLE_CX_KEY not specified");
-else if (config.YOUTUBE_API_KEY === undefined)
-	throw Error("YOUTUBE_API_KEY not specified");
 
 export default config;
