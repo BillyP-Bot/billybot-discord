@@ -4,6 +4,7 @@ import path from "path";
 dotenv.config();
 
 const config = {
+	CONNECTION_STRING: <string>process.env.CONNECTION_STRING || undefined,
 	IS_COMPILED: <boolean>path.extname(__filename).includes("js"),
 	IS_PROD: <boolean>(process.env.NODE_ENV == "production" ? true : false),
 	BOT_TOKEN: <string>process.env.BOT_TOKEN || undefined,
