@@ -8,8 +8,8 @@
   },
   "main": "build/Index.js",
   "scripts": {
-    "tsc": "tsc",
-    "postinstall": "npm run tsc",
+    "build": "tsc",
+    "postinstall": "npm run build",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "watch": "tsc --watch",
     "start": "node ."
@@ -27,7 +27,6 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@discordjs/opus": "^0.4.0",
     "axios": "^0.21.1",
     "cron": "^1.8.2",
     "discord.js": "^12.5.1",
