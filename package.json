@@ -2,13 +2,15 @@
   "name": "billypbot",
   "description": "billypbot",
   "version": "1.0.0",
-  "engines": { "node": "14.15.1" },
+  "engines": {
+    "node": "14.x",
+    "npm": "*"
+  },
   "main": "build/index.js",
   "scripts": {
     "prebuild": "eslint --fix --ext .ts,.tsx .",
-    "postinstall": "ls",
     "build": "tsc",
-    "prestart": "npm run build && ls",
+    "prestart": "npm run build",
     "watch": "tsc --watch",
     "start": "node ."
   },
