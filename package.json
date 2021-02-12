@@ -6,7 +6,7 @@
   "main": "build/index.js",
   "scripts": {
     "prebuild": "eslint --fix --ext .ts,.tsx .",
-    "postinstall": "npm run build",
+    "postinstall": "ls",
     "build": "tsc",
     "prestart": "npm run build",
     "watch": "tsc --watch",
