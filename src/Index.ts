@@ -1,5 +1,6 @@
 import { Client, Guild, Message } from "discord.js";
 import { CronJob } from "cron";
+import { cwd } from "process";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
@@ -62,6 +63,10 @@ client.on("ready", () => {
 });
 
 client.on("message", (msg: Message) => {
+	if (msg.content.startsWith("!ping")) {
+		console.log(cwd());
+		console.log(__dirname);
+	}
 	message.adminMsg(msg, client);
 	message.includesAndResponse(msg, triggersAndResponses);
 	boyd.townRoad(msg);
