@@ -6,7 +6,7 @@
     "node": "14.x",
     "npm": "*"
   },
-  "main": "build/",
+  "main": "build/Index.js",
   "scripts": {
     "tsc": "tsc",
     "postinstall": "npm run tsc",
