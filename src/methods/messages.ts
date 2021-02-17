@@ -22,8 +22,7 @@ const postLog = (body: ILogBody): Promise<void> => {
 };
 
 export const adminMsg = (msg: Message, client: Client): void => {
-
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type !== "dm" && msg.channel.name === "admin-announcements") {
 		const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
 		const generalChannel: any = client.channels.cache.find((TextChannel: TextChannel) => TextChannel.name === "general");
 
