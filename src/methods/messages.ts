@@ -32,7 +32,8 @@ export const adminMsg = (msg: Message, client: Client): void => {
 				.setColor("#1bb0a2")
 				.setTitle("Admin Update")
 				.addField(`Update From ${msg.author.username}`, adminText)
-				.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)");
+				.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)")
+				.addField("Donate", "Support the bot [here](https://btbackend.herokuapp.com/api/donate)");
 
 			return generalChannel.send(card)
 				.then(logger.info(`Sent Admin message: ${adminText}`))
