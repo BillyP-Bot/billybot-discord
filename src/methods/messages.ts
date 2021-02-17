@@ -22,8 +22,7 @@ const postLog = (body: ILogBody): Promise<void> => {
 };
 
 export const adminMsg = (msg: Message, client: Client): void => {
-
-	if (msg.channel.type === "dm") {
+	if (msg.channel.type !== "dm" && msg.channel.name === "admin-announcements") {
 		const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
 		const generalChannel: any = client.channels.cache.find((TextChannel: TextChannel) => TextChannel.name === "general");
 
@@ -33,7 +32,7 @@ export const adminMsg = (msg: Message, client: Client): void => {
 				.setColor("#1bb0a2")
 				.setTitle("Admin Update")
 				.addField(`Update From ${msg.author.username}`, adminText)
-				.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)!");
+				.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)");
 
 			return generalChannel.send(card)
 				.then(logger.info(`Sent Admin message: ${adminText}`))

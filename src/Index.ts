@@ -35,33 +35,31 @@ client.on("ready", () => {
 	itsTimeToRockandRoll.start();
 });
 
-const adminMsg : RegExp = /.*(!adminmsg).*/gmi;
-const townRoad : RegExp = /.*!boydTownRoad.*/gmi;
-const exitStream : RegExp = /.*!stop.*/gmi;
-const skiStats : RegExp = /.*(!skistats).*/gmi;
-const fridayFunny : RegExp = /.*!diane.*/gmi;
-const fridayFunnies : RegExp = /.*!fridayfunnies*/gmi;
-const howardUpdate : RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
+const townRoad: RegExp = /.*!boydTownRoad.*/gmi;
+const exitStream: RegExp = /.*!stop.*/gmi;
+const skiStats: RegExp = /.*(!skistats).*/gmi;
+const fridayFunny: RegExp = /.*!diane.*/gmi;
+const fridayFunnies: RegExp = /.*!fridayfunnies*/gmi;
+const howardUpdate: RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
 //const kyleCommand : RegExp = /.*!drink*/gmi; TODO
 //TODO Includes and responses
 
 client.on("message", (msg: Message) => {
-	if (adminMsg.test(msg.content)){
-		message.adminMsg(msg, client);
-	} else if (skiStats.test(msg.content)){
+	if (skiStats.test(msg.content)) {
 		skistats.all(msg);
-	} else if (townRoad.test(msg.content)){
+	} else if (townRoad.test(msg.content)) {
 		boyd.townRoad(msg);
-	} else if (exitStream.test(msg.content)){
+	} else if (exitStream.test(msg.content)) {
 		boyd.exitStream(msg);
-	} else if (fridayFunny.test(msg.content)){
+	} else if (fridayFunny.test(msg.content)) {
 		dianne.fridayFunny(msg);
-	} else if (fridayFunnies.test(msg.content)){
+	} else if (fridayFunnies.test(msg.content)) {
 		dianne.fridayFunnies(msg);
-	} else if (howardUpdate.test(msg.content)){
+	} else if (howardUpdate.test(msg.content)) {
 		whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 	} else {
 		message.includesAndResponse(msg, triggersAndResponses);
+		message.adminMsg(msg, client);
 		kyle.kyleNoWorking(msg);
 		kyle.getKyleCommand(msg);
 	}
