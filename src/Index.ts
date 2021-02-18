@@ -45,7 +45,7 @@ const howardUpdate: RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
 //TODO Includes and responses
 
 client.on("message", (msg: Message) => {
-	switch(true) {
+	switch (true) {
 	case skiStats.test(msg.content) && !msg.author.bot:
 		skistats.all(msg);
 		break;
