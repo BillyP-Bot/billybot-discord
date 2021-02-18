@@ -2,7 +2,6 @@ import { Message, MessageEmbed } from "discord.js";
 import axios from "axios";
 
 export const all = (msg: Message): void => {
-	if (!msg.author.bot) {
 		axios.get("https://skifreejs.herokuapp.com/api/leaderboard/10").then(r => {
 			const card: MessageEmbed = new MessageEmbed()
 				.setColor("#1bb0a2")
@@ -20,5 +19,4 @@ export const all = (msg: Message): void => {
 		}).catch((e: Error) => {
 			console.log(e);
 		});
-	}
 };

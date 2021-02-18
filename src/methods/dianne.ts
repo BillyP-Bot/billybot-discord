@@ -7,56 +7,52 @@ import logger from "../services/logger";
 let cachedImages: any = [];
 
 export const fridayFunny = (msg: Message): void => {
-	if (!msg.author.bot) {
-		if (cachedImages.length == 0) {
-			fetch("https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=False")
-				.then(response => response.json())
-				.then(data => {
-					data.data.children.forEach((redditPost: any) => {
-						if (redditPost.data.selftext == "" && redditPost.data.over_18 == false) {
-							cachedImages.push(redditPost.data.url);
-						}
-					});
-					logger.info("Populated cachedImages. Length: " + cachedImages.length);
-					let fridayFunny = [];
-					fridayFunny.push(getRandomMeme(cachedImages));
-					logger.info(fridayFunny[0]);
-					msg.reply("I just found this great meme on my Facebook feed!\n\n", {
-						files: fridayFunny[0]
-					});
+	if (cachedImages.length == 0) {
+		fetch("https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=False")
+			.then(response => response.json())
+			.then(data => {
+				data.data.children.forEach((redditPost: any) => {
+					if (redditPost.data.selftext == "" && redditPost.data.over_18 == false) {
+						cachedImages.push(redditPost.data.url);
+					}
 				});
-		} else {
-			logger.info("cachedImages contains content: Length: " + cachedImages.length);
-			let fridayFunny: any[] = [];
-			fridayFunny.push(getRandomMeme(cachedImages));
-			logger.info(fridayFunny[0]);
-			msg.reply("I just found this great meme on my Facebook feed!\n\n", {
-				files: fridayFunny[0]
+				logger.info("Populated cachedImages. Length: " + cachedImages.length);
+				let fridayFunny = [];
+				fridayFunny.push(getRandomMeme(cachedImages));
+				logger.info(fridayFunny[0]);
+				msg.reply("I just found this great meme on my Facebook feed!\n\n", {
+					files: fridayFunny[0]
+				});
 			});
-		}
+	} else {
+		logger.info("cachedImages contains content: Length: " + cachedImages.length);
+		let fridayFunny: any[] = [];
+		fridayFunny.push(getRandomMeme(cachedImages));
+		logger.info(fridayFunny[0]);
+		msg.reply("I just found this great meme on my Facebook feed!\n\n", {
+			files: fridayFunny[0]
+		});
 	}
 };
 
 export const fridayFunnies = (msg: Message): void => {
 
-	if (!msg.author.bot) {
-		let fridayFunnies: any = [];
-		let attachmentCount: number = 0;
-		fetch("https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False")
-			.then(response => response.json())
-			.then(data => {
-				data.data.children.forEach((redditPost: any) => {
-					if (redditPost.data.over_18 == false && attachmentCount < 10) {
-						fridayFunnies.push(redditPost.data.url);
-						attachmentCount += 1;
-					}
-				});
-
-				msg.reply("Here's your Friday Funnies!\n\n", {
-					files: fridayFunnies
-				});
+	let fridayFunnies: any = [];
+	let attachmentCount: number = 0;
+	fetch("https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False")
+		.then(response => response.json())
+		.then(data => {
+			data.data.children.forEach((redditPost: any) => {
+				if (redditPost.data.over_18 == false && attachmentCount < 10) {
+					fridayFunnies.push(redditPost.data.url);
+					attachmentCount += 1;
+				}
 			});
-	}
+
+			msg.reply("Here's your Friday Funnies!\n\n", {
+				files: fridayFunnies
+			});
+		});
 };
 
 export const getRandomIntInclusive = (min: number, max: number): number => {

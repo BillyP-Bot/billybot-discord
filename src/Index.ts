@@ -45,21 +45,30 @@ const howardUpdate: RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
 //TODO Includes and responses
 
 client.on("message", (msg: Message) => {
-	if (skiStats.test(msg.content)) {
+	switch(true) {
+	case skiStats.test(msg.content) && !msg.author.bot:
 		skistats.all(msg);
-	} else if (townRoad.test(msg.content)) {
+		break;
+	case townRoad.test(msg.content) && !msg.author.bot:
 		boyd.townRoad(msg);
-	} else if (exitStream.test(msg.content)) {
+		break;
+	case exitStream.test(msg.content) && !msg.author.bot:
 		boyd.exitStream(msg);
-	} else if (fridayFunny.test(msg.content)) {
+		break;
+	case fridayFunny.test(msg.content) && !msg.author.bot:
 		dianne.fridayFunny(msg);
-	} else if (fridayFunnies.test(msg.content)) {
+		break;
+	case fridayFunnies.test(msg.content) && !msg.author.bot:
 		dianne.fridayFunnies(msg);
-	} else if (howardUpdate.test(msg.content)) {
+		break;
+	case howardUpdate.test(msg.content) && !msg.author.bot:
 		whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-	} else {
-		message.includesAndResponse(msg, triggersAndResponses);
+		break;
+	case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
 		message.adminMsg(msg, client);
+		break;
+	default:
+		message.includesAndResponse(msg, triggersAndResponses);
 		kyle.kyleNoWorking(msg);
 		kyle.getKyleCommand(msg);
 	}
