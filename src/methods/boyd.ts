@@ -6,7 +6,6 @@ import logger from "../services/logger";
 export let boydTownRoad: StreamDispatcher = null;
 
 export const townRoad = async (msg: Message): Promise<void> => {
-	if (!msg.author.bot) {
 		if (msg.member.voice.channel) {
 			const channel: VoiceChannel = msg.member.voice.channel;
 			const connection: VoiceConnection = await channel.join();
@@ -23,7 +22,6 @@ export const townRoad = async (msg: Message): Promise<void> => {
 		} else {
 			msg.reply("You need to join a voice channel first!");
 		}
-	}
 };
 
 export const exitStream = (msg: Message): void => {
