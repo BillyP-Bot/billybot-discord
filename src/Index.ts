@@ -1,4 +1,4 @@
-import { Client, Guild, Message } from "discord.js";
+import { Client, Guild, Message, Intents } from "discord.js";
 import { CronJob } from "cron";
 
 import config from "./helpers/config";
@@ -12,6 +12,8 @@ import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 
+const intents: Intents = new Intents();
+intents.add(Intents.ALL);
 const client: Client = new Client();
 
 const triggersAndResponses: string[][] = [
@@ -45,32 +47,32 @@ const howardUpdate: RegExp = /.*!whereshowwie*/gmi; //TODO: other commands
 //TODO Includes and responses
 
 client.on("message", (msg: Message) => {
-	switch(true) {
-	case skiStats.test(msg.content) && !msg.author.bot:
-		skistats.all(msg);
-		break;
-	case townRoad.test(msg.content) && !msg.author.bot:
-		boyd.townRoad(msg);
-		break;
-	case exitStream.test(msg.content) && !msg.author.bot:
-		boyd.exitStream(msg);
-		break;
-	case fridayFunny.test(msg.content) && !msg.author.bot:
-		dianne.fridayFunny(msg);
-		break;
-	case fridayFunnies.test(msg.content) && !msg.author.bot:
-		dianne.fridayFunnies(msg);
-		break;
-	case howardUpdate.test(msg.content) && !msg.author.bot:
-		whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-		break;
-	case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-		message.adminMsg(msg, client);
-		break;
-	default:
-		message.includesAndResponse(msg, triggersAndResponses);
-		kyle.kyleNoWorking(msg);
-		kyle.getKyleCommand(msg);
+	switch (true) {
+		case skiStats.test(msg.content) && !msg.author.bot:
+			skistats.all(msg);
+			break;
+		case townRoad.test(msg.content) && !msg.author.bot:
+			boyd.townRoad(msg);
+			break;
+		case exitStream.test(msg.content) && !msg.author.bot:
+			boyd.exitStream(msg);
+			break;
+		case fridayFunny.test(msg.content) && !msg.author.bot:
+			dianne.fridayFunny(msg);
+			break;
+		case fridayFunnies.test(msg.content) && !msg.author.bot:
+			dianne.fridayFunnies(msg);
+			break;
+		case howardUpdate.test(msg.content) && !msg.author.bot:
+			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
+			break;
+		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
+			message.adminMsg(msg, client);
+			break;
+		default:
+			message.includesAndResponse(msg, triggersAndResponses);
+			kyle.kyleNoWorking(msg);
+			kyle.getKyleCommand(msg);
 	}
 });
 
