@@ -3,7 +3,8 @@ import mongoose, { Document } from "mongoose";
 export interface IUser extends Document {
 	_id: string
 	username: string,
-	userId: number
+	userId: string,
+	billyBucks: number
 }
 
 const User = new mongoose.Schema(
@@ -13,6 +14,10 @@ const User = new mongoose.Schema(
 			required: true
 		},
 		userId: {
+			type: String,
+			required: true
+		},
+		billyBucks: {
 			type: Number,
 			required: true
 		}
