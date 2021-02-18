@@ -9,3 +9,8 @@ export interface ILogBody {
 	log: string,
 	issuer: string
 }
+
+export interface IUserList {
+	username: string,
+	id: string
+}
