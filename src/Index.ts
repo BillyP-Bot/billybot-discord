@@ -17,7 +17,7 @@ import * as kyle from "./methods/kyle";
 import { IUserList } from "./types/Abstract";
 
 const client: Client = new Client();
-const serverId: string = "730228346025148486";
+const serverId: string = "689463685566955566";
 
 try {
 	connect();
