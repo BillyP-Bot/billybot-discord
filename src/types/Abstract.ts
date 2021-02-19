@@ -12,5 +12,6 @@ export interface ILogBody {
 
 export interface IUserList {
 	username: string,
-	id: string
+	id: string,
+	serverId: string
 }

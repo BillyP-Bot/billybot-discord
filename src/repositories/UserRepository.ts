@@ -24,6 +24,7 @@ class UserRepository extends Base {
 			user.isNew = true;
 			user.username = member.username;
 			user.userId = member.id;
+			user.serverId = member.serverId;
 			user.billyBucks = 500;
 
 			await user.save();
