@@ -19,7 +19,7 @@ import { IUserList } from "./types/Abstract";
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
 const client: Client = new Client();
-const serverId: string = "730228346025148486";
+const serverId: string = "689463685566955566";
 
 try {
 	connect();
