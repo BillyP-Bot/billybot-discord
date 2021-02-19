@@ -17,7 +17,7 @@ export default class Currency {
 		try {
 			let notBot: IUserList[] = [];
 
-			const serverId: string = msg.author.client.guilds.cache.find(a => a.id !== undefined).id;
+			const serverId: string = msg.guild.id;
 			const _guild: Guild = await client.guilds.fetch(serverId);
 
 			const members: Collection<string, Discord.GuildMember> = await _guild.members.fetch();
