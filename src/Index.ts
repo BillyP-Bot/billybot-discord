@@ -1,4 +1,4 @@
-import { Client, GuildMember, Guild, Collection, Message } from "discord.js";
+import { Client, GuildMember, Guild, Intents, Collection, Message } from "discord.js";
 import { CronJob } from "cron";
 
 import config from "./helpers/config";
@@ -16,6 +16,8 @@ import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import { IUserList } from "./types/Abstract";
 
+const intents: Intents = new Intents();
+intents.add(Intents.ALL);
 const client: Client = new Client();
 const serverId: string = "689463685566955566";
 
