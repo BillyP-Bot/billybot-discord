@@ -4,6 +4,7 @@ export interface IUser extends Document {
 	_id: string
 	username: string,
 	userId: string,
+	serverId: string,
 	billyBucks: number
 }
 
@@ -14,6 +15,10 @@ const User = new mongoose.Schema(
 			required: true
 		},
 		userId: {
+			type: String,
+			required: true
+		},
+		serverId: {
 			type: String,
 			required: true
 		},
