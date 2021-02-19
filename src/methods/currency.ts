@@ -1,4 +1,4 @@
-import Discord, { Message, Collection, GuildMember, MessageEmbed, Client } from "discord.js";
+import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild } from "discord.js";
 
 import { IUser } from "../models/User";
 import { User } from "../repositories/UserRepository";
@@ -17,17 +17,18 @@ export default class Currency {
 		try {
 			let notBot: IUserList[] = [];
 
-			const currentServer: string = msg.author.client.guilds.cache.find(a => a.id !== undefined).id;
+			const serverId: string = msg.author.client.guilds.cache.find(a => a.id !== undefined).id;
+			const _guild: Guild = await client.guilds.fetch(serverId);
 
-			const members: Collection<string, GuildMember> = client.guilds.cache.find(a => a.id == currentServer).members.cache;
+			const members: Collection<string, Discord.GuildMember> = await _guild.members.fetch();
 			const notBots: Collection<string, GuildMember> = members.filter(a => a.user.bot == false);
-			notBots.forEach(mem => notBot.push({ username: mem.user.username, id: mem.user.id, serverId: currentServer }));
+			notBots.forEach(mem => notBot.push({ username: mem.user.username, id: mem.user.id, serverId: serverId }));
 
 			let insertCOunt: number = 0;
 			for (let i = 0; i < notBot.length; i++) {
 				try {
 					const inserted: boolean = await User.InsertOne({ username: notBot[i].username, id: notBot[i].id, serverId: notBot[i].serverId });
-					if(inserted) insertCOunt += 1;
+					if (inserted) insertCOunt += 1;
 				} catch (error) {
 					console.log(error);
 				}
