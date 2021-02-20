@@ -5,12 +5,6 @@ import { User } from "../repositories/UserRepository";
 import { Colors } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
-const buckEmbed: MessageEmbed = new MessageEmbed();
-buckEmbed.setColor(Colors.green);
-
-const errorEmbed: MessageEmbed = new MessageEmbed();
-errorEmbed.setColor(Colors.red).setTitle("Error");
-
 export default class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
@@ -36,6 +30,8 @@ export default class Currency {
 
 			msg.reply(`configuration done! ${insertCOunt} users updated.`);
 		} catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
 			errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
 		}
@@ -50,6 +46,8 @@ export default class Currency {
 
 				const bucks: number = await User.GetBucks(found.id);
 
+				const buckEmbed: MessageEmbed = new MessageEmbed();
+				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle(found.username);
 				buckEmbed.setDescription(`${found.username} has ${bucks} BillyBucks!`);
 
@@ -60,11 +58,15 @@ export default class Currency {
 			const req: string = msg.author.id;
 			const bucks: number = await User.GetBucks(req);
 
+			const buckEmbed: MessageEmbed = new MessageEmbed();
+			buckEmbed.setColor(Colors.green);
 			buckEmbed.setTitle(msg.author.username);
 			buckEmbed.setDescription(`you have ${bucks} BillyBucks!`);
 
 			msg.reply(buckEmbed);
 		} catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
 			errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
 		}
@@ -74,11 +76,15 @@ export default class Currency {
 		try {
 			const nobles: IUser[] = await User.GetNobles();
 
+			const buckEmbed: MessageEmbed = new MessageEmbed();
+			buckEmbed.setColor(Colors.green);
 			buckEmbed.setDescription("Here Are The 3 Richest Members");
 			nobles.forEach((noble, i) => buckEmbed.addField(`${i + 1}. ${noble.username}`, `$${noble.billyBucks}`));
 
 			msg.reply(buckEmbed);
 		} catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
 			errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
 		}

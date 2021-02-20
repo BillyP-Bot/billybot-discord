@@ -55,9 +55,6 @@ client.on("message", (msg: Message) => {
 	case Checks.bucksReg.test(msg.content) && !msg.author.bot:
 		Currency.CheckBucks(msg, "!bucks");
 		break;
-	case Checks.getNobles.test(msg.content) && !msg.author.bot:
-		Currency.GetNobles(msg);
-		break;
 	case Checks.configure.test(msg.content) && !msg.author.bot:
 		Currency.Configure(client, msg);
 		break;
