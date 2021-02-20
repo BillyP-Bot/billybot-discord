@@ -10,6 +10,19 @@ export enum Images {
 	billyMad = "https://cdn.discordapp.com/emojis/694721037006405742.png?v=1"
 }
 
+export enum Activities {
+	farmville = "Farmville"
+}
+
+export enum Roles {
+	billyDev = "BillyPBotDev"
+}
+
+export const enum Nums {
+	oneDay = 86400000, // 24 * 60 * 60 * 1000
+	oneWeek = 604800000 // 24 * 60 * 60 * 1000 * 7
+}
+
 export class Checks {
 	public static readonly townRoad: RegExp = /.*!boydTownRoad.*/gmi;
 	public static readonly exitStream: RegExp = /.*!stop.*/gmi;
@@ -17,6 +30,7 @@ export class Checks {
 	public static readonly fridayFunny: RegExp = /.*!diane.*/gmi;
 	public static readonly fridayFunnies: RegExp = /.*!fridayfunnies*/gmi;
 	public static readonly bucksReg: RegExp = /.*!bucks*/gmi;
+	public static readonly allowance: RegExp = /.*!allowance*/gmi;
 	public static readonly getNobles: RegExp = /.*!noblemen*/gmi;
 	public static readonly howardUpdate: RegExp = /.*!whereshowwie*/gmi;
 	public static readonly configure: RegExp = /.*!configure*/gmi;

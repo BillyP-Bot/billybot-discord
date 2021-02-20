@@ -5,7 +5,8 @@ export interface IUser extends Document {
 	username: string,
 	userId: string,
 	serverId: string,
-	billyBucks: number
+	billyBucks: number,
+	lastAllowance: Date
 }
 
 const User = new mongoose.Schema(
@@ -24,6 +25,10 @@ const User = new mongoose.Schema(
 		},
 		billyBucks: {
 			type: Number,
+			required: true
+		},
+		lastAllowance: {
+			type: Date,
 			required: true
 		}
 	},
