@@ -81,8 +81,10 @@ client.on("message", (msg: Message) => {
 		break;
 	case Checks.goodBot.test(msg.content):
 		message.goodBot(msg);
+		break;
 	case Checks.badBot.test(msg.content):
 		message.badBot(msg);
+		break;
 	default:
 		message.includesAndResponse(msg, triggersAndResponses);
 		kyle.kyleNoWorking(msg);
