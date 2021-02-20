@@ -1,4 +1,4 @@
-import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, ReactionEmoji } from "discord.js";
+import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji } from "discord.js";
 import fetch from "node-fetch";
 
 import { ILogBody } from "../types/Abstract";
@@ -29,7 +29,7 @@ export const goodBot = (msg: Message): void => {
 	} catch (error) {
 		logger.error(error);
 	}
-}
+};
 
 export const badBot = (msg: Message): void => {
 	const billyMad: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyMad");
@@ -39,7 +39,7 @@ export const badBot = (msg: Message): void => {
 	} catch (error) {
 		logger.error(error);
 	}
-}
+};
 
 export const adminMsg = (msg: Message, client: Client): void => {
 	const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
