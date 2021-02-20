@@ -15,4 +15,6 @@ export class Checks {
 	public static readonly getNobles: RegExp = /.*!noblemen*/gmi;
 	public static readonly howardUpdate: RegExp = /.*!whereshowwie*/gmi;
 	public static readonly configure: RegExp = /.*!configure*/gmi;
+	public static readonly goodBot: RegExp = /.*good bot*/gmi;
+	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }

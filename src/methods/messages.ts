@@ -1,4 +1,4 @@
-import { MessageEmbed, Message, Client, Role, RoleData, TextChannel } from "discord.js";
+import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, ReactionEmoji } from "discord.js";
 import fetch from "node-fetch";
 
 import { ILogBody } from "../types/Abstract";
@@ -20,6 +20,26 @@ const postLog = (body: ILogBody): Promise<void> => {
 			});
 	});
 };
+
+export const goodBot = (msg: Message): void => {
+	const billyHappy: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyHappy");
+	
+	try{
+		msg.react(billyHappy);
+	} catch (error) {
+		logger.error(error);
+	}
+}
+
+export const badBot = (msg: Message): void => {
+	const billyMad: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyMad");
+	
+	try{
+		msg.react(billyMad);
+	} catch (error) {
+		logger.error(error);
+	}
+}
 
 export const adminMsg = (msg: Message, client: Client): void => {
 	const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
