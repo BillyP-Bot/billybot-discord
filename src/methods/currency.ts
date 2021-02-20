@@ -40,6 +40,25 @@ export default class Currency {
 		}
 	}
 
+	public static async Allowance(msg: Message): Promise<void> {
+		try {
+			const update: number = await User.Allowance(msg.member.id);
+
+			const buckEmbed: MessageEmbed = new MessageEmbed();
+			buckEmbed.setColor(Colors.green);
+			buckEmbed.setTitle("+ 200");
+			buckEmbed.setDescription(`Here's your allowance, ${msg.member.user.username}! You now have ${update} BillyBucks!`);
+
+			msg.reply(buckEmbed);
+			return;
+		} catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
+			errorEmbed.setDescription(error);
+			msg.reply(errorEmbed);
+		}
+	}
+
 	public static async CheckBucks(msg: Message, prefix: string): Promise<void> {
 		try {
 			const param: string[] = msg.content.slice(prefix.length).trim().split(" ");
