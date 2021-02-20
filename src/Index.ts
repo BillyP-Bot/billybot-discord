@@ -5,7 +5,7 @@ import config from "./helpers/config";
 import logger from "./services/logger";
 
 import connect from "./services/db";
-import { Checks } from "./types/Constants";
+import { Checks, Images } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import Currency from "./methods/currency";
@@ -42,7 +42,7 @@ client.on("guildCreate", (guild: Guild) => {
 client.on("ready", async () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	logger.info(`Logged in as ${client.user.tag}!`);
-	// client.user.setAvatar("https://cdn.discordapp.com/emojis/694721037006405742.png?v=1");
+	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity("Farmville");
 	itsTimeToRockandRoll.start();
 });
