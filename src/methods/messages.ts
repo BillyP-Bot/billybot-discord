@@ -29,7 +29,16 @@ export const goodBot = (msg: Message): void => {
 	} catch (error) {
 		logger.error(error);
 	}
+}
+
+export const badBot = (msg: Message): void => {
+	const billyMad: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyMad");
 	
+	try{
+		msg.react(billyMad);
+	} catch (error) {
+		logger.error(error);
+	}
 }
 
 export const adminMsg = (msg: Message, client: Client): void => {
