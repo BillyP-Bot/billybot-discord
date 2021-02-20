@@ -79,6 +79,8 @@ client.on("message", (msg: Message) => {
 	case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
 		message.adminMsg(msg, client);
 		break;
+	case Checks.goodBot.test(msg.content):
+		message.goodBot(msg);
 	default:
 		message.includesAndResponse(msg, triggersAndResponses);
 		kyle.kyleNoWorking(msg);
