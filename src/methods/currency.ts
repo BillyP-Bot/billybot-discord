@@ -1,14 +1,17 @@
-import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild } from "discord.js";
+import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role } from "discord.js";
 
 import { IUser } from "../models/User";
 import { User } from "../repositories/UserRepository";
-import { Colors } from "../types/Constants";
+import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
 export default class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
 		try {
+			const devRole: Role = msg.member.roles.cache.find(a => a.name == Roles.billyDev);
+			if(!devRole) throw "user permission denied";
+			
 			let notBot: IUserList[] = [];
 
 			const serverId: string = msg.guild.id;
@@ -32,7 +35,7 @@ export default class Currency {
 		} catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");
-			errorEmbed.setDescription(error.message);
+			errorEmbed.setDescription(error);
 			msg.reply(errorEmbed);
 		}
 	}

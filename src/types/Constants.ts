@@ -10,6 +10,14 @@ export enum Images {
 	billyMad = "https://cdn.discordapp.com/emojis/694721037006405742.png?v=1"
 }
 
+export enum Activities {
+	farmville = "Farmville"
+}
+
+export enum Roles {
+	billyDev = "BillyPBotDev"
+}
+
 export class Checks {
 	public static readonly townRoad: RegExp = /.*!boydTownRoad.*/gmi;
 	public static readonly exitStream: RegExp = /.*!stop.*/gmi;

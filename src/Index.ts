@@ -5,7 +5,7 @@ import config from "./helpers/config";
 import logger from "./services/logger";
 
 import connect from "./services/db";
-import { Checks, Images } from "./types/Constants";
+import { Checks, Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import Currency from "./methods/currency";
@@ -39,11 +39,10 @@ client.on("guildCreate", (guild: Guild) => {
 	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
-client.on("ready", async () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	client.user.setAvatar(Images.billyMad);
-	client.user.setActivity("Farmville");
+	client.user.setActivity(Activities.farmville);
 	itsTimeToRockandRoll.start();
 });
 
