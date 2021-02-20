@@ -24,10 +24,13 @@ const postLog = (body: ILogBody): Promise<void> => {
 export const goodBot = (msg: Message): void => {
 	const billyHappy: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyHappy");
 	
-	msg.react(billyHappy)
+	if(billyHappy){
+		msg.react(billyHappy)
 		.catch((e: Error) => {
 			logger.error(e);
 		});
+	}
+	
 }
 
 export const adminMsg = (msg: Message, client: Client): void => {
