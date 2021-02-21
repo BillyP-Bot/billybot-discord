@@ -63,7 +63,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!diane", description: "A hilarious meme straight from Diane's Facebook." },
 	{ prefix: "!fridayfunnies", description: "A big 'ole meme dump right into your feed." },
 	{ prefix: "!bucks", description: "Get your current balance of BillyBucks, (Optional !bucks [username]) " },
-	{ prefix: "!allowance", description: "Collect your weekly BillyBuck allowance! Only svailable once a week." },
+	{ prefix: "!allowance", description: "Collect your weekly BillyBuck allowance! Only available once a week." },
 	{ prefix: "!whereshowwie", description: "Get updates on Howard's job status." },
 	{ prefix: "!configure", description: "Command for admins to prep the server." },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
