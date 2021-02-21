@@ -15,3 +15,8 @@ export interface IUserList {
 	id: string,
 	serverId: string
 }
+
+export interface ICommand {
+	prefix: string,
+	description: string
+}

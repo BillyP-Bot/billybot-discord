@@ -42,7 +42,8 @@ export default class Currency {
 
 	public static async Allowance(msg: Message): Promise<void> {
 		try {
-			const update: number = await User.Allowance(msg.member.id);
+			const serverId: string = msg.guild.id;
+			const update: number = await User.Allowance(msg.member.id, serverId);
 
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			buckEmbed.setColor(Colors.green);

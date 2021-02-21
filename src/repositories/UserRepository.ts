@@ -18,7 +18,7 @@ class UserRepository extends Base {
 
 	public async InsertOne(member: IUserList): Promise<boolean> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: member.id });
+			const exists: IUser = await _User.findOne({ userId: member.id, serverId: member.serverId });
 			if (exists) return false;
 
 			const user = new _User();
@@ -51,9 +51,9 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async Allowance(id: string): Promise<number> {
+	public async Allowance(id: string, serverId: string): Promise<number> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: id });
+			const exists: IUser = await _User.findOne({ userId: id, serverId: serverId });
 			if (!exists) throw "user not found";
 
 			const timestamp: number = +new Date(exists.lastAllowance);
