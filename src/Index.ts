@@ -9,6 +9,7 @@ import { Checks, Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import Currency from "./methods/currency";
+import Generic from "./methods/generic";
 import * as dianne from "./methods/dianne";
 import * as rockandroll from "./methods/rockandroll";
 import * as skistats from "./methods/skiStats";
@@ -48,6 +49,9 @@ client.on("ready", () => {
 
 client.on("message", (msg: Message) => {
 	switch (true) {
+	case Checks.help.test(msg.content) && !msg.author.bot:
+		Generic.Help(msg);
+		break;
 	case Checks.skiStats.test(msg.content) && !msg.author.bot:
 		skistats.all(msg);
 		break;
