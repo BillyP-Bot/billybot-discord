@@ -1,17 +1,16 @@
 import { Client, Guild, Intents, Message } from "discord.js";
-import { CronJob } from "cron";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
 
 import connect from "./services/db";
+import CronJobs from "./methods/cronJobs";
+import Currency from "./methods/currency";
+import Generic from "./methods/generic";
 import { Checks, Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
-import Currency from "./methods/currency";
-import Generic from "./methods/generic";
 import * as dianne from "./methods/dianne";
-import * as rockandroll from "./methods/rockandroll";
 import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
@@ -19,6 +18,8 @@ import * as kyle from "./methods/kyle";
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
 const client: Client = new Client();
+// instantiate all cronjobs
+const Jobs: CronJobs = new CronJobs(client);
 
 try {
 	connect();
@@ -32,10 +33,6 @@ const triggersAndResponses: string[][] = [
 	["linear", "We have to work exponentially, not linearly!"]
 ];
 
-const itsTimeToRockandRoll: CronJob = new CronJob("0 0 9 * * 1", () => {
-	rockandroll.itsTime(client);
-}, null, null, "America/New_York");
-
 client.on("guildCreate", (guild: Guild) => {
 	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
@@ -44,7 +41,7 @@ client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
-	itsTimeToRockandRoll.start();
+	Jobs.RollCron.start();
 });
 
 client.on("message", (msg: Message) => {

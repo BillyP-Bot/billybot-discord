@@ -31,5 +31,4 @@ export const exitStream = (msg: Message): void => {
 	} else {
 		msg.channel.send("I'm not in a voice channel!");
 	}
-
 };
