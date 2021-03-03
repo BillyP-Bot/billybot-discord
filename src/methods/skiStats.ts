@@ -15,7 +15,7 @@ export const all = (msg: Message): void => {
 			else
 				card.addField(`${r.data.data[i].username} 👑`, `${r.data.data[i].score}`);
 		}
-		return msg.channel.send(card);
+		msg.channel.send(card);
 	}).catch((e: Error) => {
 		console.log(e);
 	});
