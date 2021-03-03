@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { Client, Guild, Intents, Message } from "discord.js";
 
 import config from "./helpers/config";
@@ -7,7 +8,7 @@ import connect from "./services/db";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
-import { Checks, Images, Activities } from "./types/Constants";
+import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import * as dianne from "./methods/dianne";
@@ -45,51 +46,57 @@ client.on("ready", () => {
 });
 
 client.on("message", (msg: Message) => {
+	try {
+	if(msg.author.bot) return;
+
 	switch (true) {
-	case Checks.help.test(msg.content) && !msg.author.bot:
-		Generic.Help(msg);
-		break;
-	case Checks.skiStats.test(msg.content) && !msg.author.bot:
-		skistats.all(msg);
-		break;
-	case Checks.bucksReg.test(msg.content) && !msg.author.bot:
-		Currency.CheckBucks(msg, "!bucks");
-		break;
-	case Checks.configure.test(msg.content) && !msg.author.bot:
-		Currency.Configure(client, msg);
-		break;
-	case Checks.allowance.test(msg.content) && !msg.author.bot:
-		Currency.Allowance(msg);
-		break;
-	case Checks.townRoad.test(msg.content) && !msg.author.bot:
-		boyd.townRoad(msg);
-		break;
-	case Checks.exitStream.test(msg.content) && !msg.author.bot:
-		boyd.exitStream(msg);
-		break;
-	case Checks.fridayFunny.test(msg.content) && !msg.author.bot:
-		dianne.fridayFunny(msg);
-		break;
-	case Checks.fridayFunnies.test(msg.content) && !msg.author.bot:
-		dianne.fridayFunnies(msg);
-		break;
-	case Checks.howardUpdate.test(msg.content) && !msg.author.bot:
-		whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-		break;
-	case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-		message.adminMsg(msg, client);
-		break;
-	case Checks.goodBot.test(msg.content):
-		message.goodBot(msg);
-		break;
-	case Checks.badBot.test(msg.content):
-		message.badBot(msg);
-		break;
-	default:
-		message.includesAndResponse(msg, triggersAndResponses);
-		kyle.kyleNoWorking(msg);
-		kyle.getKyleCommand(msg);
+		case /.*(!help).*/gmi.test(msg.content):
+			Generic.Help(msg);
+			break;
+		case /.*(!skistats).*/gmi.test(msg.content):
+			skistats.all(msg);
+			break;
+		case /.*!bucks*/gmi.test(msg.content):
+			Currency.CheckBucks(msg, "!bucks");
+			break;
+		case /.*!configure*/gmi.test(msg.content):
+			Currency.Configure(client, msg);
+			break;
+		case /.*!allowance*/gmi.test(msg.content):
+			Currency.Allowance(msg);
+			break;
+		case /.*!boydTownRoad.*/gmi.test(msg.content):
+			boyd.townRoad(msg);
+			break;
+		case /.*!stop.*/gmi.test(msg.content):
+			boyd.exitStream(msg);
+			break;
+		case /.*!diane.*/gmi.test(msg.content):
+			dianne.fridayFunny(msg);
+			break;
+		case /.*!fridayfunnies*/gmi.test(msg.content):
+			dianne.fridayFunnies(msg);
+			break;
+		case /.*!whereshowwie*/gmi.test(msg.content):
+			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
+			break;
+		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
+			message.adminMsg(msg, client);
+			break;
+		case /.*good bot*/gmi.test(msg.content):
+			message.goodBot(msg);
+			break;
+		case /.*bad bot*/gmi.test(msg.content):
+			message.badBot(msg);
+			break;
+		default:
+			message.includesAndResponse(msg, triggersAndResponses);
+			kyle.kyleNoWorking(msg);
+			kyle.getKyleCommand(msg);
 	}
+} catch (error) {
+	console.log(error);
+}
 });
 
 client.on("unhandledRejection", error => {

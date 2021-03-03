@@ -4,18 +4,18 @@ import { Colors, CommandDescriptor } from "../types/Constants";
 
 export default class Generic {
 
-	private static helpEmbed: MessageEmbed = new MessageEmbed();
-
-	public static async Help(msg: Message): Promise<void> {
+	public static Help(msg: Message): void {
 		try {
-			Generic.helpEmbed.setColor(Colors.green);
-			Generic.helpEmbed.setTitle("Commands");
+			//if(msg.author.bot) return;
+
+			const helpEmbed: MessageEmbed = new MessageEmbed();
+			helpEmbed.setColor(Colors.green);
+			helpEmbed.setTitle("Commands");
 			CommandDescriptor.forEach(obj => {
-				Generic.helpEmbed.addField(obj.prefix, obj.description);
+				helpEmbed.addField(obj.prefix, obj.description);
 			});
-			Generic.helpEmbed.setDescription("Here is a list of my commands!");
-			msg.reply(Generic.helpEmbed);
-			return;
+			helpEmbed.setDescription("Here is a list of my commands!");
+			msg.reply(helpEmbed);
 		} catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");

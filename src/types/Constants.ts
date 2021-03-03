@@ -24,21 +24,21 @@ export const enum Nums {
 	oneWeek = 604800000 // 7 * 24 * 60 * 60 * 1000
 }
 
-export class Checks {
-	public static readonly help: RegExp = /.*!help.*/gmi;
-	public static readonly townRoad: RegExp = /.*!boydTownRoad.*/gmi;
-	public static readonly exitStream: RegExp = /.*!stop.*/gmi;
-	public static readonly skiStats: RegExp = /.*(!skistats).*/gmi;
-	public static readonly fridayFunny: RegExp = /.*!diane.*/gmi;
-	public static readonly fridayFunnies: RegExp = /.*!fridayfunnies*/gmi;
-	public static readonly bucksReg: RegExp = /.*!bucks*/gmi;
-	public static readonly allowance: RegExp = /.*!allowance*/gmi;
-	public static readonly getNobles: RegExp = /.*!noblemen*/gmi;
-	public static readonly howardUpdate: RegExp = /.*!whereshowwie*/gmi;
-	public static readonly configure: RegExp = /.*!configure*/gmi;
-	public static readonly goodBot: RegExp = /.*good bot*/gmi;
-	public static readonly badBot: RegExp = /.*bad bot*/gmi;
-}
+export const Checks = {
+	help: /.*(!help).*/gmi,
+	townRoad: /.*!boydTownRoad.*/gmi,
+	exitStream: /.*!stop.*/gmi,
+	skiStats: /.*(!skistats).*/gmi,
+	fridayFunny: /.*!diane.*/gmi,
+	fridayFunnies: /.*!fridayfunnies*/gmi,
+	bucksReg: /.*!bucks*/gmi,
+	allowance: /.*!allowance*/gmi,
+	getNobles: /.*!noblemen*/gmi,
+	howardUpdate: /.*!whereshowwie*/gmi,
+	configure: /.*!configure*/gmi,
+	goodBot: /.*good bot*/gmi,
+	badBot: /.*bad bot*/gmi
+};
 
 export class Commands {
 	public static readonly help: RegExp = /.*!help.*/gmi;
