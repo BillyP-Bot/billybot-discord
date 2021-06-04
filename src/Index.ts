@@ -15,6 +15,7 @@ import * as dianne from "./methods/dianne";
 import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
+import * as joe from "./methods/joe";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -74,7 +75,10 @@ client.on("message", (msg: Message) => {
 		case /.*!diane.*/gmi.test(msg.content):
 			dianne.fridayFunny(msg);
 			break;
-		case /.*!fridayfunnies*/gmi.test(msg.content):
+		case /.*!joe*/gmi.test(msg.content):
+                        joe.joe(msg);
+                        break;
+                case /.*!fridayfunnies*/gmi.test(msg.content):
 			dianne.fridayFunnies(msg);
 			break;
 		case /.*!whereshowwie*/gmi.test(msg.content):
