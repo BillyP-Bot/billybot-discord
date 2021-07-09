@@ -18,11 +18,13 @@ export default class CronJobs {
 	}, null, null, "America/New_York");
 
 	public static ItsTime(client: Client): void {
-		const channel: any = client.channels.cache.find((TextChannel: TextChannel) => TextChannel.name === "mems");
+		const channels: any = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "mems");
 		//const attachment = new MessageAttachment('../videos/rockandroll.mp4');
 
-		channel.send("Good Morning!", { files: [path.join(cwd(), "./videos/rockandroll.mp4")] })
-			.then(() => console.log("Its time to rock and roll"))
+		channels.forEach((channel: TextChannel) => {
+			channel.send("Good Morning!", { files: [path.join(cwd(), "./videos/rockandroll.mp4")] })
+			.then(() => console.log("It's time to rock and roll"))
 			.catch(console.error);
+		});
 	}
 }
