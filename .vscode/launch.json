@@ -8,7 +8,7 @@
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"program": "${workspaceFolder}\\build\\index.js",
+			"program": "${workspaceFolder}/build/index.js",
 			"preLaunchTask": "tsc: compile",
 			"outFiles": [
 				"${workspaceFolder}/build/**/*.js"
