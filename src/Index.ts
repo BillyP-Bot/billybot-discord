@@ -66,6 +66,9 @@ client.on("message", (msg: Message) => {
 		case /.*!allowance*/gmi.test(msg.content):
 			Currency.Allowance(msg);
 			break;
+		case /.*!noblemen*/gmi.test(msg.content):
+			Currency.GetNobles(msg);
+			break;
 		case /.*!boydTownRoad.*/gmi.test(msg.content):
 			boyd.townRoad(msg);
 			break;
