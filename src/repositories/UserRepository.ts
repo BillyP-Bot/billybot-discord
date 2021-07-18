@@ -36,13 +36,19 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async UpdateBucks(id: string, bucks: number): Promise<boolean> {
+	public async UpdateBucks(id: string, bucks: number, increment: boolean): Promise<boolean> {
 		try {
 			const exists: IUser = await _User.findOne({ userId: id });
 			if (!exists) return false;
 
 			exists.isNew = false;
-			exists.billyBucks = bucks;
+			if (increment){
+				exists.billyBucks = exists.billyBucks + bucks;
+			}
+			else {
+				exists.billyBucks = bucks;
+			}
+			
 
 			await exists.save();
 			return true;
