@@ -12,4 +12,4 @@ https://discord.js.org/#/docs/main/11.1.0/general/welcome
         - GOOGLE_API_KEY
         - GOOGLE_CX_KEY
 - Run 'npm i' to ensure that the local project has all packages installed
-- Run 'npm run dev' to start project (will restart everytime a file is saved)
+- Run 'npm start' to start project (will restart everytime a file is saved)

@@ -1,5 +1,6 @@
 /* eslint-disable indent */
-import { Client, Guild, Intents, Message } from "discord.js";
+import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
+import { User as MongoUser} from "./repositories/UserRepository";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
@@ -66,6 +67,9 @@ client.on("message", (msg: Message) => {
 		case /.*!allowance*/gmi.test(msg.content):
 			Currency.Allowance(msg);
 			break;
+		case /.*!noblemen*/gmi.test(msg.content):
+			Currency.GetNobles(msg);
+			break;
 		case /.*!boydTownRoad.*/gmi.test(msg.content):
 			boyd.townRoad(msg);
 			break;
@@ -101,6 +105,21 @@ client.on("message", (msg: Message) => {
 } catch (error) {
 	console.log(error);
 }
+});
+
+client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
+	console.log(react, user);
+	try {
+		if (react.message.author.bot) return;
+
+		switch (true){
+			case (react.emoji.name === "BillyBuck"):
+				MongoUser.UpdateBucks(user.id, -1, true);
+				MongoUser.UpdateBucks(react.message.author.id, 1, true);
+		}
+	} catch (error) {
+		logger.error(error);
+	}
 });
 
 client.on("unhandledRejection", error => {
