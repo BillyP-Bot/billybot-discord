@@ -1,41 +1,25 @@
-import mongoose, { Document } from "mongoose";
+import { Index, Entity, Column } from "typeorm";
 
-export interface IUser extends Document {
-	_id: string
-	username: string,
-	userId: string,
-	serverId: string,
-	billyBucks: number,
-	lastAllowance: Date
+import Base from "./Base";
+
+@Entity("User")
+export class User extends Base {
+
+	@Index()
+	@Column()
+	username: string;
+
+	@Index()
+	@Column()
+	userId: string;
+
+	@Index()
+	@Column()
+	serverId: string;
+
+	@Column()
+	billyBucks: number;
+
+	@Column()
+	lastAllowance: Date;
 }
-
-const User = new mongoose.Schema(
-	{
-		username: {
-			type: String,
-			required: true
-		},
-		userId: {
-			type: String,
-			required: true
-		},
-		serverId: {
-			type: String,
-			required: true
-		},
-		billyBucks: {
-			type: Number,
-			required: true
-		},
-		lastAllowance: {
-			type: Date,
-			required: true
-		}
-	},
-	{
-		collection: "User",
-		versionKey: false
-	}
-);
-
-export default mongoose.model<IUser>("User", User);
