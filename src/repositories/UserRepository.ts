@@ -1,4 +1,3 @@
-// import Base from "./abstract/UserRepositoryBase";
 import { User } from "../models/User";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
@@ -86,10 +85,10 @@ export class UserRepository {
 
 	public static async GetNobles(): Promise<User[]> {
 		try {
-			// const records = await User.find().sort({ billyBucks: -1 }).limit(3);
-			const records = await User.find({order: { 
-				billyBucks: "DESC"
-			}, take: 3});
+			const records = await User.find({
+				order: {  billyBucks: -1 },
+				take: 3
+			});
 			let normalized: any[] = [];
 
 			records.forEach(entry => {

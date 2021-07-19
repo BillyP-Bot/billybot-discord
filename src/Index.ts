@@ -11,8 +11,7 @@ import { Database } from "./services/db";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
-// import { Images, Activities } from "./types/Constants";
-import { Activities } from "./types/Constants";
+import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import * as dianne from "./methods/dianne";
@@ -47,7 +46,7 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	// client.user.setAvatar(Images.billyMad);
+	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 });
