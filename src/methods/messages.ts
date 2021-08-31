@@ -1,24 +1,13 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji } from "discord.js";
-import fetch from "node-fetch";
 
 import { ILogBody } from "../types/Abstract";
 import logger from "../services/logger";
+import { Rest } from "../helpers/rest";
 
 const adminMsgPrefix: string = "!adminMsg";
 
-const postLog = (body: ILogBody): Promise<void> => {
-	return new Promise((resolve, reject) => {
-		fetch("https://btbackend.herokuapp.com/api/logs/newlog", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ log: body.log, issuer: body.issuer })
-		}).then(r => r.json())
-			.then(data => {
-				return resolve(data);
-			}).catch(e => {
-				reject(e);
-			});
-	});
+const postLog = async (body: ILogBody) => {
+	return await Rest.PostLog(body);
 };
 
 export const goodBot = (msg: Message): void => {
