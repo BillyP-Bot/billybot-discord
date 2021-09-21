@@ -62,16 +62,16 @@ client.on("message", async (msg: Message) => {
 		case /.*(!skistats).*/gmi.test(msg.content):
 			skistats.all(msg);
 			break;
-		case /.*!bucks*/gmi.test(msg.content):
+		case /.*!bucks.*/gmi.test(msg.content):
 			Currency.CheckBucks(msg, "!bucks");
 			break;
-		case /.*!configure*/gmi.test(msg.content):
+		case /.*!configure.*/gmi.test(msg.content):
 			Currency.Configure(client, msg);
 			break;
-		case /.*!allowance*/gmi.test(msg.content):
+		case /.*!allowance.*/gmi.test(msg.content):
 			Currency.Allowance(msg);
 			break;
-		case /.*!noblemen*/gmi.test(msg.content):
+		case /.*!noblemen.*/gmi.test(msg.content):
 			Currency.GetNobles(msg);
 			break;
 		case /.*!boydTownRoad.*/gmi.test(msg.content):
@@ -83,22 +83,22 @@ client.on("message", async (msg: Message) => {
 		case /.*!diane.*/gmi.test(msg.content):
 			dianne.fridayFunny(msg);
 			break;
-		case /.*!joe*/gmi.test(msg.content):
+		case /.*!joe.*/gmi.test(msg.content):
                         joe.joe(msg);
                         break;
-                case /.*!fridayfunnies*/gmi.test(msg.content):
+                case /.*!fridayfunnies.*/gmi.test(msg.content):
 			dianne.fridayFunnies(msg);
 			break;
-		case /.*!whereshowwie*/gmi.test(msg.content):
+		case /.*!whereshowwie.*/gmi.test(msg.content):
 			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 			break;
 		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
 			message.adminMsg(msg, client);
 			break;
-		case /.*good bot*/gmi.test(msg.content):
+		case /.*good bot.*/gmi.test(msg.content):
 			message.goodBot(msg);
 			break;
-		case /.*bad bot*/gmi.test(msg.content):
+		case /.*bad bot.*/gmi.test(msg.content):
 			message.badBot(msg);
 			break;
 		default:
