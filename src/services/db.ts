@@ -4,7 +4,7 @@ import { Connection, ConnectionOptions, createConnection, getConnection } from "
 
 import { User } from "../models/User";
 import Config, { Db } from "../helpers/config";
-import Log  from "./Logger";
+import Log  from "./logger";
 
 export class Database {
 
