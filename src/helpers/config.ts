@@ -15,6 +15,7 @@ const config = {
 };
 
 export const Db = {
+	DB_URL: process.env.DATABASE_URL,
 	DB_TYPE: process.env.DB_TYPE,
 	DB_HOST: process.env.DB_HOST,
 	DB_PORT: parseInt(process.env.DB_PORT as string),

@@ -2,25 +2,31 @@ import path from "path";
 import { cwd } from "process";
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 
+import { User } from "../models/User";
 import Config, { Db } from "../helpers/config";
 import Log  from "./Logger";
 
 export class Database {
 
 	private static readonly Orm = {
+		name: "default",
+		url: Db.DB_URL,
 		type: Db.DB_TYPE,
-		host: Db.DB_HOST,
-		port: Db.DB_PORT,
-		username: Db.DB_USERNAME,
-		password: Db.DB_PASSWORD,
-		database: Db.DB_NAME,
+		// host: Config.IS_PROD ? undefined : Db.DB_HOST,
+		// port: Config.IS_PROD ? undefined : Db.DB_PORT,
+		// username: Config.IS_PROD ? undefined : Db.DB_USERNAME,
+		// password: Config.IS_PROD ? undefined : Db.DB_PASSWORD,
+		// database: Config.IS_PROD ? undefined : Db.DB_NAME,
 		synchronize: Db.DB_SYNC,
 		logging: Db.DB_LOGGING,
 		autoReconnect: true,
-		reconnectTries: Number.MAX_VALUE,
-		ssl: Config.IS_PROD ? { rejectUnauthorized: false } : false,
+		reconnectTries: 5,
+		//ssl: { rejectUnauthorized: false },
+		ssl: true,
+		extra: { ssl: { rejectUnauthorized: false } },
 		reconnectInterval: 2000,
 		entities: [path.join(cwd(), "build/models/**/*.js")]
+		//entities: [ User ]
 	} as ConnectionOptions;
 
 	public static async Connect(): Promise<void> {
