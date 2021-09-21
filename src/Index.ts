@@ -1,11 +1,13 @@
 /* eslint-disable indent */
+import "reflect-metadata";
+import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
-import { User as MongoUser} from "./repositories/UserRepository";
+import { UserRepository as _User} from "./repositories/UserRepository";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
 
-import connect from "./services/db";
+import { Database } from "./services/db";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
@@ -24,11 +26,13 @@ const client: Client = new Client();
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
-try {
-	connect();
-} catch (error) {
-	logger.info(error);
-}
+(async () => {
+	try {
+		await Database.Connect();
+	} catch (error) {
+		logger.info(error);
+	}
+})();
 
 const triggersAndResponses: string[][] = [
 	["!loop", "no !loop please"],
@@ -47,7 +51,7 @@ client.on("ready", () => {
 	Jobs.RollCron.start();
 });
 
-client.on("message", (msg: Message) => {
+client.on("message", async (msg: Message) => {
 	try {
 	if(msg.author.bot) return;
 
@@ -114,8 +118,8 @@ client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
 
 		switch (true){
 			case (react.emoji.name === "BillyBuck"):
-				MongoUser.UpdateBucks(user.id, -1, true);
-				MongoUser.UpdateBucks(react.message.author.id, 1, true);
+				_User.UpdateBucks(user.id, -1, true);
+				_User.UpdateBucks(react.message.author.id, 1, true);
 		}
 	} catch (error) {
 		logger.error(error);

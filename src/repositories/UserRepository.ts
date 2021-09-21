@@ -1,13 +1,12 @@
-import Base from "./abstract/UserRepositoryBase";
-import _User, { IUser } from "../models/User";
+import { User } from "../models/User";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
 
-class UserRepository extends Base {
+export class UserRepository {
 
-	public async FindOne(id: number): Promise<IUser> {
+	public static async FindOne(id: number): Promise<User> {
 		try {
-			const user: IUser = await _User.findOne({ id: id }).lean();
+			const user = await User.findOne({ id });
 			if (!user) throw "user not found";
 
 			return user;
@@ -16,39 +15,34 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async InsertOne(member: IUserList): Promise<boolean> {
+	public static async InsertOne(member: IUserList): Promise<boolean> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: member.id, serverId: member.serverId });
+			const exists = await User.findOne({ userId: member.id, serverId: member.serverId });
 			if (exists) return false;
 
-			const user = new _User();
-			user.isNew = true;
-			user.username = member.username;
-			user.userId = member.id;
-			user.serverId = member.serverId;
-			user.billyBucks = 500;
-			user.lastAllowance = new Date();
+			const newUser = new User();
+			newUser.username = member.username;
+			newUser.userId = member.id;
+			newUser.serverId = member.serverId;
+			newUser.billyBucks = 500;
+			newUser.lastAllowance = new Date();
 
-			await user.save();
+			await newUser.save();
 			return true;
 		} catch (e) {
 			throw Error(e);
 		}
 	}
 
-	public async UpdateBucks(id: string, bucks: number, increment: boolean): Promise<boolean> {
+	public static async UpdateBucks(userId: string, bucks: number, increment: boolean): Promise<boolean> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: id });
+			const exists = await User.findOne({ userId });
 			if (!exists) return false;
 
-			exists.isNew = false;
-			if (increment){
+			if (increment)
 				exists.billyBucks = exists.billyBucks + bucks;
-			}
-			else {
+			else
 				exists.billyBucks = bucks;
-			}
-			
 
 			await exists.save();
 			return true;
@@ -57,9 +51,9 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async Allowance(id: string, serverId: string): Promise<number> {
+	public static async Allowance(userId: string, serverId: string): Promise<number> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: id, serverId: serverId });
+			const exists = await User.findOne({ userId, serverId });
 			if (!exists) throw "user not found";
 
 			const timestamp: number = +new Date(exists.lastAllowance);
@@ -68,7 +62,6 @@ class UserRepository extends Base {
 				throw `you've already gotten a weekly allowance on ${exists.lastAllowance}`;
 			}
 
-			exists.isNew = false;
 			exists.billyBucks = exists.billyBucks + 200;
 			exists.lastAllowance = new Date();
 
@@ -79,9 +72,9 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async GetBucks(id: string): Promise<number> {
+	public static async GetBucks(userId: string): Promise<number> {
 		try {
-			const exists: IUser = await _User.findOne({ userId: id });
+			const exists = await User.findOne({ userId });
 			if (!exists) throw "user not found";
 
 			return exists.billyBucks;
@@ -90,9 +83,12 @@ class UserRepository extends Base {
 		}
 	}
 
-	public async GetNobles(): Promise<IUser[]> {
+	public static async GetNobles(): Promise<User[]> {
 		try {
-			const records: IUser[] = await _User.find().sort({ billyBucks: -1 }).limit(3);
+			const records = await User.find({
+				order: {  billyBucks: -1 },
+				take: 3
+			});
 			let normalized: any[] = [];
 
 			records.forEach(entry => {
@@ -105,5 +101,3 @@ class UserRepository extends Base {
 		}
 	}
 }
-
-export const User: Base = new UserRepository;
