@@ -1,11 +1,13 @@
 /* eslint-disable indent */
+import "reflect-metadata";
+import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
-import { User as MongoUser} from "./repositories/UserRepository";
+import { UserRepository as _User} from "./repositories/UserRepository";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
 
-import connect from "./services/db";
+import { Database } from "./services/db";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
@@ -24,11 +26,13 @@ const client: Client = new Client();
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
-try {
-	connect();
-} catch (error) {
-	logger.info(error);
-}
+(async () => {
+	try {
+		await Database.Connect();
+	} catch (error) {
+		logger.info(error);
+	}
+})();
 
 const triggersAndResponses: string[][] = [
 	["!loop", "no !loop please"],
@@ -47,7 +51,7 @@ client.on("ready", () => {
 	Jobs.RollCron.start();
 });
 
-client.on("message", (msg: Message) => {
+client.on("message", async (msg: Message) => {
 	try {
 	if(msg.author.bot) return;
 
@@ -58,16 +62,16 @@ client.on("message", (msg: Message) => {
 		case /.*(!skistats).*/gmi.test(msg.content):
 			skistats.all(msg);
 			break;
-		case /.*!bucks*/gmi.test(msg.content):
+		case /.*!bucks.*/gmi.test(msg.content):
 			Currency.CheckBucks(msg, "!bucks");
 			break;
-		case /.*!configure*/gmi.test(msg.content):
+		case /.*!configure.*/gmi.test(msg.content):
 			Currency.Configure(client, msg);
 			break;
-		case /.*!allowance*/gmi.test(msg.content):
+		case /.*!allowance.*/gmi.test(msg.content):
 			Currency.Allowance(msg);
 			break;
-		case /.*!noblemen*/gmi.test(msg.content):
+		case /.*!noblemen.*/gmi.test(msg.content):
 			Currency.GetNobles(msg);
 			break;
 		case /.*!boydTownRoad.*/gmi.test(msg.content):
@@ -79,22 +83,22 @@ client.on("message", (msg: Message) => {
 		case /.*!diane.*/gmi.test(msg.content):
 			dianne.fridayFunny(msg);
 			break;
-		case /.*!joe*/gmi.test(msg.content):
+		case /.*!joe.*/gmi.test(msg.content):
                         joe.joe(msg);
                         break;
-                case /.*!fridayfunnies*/gmi.test(msg.content):
+                case /.*!fridayfunnies.*/gmi.test(msg.content):
 			dianne.fridayFunnies(msg);
 			break;
-		case /.*!whereshowwie*/gmi.test(msg.content):
+		case /.*!whereshowwie.*/gmi.test(msg.content):
 			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 			break;
 		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
 			message.adminMsg(msg, client);
 			break;
-		case /.*good bot*/gmi.test(msg.content):
+		case /.*good bot.*/gmi.test(msg.content):
 			message.goodBot(msg);
 			break;
-		case /.*bad bot*/gmi.test(msg.content):
+		case /.*bad bot.*/gmi.test(msg.content):
 			message.badBot(msg);
 			break;
 		default:
@@ -114,8 +118,8 @@ client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
 
 		switch (true){
 			case (react.emoji.name === "BillyBuck"):
-				MongoUser.UpdateBucks(user.id, -1, true);
-				MongoUser.UpdateBucks(react.message.author.id, 1, true);
+				_User.UpdateBucks(user.id, -1, true);
+				_User.UpdateBucks(react.message.author.id, 1, true);
 		}
 	} catch (error) {
 		logger.error(error);

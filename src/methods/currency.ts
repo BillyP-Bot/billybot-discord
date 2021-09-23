@@ -1,7 +1,7 @@
 import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role } from "discord.js";
 
-import { IUser } from "../models/User";
-import { User } from "../repositories/UserRepository";
+import { UserRepository as User } from "../repositories/UserRepository";
+import { User as IUser } from "../models/User";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 

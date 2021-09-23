@@ -1,22 +1,23 @@
 {
-    "compilerOptions": {
+	"compilerOptions": {
 		"experimentalDecorators": true,
 		"module": "commonjs",
 		"esModuleInterop": true,
-        "target": "es6",
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "sourceMap": true,
-        "outDir": "build",
-        "baseUrl": ".",
-	"skipLibCheck": true,
-        "paths": {
-            "*": [
-                "node_modules/*"
-            ]
-        }
-    },
-    "include": [
-        "src/**/*"
-    ]
+		"target": "es6",
+		"noImplicitAny": true,
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "build",
+		"baseUrl": ".",
+		"emitDecoratorMetadata": true,
+		"skipLibCheck": true,
+		"paths": {
+			"*": [
+				"node_modules/*"
+			]
+		}
+	},
+	"include": [
+		"src/**/*"
+	]
 }
