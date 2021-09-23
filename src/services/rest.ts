@@ -5,7 +5,7 @@ import config from "../helpers/config";
 export class Rest {
 
 	private static readonly BackendClient = axios.create({
-		url: "https://btbackend.herokuapp.com/api/",
+		baseURL: "https://btbackend.herokuapp.com/api/",
 		headers: {
 			"Content-Type": "application/json",
 			"appcode": config.BACKEND_TOKEN
