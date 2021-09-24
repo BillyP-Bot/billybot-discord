@@ -74,7 +74,7 @@ export default class Currency {
 					if (!found) {
 						buckEmbed.setColor(Colors.red);
 						buckEmbed.setTitle("Error");
-						buckEmbed.setDescription(`${param[0]} has not been configured for this server. Please ask an admin to set them up with a Billy Bank account.`);
+						buckEmbed.setDescription(`Could not find ${param[0]} in this server.`);
 						
 						msg.reply(buckEmbed);
 					}
@@ -102,7 +102,10 @@ export default class Currency {
 		} catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");
-			errorEmbed.setDescription(error.message);
+			if (error.message === 'user not found')
+				errorEmbed.setDescription("User has not been configured for this server. Please ask an admin to set them up with a Billy Bank account.")
+			else 
+				errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
 		}
 	}
