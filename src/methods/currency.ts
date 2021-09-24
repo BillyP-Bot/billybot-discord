@@ -67,7 +67,7 @@ export default class Currency {
 			if (param[0]) {
 				const found: Discord.User = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === param[0].toUpperCase().trim()).user;
 
-				const bucks: number = await User.GetBucks(found.id);
+				const bucks: number = await User.GetBucks(found.id, msg.guild.id);
 
 				const buckEmbed: MessageEmbed = new MessageEmbed();
 				buckEmbed.setColor(Colors.green);
@@ -79,7 +79,7 @@ export default class Currency {
 			}
 
 			const req: string = msg.author.id;
-			const bucks: number = await User.GetBucks(req);
+			const bucks: number = await User.GetBucks(req, msg.guild.id);
 
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			buckEmbed.setColor(Colors.green);
@@ -97,7 +97,7 @@ export default class Currency {
 
 	public static async GetNobles(msg: Message): Promise<void> {
 		try {
-			const nobles: IUser[] = await User.GetNobles();
+			const nobles: IUser[] = await User.GetNobles(msg.guild.id);
 
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			buckEmbed.setColor(Colors.green);
