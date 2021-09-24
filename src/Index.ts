@@ -118,8 +118,8 @@ client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
 
 		switch (true){
 			case (react.emoji.name === "BillyBuck"):
-				_User.UpdateBucks(user.id, -1, true);
-				_User.UpdateBucks(react.message.author.id, 1, true);
+				_User.UpdateBucks(user.id, react.message.guild.id, -1, true);
+				_User.UpdateBucks(react.message.author.id, react.message.guild.id, 1, true);
 		}
 	} catch (error) {
 		logger.error(error);

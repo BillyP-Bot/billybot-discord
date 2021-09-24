@@ -1,12 +1,13 @@
+import { checkServerIdentity } from "tls";
 import { User } from "../models/User";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
 
 export class UserRepository {
 
-	public static async FindOne(id: number): Promise<User> {
+	public static async FindOne(userId: string, serverId: string): Promise<User> {
 		try {
-			const user = await User.findOne({ id });
+			const user = await User.findOne({ userId: userId, serverId: serverId });
 			if (!user) throw "user not found";
 
 			return user;
@@ -34,9 +35,9 @@ export class UserRepository {
 		}
 	}
 
-	public static async UpdateBucks(userId: string, bucks: number, increment: boolean): Promise<boolean> {
+	public static async UpdateBucks(userId: string, serverId: string, bucks: number, increment: boolean): Promise<boolean> {
 		try {
-			const exists = await User.findOne({ userId });
+			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
 			if (!exists) return false;
 
 			if (increment)
@@ -53,7 +54,7 @@ export class UserRepository {
 
 	public static async Allowance(userId: string, serverId: string): Promise<number> {
 		try {
-			const exists = await User.findOne({ userId, serverId });
+			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
 			if (!exists) throw "user not found";
 
 			const timestamp: number = +new Date(exists.lastAllowance);
@@ -72,9 +73,9 @@ export class UserRepository {
 		}
 	}
 
-	public static async GetBucks(userId: string): Promise<number> {
+	public static async GetBucks(userId: string, serverId: string): Promise<number> {
 		try {
-			const exists = await User.findOne({ userId });
+			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
 			if (!exists) throw "user not found";
 
 			return exists.billyBucks;
@@ -83,9 +84,12 @@ export class UserRepository {
 		}
 	}
 
-	public static async GetNobles(): Promise<User[]> {
+	public static async GetNobles(serverId: string): Promise<User[]> {
 		try {
 			const records = await User.find({
+				where: {
+					serverId: serverId
+				},
 				order: {  billyBucks: -1 },
 				take: 3
 			});
