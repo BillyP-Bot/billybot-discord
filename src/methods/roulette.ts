@@ -13,7 +13,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		if (!validateArgs(bet, color)) return replyWithError(msg, buckEmbed, "Invalid format! Type '!help' for proper usage.");
 
 		if (bet <= 0) return replyWithError(msg, buckEmbed, "You must bet at least 1 BillyBuck!");
-		
+
 		const bucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
 		if (bet >= bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);

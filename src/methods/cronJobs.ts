@@ -23,8 +23,8 @@ export default class CronJobs {
 
 		channels.forEach((channel: TextChannel) => {
 			channel.send("Good Morning!", { files: [path.join(cwd(), "./videos/rockandroll.mp4")] })
-			.then(() => console.log("It's time to rock and roll"))
-			.catch(console.error);
+				.then(() => console.log("It's time to rock and roll"))
+				.catch(console.error);
 		});
 	}
 }
