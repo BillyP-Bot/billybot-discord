@@ -1,4 +1,3 @@
-import { checkServerIdentity } from "tls";
 import { User } from "../models/User";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
