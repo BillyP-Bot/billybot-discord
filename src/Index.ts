@@ -19,6 +19,7 @@ import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
+import * as roulette from "./methods/roulette";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -103,6 +104,9 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*bad bot.*/gmi.test(msg.content):
 			message.badBot(msg);
+			break;
+		case /.*!spin.*/gmi.test(msg.content):
+			roulette.spin(msg, "!spin");
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);

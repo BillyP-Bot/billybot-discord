@@ -27,7 +27,7 @@ export const badBot = (msg: Message): void => {
 
 export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 	const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
-	const generalChannel: any = client.channels.cache.find((TextChannel: TextChannel) => TextChannel.name === "general");
+	const generalChannels = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "general");
 
 	await Rest.Post("logs/newlog", { log: adminText, issuer: msg.author.username });
 
@@ -37,11 +37,9 @@ export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 		.addField(`Update From ${msg.author.username}`, adminText)
 		.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)");
 
-	return generalChannel.send(card)
-		.then(logger.info(`Sent Admin message: ${adminText}`))
-		.catch((e: Error) => {
-			logger.error(e);
-		});
+	generalChannels.forEach(async (channel: TextChannel) => {
+		await channel.send(card);
+	});
 };
 
 export const includesAndResponse = (msg: Message, prompts: string[][]): void => {
