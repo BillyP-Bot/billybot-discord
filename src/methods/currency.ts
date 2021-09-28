@@ -1,4 +1,4 @@
-import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role } from "discord.js";
+import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role, MessageReaction } from "discord.js";
 
 import { UserRepository as User } from "../repositories/UserRepository";
 import { User as IUser } from "../models/User";
@@ -117,6 +117,76 @@ export default class Currency {
 
 			msg.reply(buckEmbed);
 		} catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
+			errorEmbed.setDescription(error.message);
+			msg.reply(errorEmbed);
+		}
+	}
+
+	public static async BuckReact(react: MessageReaction, userId: string, add: boolean): Promise<void> {
+		try {
+			const guildId: string = react.message.guild.id;
+			const authorId: string = react.message.author.id;
+			const author$: number = await User.GetBucks(authorId, react.message.guild.id);
+			const user$: number = await User.GetBucks(userId, react.message.guild.id);
+			if (author$ && user$){ //Update bucks if configured and have money otherwise do nothing
+				if (user$ > 0 && add) {
+					User.UpdateBucks(authorId, guildId, 1, true);
+					User.UpdateBucks(userId, guildId, -1, true);
+				} else {
+					User.UpdateBucks(authorId, guildId, -1, true);
+					User.UpdateBucks(userId, guildId, 1, true);
+				}
+			}
+		} catch (error) {
+			if (error === "user not found")
+				logger.warn(error);
+			else 
+				logger.error(error);
+		}
+	}
+
+	public static async BillyPay(msg: Message, prefix: string){
+		try {
+			const username: string = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
+			const payAmount: string = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
+			const buckEmbed: MessageEmbed = new MessageEmbed();
+			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
+
+			if (username) {
+				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
+					if (!found) {
+						buckEmbed.setColor(Colors.red);
+						buckEmbed.setTitle("Error");
+						buckEmbed.setDescription(`Could not find ${username} in this server.`);
+						
+						msg.reply(buckEmbed);
+					}
+					else {
+						if (payAmount) {
+							const user: Discord.User = found.user;
+							if (+payAmount > userBucks && +payAmount > 0){
+								buckEmbed.setColor(Colors.red).setTitle("Error");
+								buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
+								msg.reply(buckEmbed);
+							}
+							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
+							const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
+							
+							if (updated && updated2) {
+								buckEmbed.setColor(Colors.green);
+								buckEmbed.setTitle(user.username);
+								buckEmbed.setDescription(`You paid ${user.username} ${payAmount} BillyBucks!`);
+		
+								msg.reply(buckEmbed);
+							}
+							return;
+						}
+					}
+			}
+		}
+		catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");
 			errorEmbed.setDescription(error.message);

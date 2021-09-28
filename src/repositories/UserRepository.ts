@@ -75,7 +75,7 @@ export class UserRepository {
 	public static async GetBucks(userId: string, serverId: string): Promise<number> {
 		try {
 			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
-			if (!exists) throw "user not found";
+			if (!exists) throw ("user not found");
 
 			return exists.billyBucks;
 		} catch (e) {
