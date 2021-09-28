@@ -1,9 +1,6 @@
-import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role } from "discord.js";
-import Currency from "./methods/currency";
+import { Message, MessageEmbed } from "discord.js";
 import { Colors } from "../types/Constants";
 import { UserRepository as User } from "../repositories/UserRepository";
-
-
 
 export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	try {
