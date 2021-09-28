@@ -1,4 +1,4 @@
-import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role } from "discord.js";
+import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role, MessageReaction } from "discord.js";
 
 import logger from "../services/logger";
 
@@ -6,8 +6,8 @@ import { UserRepository as User } from "../repositories/UserRepository";
 import { User as IUser } from "../models/User";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
-import { EntityNotFoundError } from "typeorm";
 
+import UserNotFoundError from "../types/Errors";
 
 export default class Currency {
 
@@ -102,7 +102,7 @@ export default class Currency {
 		} catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");
-			if (error.message === 'user not found')
+			if (error instanceof UserNotFoundError)
 				errorEmbed.setDescription("User has not been configured for this server. Please ask an admin to set them up with a Billy Bank account.")
 			else 
 				errorEmbed.setDescription(error.message);
@@ -125,6 +125,29 @@ export default class Currency {
 			errorEmbed.setColor(Colors.red).setTitle("Error");
 			errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
+		}
+	}
+
+	public static async BuckReact(react: MessageReaction, userId: string, add: boolean): Promise<void> {
+		try {
+			const guildId: string = react.message.guild.id;
+			const authorId: string = react.message.author.id;
+			const author$: number = await User.GetBucks(userId, react.message.guild.id);
+			const user$: number = await User.GetBucks(userId, react.message.guild.id);
+			if (author$ && user$){ //Update bucks if configured and have money otherwise do nothing
+				if (user$ > 0 && add) {
+					User.UpdateBucks(authorId, guildId, 1, true);
+					User.UpdateBucks(userId, guildId, -1, true);
+				} else {
+					User.UpdateBucks(authorId, guildId, -1, true);
+					User.UpdateBucks(userId, guildId, 1, true);
+				}
+			}
+		} catch (error) {
+			if (error instanceof UserNotFoundError)
+				logger.warn(error);
+			else 
+				logger.error(error);
 		}
 	}
 }
