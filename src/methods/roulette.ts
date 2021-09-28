@@ -19,28 +19,30 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
 		const oppColor: string = color === "black" ? "red" : "black";
-		let dbUpdated: boolean;
-		if (isWinningSpin()) {
-			//win
-			dbUpdated = await User.UpdateBucks(msg.author.id, msg.guild.id, bet, true);
-
-			if (dbUpdated) {
+		const didWin = isWinningSpin();
+		const updated = await User.UpdateBucks(
+			msg.author.id,
+			msg.guild.id,
+			didWin ? bet : -bet,
+			true
+		);
+		// win
+		if (didWin) {
+			if (updated) {
 				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle("You Won!");
 				buckEmbed.setDescription(`It's ${color}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!`);
 				msg.reply(buckEmbed);
 			}
+			return;
+		}
 
-		} else {
-			//lose
-			dbUpdated = await User.UpdateBucks(msg.author.id, msg.guild.id, -bet, true);
-
-			if (dbUpdated) {
-				buckEmbed.setColor(Colors.red);
-				buckEmbed.setTitle("You Lost!");
-				buckEmbed.setDescription(`It's ${oppColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!`);
-				msg.reply(buckEmbed);
-			}
+		// lose
+		if (updated) {
+			buckEmbed.setColor(Colors.red);
+			buckEmbed.setTitle("You Lost!");
+			buckEmbed.setDescription(`It's ${oppColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!`);
+			msg.reply(buckEmbed);
 		}
 	} catch (error) {
 		const errorEmbed: MessageEmbed = new MessageEmbed();
