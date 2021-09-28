@@ -31,7 +31,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 			if (updated) {
 				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle("You Won!");
-				buckEmbed.setDescription(`It's ${color}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!`);
+				buckEmbed.setDescription(`It's ${color}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!\n\nYou now have ${bucks + bet} BillyBucks.`);
 				msg.reply(buckEmbed);
 			}
 			return;
