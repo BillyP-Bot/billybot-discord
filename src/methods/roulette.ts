@@ -14,17 +14,19 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 
 		if (validateArgs(bet, color)) {
 			const bucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
-			if (bet <= bucks) {
+			if (bet <= 0) {
+				replyWithError(msg, buckEmbed, "You must bet at least 1 BillyBuck!");
+			} else if (bet <= bucks) {
 				const oppColor: string = color === "black" ? "red" : "black";
 				let dbUpdated: boolean;
 				if (isWinningSpin()) {
 					//win
-					dbUpdated = await User.UpdateBucks(msg.author.id, msg.guild.id, bet * 2, true);
+					dbUpdated = await User.UpdateBucks(msg.author.id, msg.guild.id, bet, true);
 
 					if (dbUpdated) {
 						buckEmbed.setColor(Colors.green);
 						buckEmbed.setTitle("You Won!");
-						buckEmbed.setDescription(`It's ${color}! You win ${bet * 2} BillyBucks! Lady LUUUCCCCKKK!`);
+						buckEmbed.setDescription(`It's ${color}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!`);
 						msg.reply(buckEmbed);
 					}
 					
