@@ -15,7 +15,7 @@ export default {
 	reconnectInterval: 2000,
 	entities: ["./src/models/**/*.ts"],
 	migrations: ["./src/migrations/**/*.ts"],
-	 ssl: process.env["NODE_ENV"] === "production" ? { rejectUnauthorized: false } : false,
+	ssl: process.env["NODE_ENV"] === "production" ? { rejectUnauthorized: false } : false,
 	// ssl: true,
 	cli: {
 		entitiesDir: "./src/models",
