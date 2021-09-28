@@ -16,7 +16,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 
 		const bucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
-		if (bet >= bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
+		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
 		const oppColor: string = color === "black" ? "red" : "black";
 		let dbUpdated: boolean;
