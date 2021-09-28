@@ -7,8 +7,6 @@ import { User as IUser } from "../models/User";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
-import UserNotFoundError from "../types/Errors";
-
 export default class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
@@ -102,7 +100,7 @@ export default class Currency {
 		} catch (error) {
 			const errorEmbed: MessageEmbed = new MessageEmbed();
 			errorEmbed.setColor(Colors.red).setTitle("Error");
-			if (error instanceof UserNotFoundError)
+			if (error.message === "user not found")
 				errorEmbed.setDescription("User has not been configured for this server. Please ask an admin to set them up with a Billy Bank account.")
 			else 
 				errorEmbed.setDescription(error.message);
@@ -144,10 +142,56 @@ export default class Currency {
 				}
 			}
 		} catch (error) {
-			if (error instanceof UserNotFoundError)
+			if (error === "user not found")
 				logger.warn(error);
 			else 
 				logger.error(error);
+		}
+	}
+
+	public static async BillyPay(msg: Message, prefix: string){
+		try {
+			const param: string[] = msg.content.slice(prefix.length).trim().split(" ");
+			const buckEmbed: MessageEmbed = new MessageEmbed();
+			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
+
+			if (param[0]) {
+				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === param[0].toUpperCase().trim());
+					if (!found) {
+						buckEmbed.setColor(Colors.red);
+						buckEmbed.setTitle("Error");
+						buckEmbed.setDescription(`Could not find ${param[0]} in this server.`);
+						
+						msg.reply(buckEmbed);
+					}
+					else {
+						if (param[1]) {
+							const user: Discord.User = found.user;
+							if (+param[1] > userBucks){
+								const errorEmbed: MessageEmbed = new MessageEmbed();
+								errorEmbed.setColor(Colors.red).setTitle("Error");
+								errorEmbed.setDescription(`You do not have ${param[1]} BillyBucks!`);
+								msg.reply(errorEmbed);
+							}
+							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +param[1], true);
+							
+							if (updated) {
+								buckEmbed.setColor(Colors.green);
+								buckEmbed.setTitle(user.username);
+								buckEmbed.setDescription(`You paid ${user.username} ${param[1]} BillyBucks!`);
+		
+								msg.reply(buckEmbed);
+							}
+							return;
+						}
+					}
+			}
+		}
+		catch (error) {
+			const errorEmbed: MessageEmbed = new MessageEmbed();
+			errorEmbed.setColor(Colors.red).setTitle("Error");
+			errorEmbed.setDescription(error.message);
+			msg.reply(errorEmbed);
 		}
 	}
 }

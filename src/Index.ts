@@ -65,6 +65,9 @@ client.on("message", async (msg: Message) => {
 		case /.*!bucks.*/gmi.test(msg.content):
 			Currency.CheckBucks(msg, "!bucks");
 			break;
+		case /.*!billypay .* [0-9]*/gmi.test(msg.content):
+			Currency.BillyPay(msg, "!billypay");
+			break;
 		case /.*!configure.*/gmi.test(msg.content):
 			Currency.Configure(client, msg);
 			break;
