@@ -130,7 +130,7 @@ export default class Currency {
 		try {
 			const guildId: string = react.message.guild.id;
 			const authorId: string = react.message.author.id;
-			const author$: number = await User.GetBucks(userId, react.message.guild.id);
+			const author$: number = await User.GetBucks(authorId, react.message.guild.id);
 			const user$: number = await User.GetBucks(userId, react.message.guild.id);
 			if (author$ && user$){ //Update bucks if configured and have money otherwise do nothing
 				if (user$ > 0 && add) {
@@ -151,34 +151,35 @@ export default class Currency {
 
 	public static async BillyPay(msg: Message, prefix: string){
 		try {
-			const param: string[] = msg.content.slice(prefix.length).trim().split(" ");
+			const username: string = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
+			const payAmount: string = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
-			if (param[0]) {
-				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === param[0].toUpperCase().trim());
+			if (username) {
+				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
 					if (!found) {
 						buckEmbed.setColor(Colors.red);
 						buckEmbed.setTitle("Error");
-						buckEmbed.setDescription(`Could not find ${param[0]} in this server.`);
+						buckEmbed.setDescription(`Could not find ${username} in this server.`);
 						
 						msg.reply(buckEmbed);
 					}
 					else {
-						if (param[1]) {
+						if (payAmount) {
 							const user: Discord.User = found.user;
-							if (+param[1] > userBucks){
-								const errorEmbed: MessageEmbed = new MessageEmbed();
-								errorEmbed.setColor(Colors.red).setTitle("Error");
-								errorEmbed.setDescription(`You do not have ${param[1]} BillyBucks!`);
-								msg.reply(errorEmbed);
+							if (+payAmount > userBucks && +payAmount > 0){
+								buckEmbed.setColor(Colors.red).setTitle("Error");
+								buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
+								msg.reply(buckEmbed);
 							}
-							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +param[1], true);
+							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
+							const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
 							
-							if (updated) {
+							if (updated && updated2) {
 								buckEmbed.setColor(Colors.green);
 								buckEmbed.setTitle(user.username);
-								buckEmbed.setDescription(`You paid ${user.username} ${param[1]} BillyBucks!`);
+								buckEmbed.setDescription(`You paid ${user.username} ${payAmount} BillyBucks!`);
 		
 								msg.reply(buckEmbed);
 							}
