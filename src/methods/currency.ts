@@ -5,6 +5,8 @@ import { User as IUser } from "../models/User";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
+import logger from "../services/logger";
+
 export default class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
