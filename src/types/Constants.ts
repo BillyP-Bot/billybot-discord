@@ -66,6 +66,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!allowance", description: "Collect your weekly BillyBuck allowance! Only available once a week." },
 	{ prefix: "!whereshowwie", description: "Get updates on Howard's job status." },
 	{ prefix: "!configure", description: "Command for admins to prep the server." },
+	{ prefix: "!spin", description: "Let's play Roulette! Usage: '!spin [betAmount] [red/black]'" },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];
