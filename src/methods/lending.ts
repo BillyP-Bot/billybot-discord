@@ -15,10 +15,7 @@ export const getActiveLoanInfo = async (msg: Message): Promise<void> => {
 		showLoanInfo(loan)
 		);
 	} catch (error) {
-		const errorEmbed: MessageEmbed = new MessageEmbed();
-		errorEmbed.setColor(Colors.red).setTitle("Error");
-		errorEmbed.setDescription(error);
-		msg.reply(errorEmbed);
+		replyWithErrorEmbed(msg, error);
 	}
 };
 
@@ -44,10 +41,7 @@ export const bookNewLoan = async (msg: Message, prefix: string): Promise<void> =
 			msg.reply(`You booked a new loan for ${amount} BillyBucks! You now have ${user.billyBucks} BillyBucks!\n\n` + showLoanInfo(newLoan));
 		}
 	} catch (error) {
-		const errorEmbed: MessageEmbed = new MessageEmbed();
-		errorEmbed.setColor(Colors.red).setTitle("Error");
-		errorEmbed.setDescription(error);
-		msg.reply(errorEmbed);
+		replyWithErrorEmbed(msg, error);
 	}
 };
 
@@ -60,10 +54,7 @@ export const getCreditScoreInfo = async (msg: Message): Promise<void> => {
 
 		msg.reply(`Your credit score of ${user.creditScore} allows you an interest rate of ${interestRate} and a credit limit of ${creditLimit} BillyBucks!`);
 	} catch (error) {
-		const errorEmbed: MessageEmbed = new MessageEmbed();
-		errorEmbed.setColor(Colors.red).setTitle("Error");
-		errorEmbed.setDescription(error);
-		msg.reply(errorEmbed);
+		replyWithErrorEmbed(msg, error);
 	}
 };
 
@@ -98,10 +89,7 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 		}
 
 	} catch (error) {
-		const errorEmbed: MessageEmbed = new MessageEmbed();
-		errorEmbed.setColor(Colors.red).setTitle("Error");
-		errorEmbed.setDescription(error);
-		msg.reply(errorEmbed);
+		replyWithErrorEmbed(msg, error);
 	}
 };
 
@@ -123,4 +111,11 @@ const showLoanInfo = (loan: Loan): string => {
 	`Next Interest Accrual Date: ${loan.nextInterestAccrualDate.toLocaleDateString()}\n` + 
 	`Next Payment Due Date: ${loan.nextPaymentDueDate.toLocaleDateString()}\n` +
 	`Minimum Payment: ${loan.minPaymentAmt}`;
+};
+
+const replyWithErrorEmbed = (msg: Message, error: any): void => {
+	const errorEmbed: MessageEmbed = new MessageEmbed();
+	errorEmbed.setColor(Colors.red).setTitle("Error");
+	errorEmbed.setDescription(error);
+	msg.reply(errorEmbed);
 };
