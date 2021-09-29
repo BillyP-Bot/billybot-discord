@@ -36,6 +36,11 @@ export const Checks = {
 	getNobles: /.*!noblemen*/gmi,
 	howardUpdate: /.*!whereshowwie*/gmi,
 	configure: /.*!configure*/gmi,
+	spin: /.*!spin*/gmi,
+	borrow: /.*!borrow*/gmi,
+	payloan: /.*!payloan*/gmi,
+	loan: /.*!loan*/gmi,
+	creditscore: /.*!creditscore*/gmi,
 	goodBot: /.*good bot*/gmi,
 	badBot: /.*bad bot*/gmi
 };
@@ -51,6 +56,11 @@ export class Commands {
 	public static readonly allowance: RegExp = /.*!allowance*/gmi;
 	public static readonly howardUpdate: RegExp = /.*!whereshowwie*/gmi;
 	public static readonly configure: RegExp = /.*!configure*/gmi;
+	public static readonly spin: RegExp = /.*!spin*/gmi;
+	public static readonly borrow: RegExp = /.*!borrow*/gmi;
+	public static readonly payloan: RegExp = /.*!payloan*/gmi;
+	public static readonly loan: RegExp = /.*!loan*/gmi;
+	public static readonly creditscore: RegExp = /.*!creditscore*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }
@@ -67,6 +77,10 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!whereshowwie", description: "Get updates on Howard's job status." },
 	{ prefix: "!configure", description: "Command for admins to prep the server." },
 	{ prefix: "!spin", description: "Let's play Roulette! Usage: '!spin [betAmount] [red/black]'" },
+	{ prefix: "!borrow", description: "Book a loan with BillyBank today! Usage: '!borrow [amount]'" },
+	{ prefix: "!payloan", description: "Pay off part or all of the outstanding balance on your active loan. Usage: '!payloan [amount]'" },
+	{ prefix: "!loan", description: "Show info about your active loan." },
+	{ prefix: "!creditscore", description: "Show your current credit score, credit limit, and interest rate that BillyBank will offer you." },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];

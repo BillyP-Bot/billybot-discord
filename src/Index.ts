@@ -20,6 +20,7 @@ import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
 import * as roulette from "./methods/roulette";
+import * as lending from "./methods/lending";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -88,9 +89,9 @@ client.on("message", async (msg: Message) => {
 			dianne.fridayFunny(msg);
 			break;
 		case /.*!joe.*/gmi.test(msg.content):
-                        joe.joe(msg);
-                        break;
-                case /.*!fridayfunnies.*/gmi.test(msg.content):
+			joe.joe(msg);
+			break;
+		case /.*!fridayfunnies.*/gmi.test(msg.content):
 			dianne.fridayFunnies(msg);
 			break;
 		case /.*!whereshowwie.*/gmi.test(msg.content):
@@ -107,6 +108,18 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!spin.*/gmi.test(msg.content):
 			roulette.spin(msg, "!spin");
+			break;
+		case /.*!loan.*/gmi.test(msg.content):
+			lending.getActiveLoanInfo(msg);
+			break;
+		case /.*!borrow.*/gmi.test(msg.content):
+			lending.bookNewLoan(msg, "!borrow");
+			break;
+		case /.*!payloan.*/gmi.test(msg.content):
+			lending.payActiveLoan(msg, "!payloan");
+			break;
+		case /.*!creditscore.*/gmi.test(msg.content):
+			lending.getCreditScoreInfo(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
