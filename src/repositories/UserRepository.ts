@@ -26,6 +26,8 @@ export class UserRepository {
 			newUser.serverId = member.serverId;
 			newUser.billyBucks = 500;
 			newUser.lastAllowance = new Date();
+			newUser.creditScore = 500;
+			newUser.hasActiveLoan = false;
 
 			await newUser.save();
 			return true;
