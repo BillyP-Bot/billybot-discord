@@ -36,10 +36,10 @@ export default class CronJobs {
 	}
 
 	public static NightlyCycle(client: Client): void {
-		const guilds = client.guilds.cache.map(guild => guild.id);
+		const serverIds = client.guilds.cache.map(guild => guild.id);
 
-		guilds.forEach(guild => {
-			lending.nightlyCycle(guild);
+		serverIds.forEach(serverId => {
+			lending.nightlyCycle(serverId);
 		});
 	}
 }
