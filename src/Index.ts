@@ -51,6 +51,7 @@ client.on("ready", () => {
 	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
+	//Jobs.NightlyCycleCron.start();
 });
 
 client.on("message", async (msg: Message) => {
