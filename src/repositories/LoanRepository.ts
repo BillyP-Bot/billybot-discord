@@ -26,6 +26,14 @@ export class LoanRepository {
 		}
 	}
 
+	public static async FindAllActiveLoans(serverId: string): Promise<Loan[]> {
+		try {
+			return await Loan.find({ serverId, closedInd: false });
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
 	public static async InsertOne(member: ILoanList, user: User): Promise<Loan> {
 		try {
 			let firstDate = new Date();

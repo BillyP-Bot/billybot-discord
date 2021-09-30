@@ -93,6 +93,42 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 	}
 };
 
+export const nightlyCycle = async (serverId: string): Promise<void> => {
+	/*
+		query loan table for all active loans (closedInd === false)
+		for each loan:
+			if loan payment is past due (current date > nextPaymentDueDate):
+				- calculate penalty amount and add it to penaltyAmt and outstandingBalanceAmt fields
+				- decrement user's credit score
+				- bump nextPaymentDueDate out 7 days
+			if it is an interest accrual date (current date >= nextInterestAccrualDate):
+				- calculate interest accrual amount and add it to interestAccruedAmt and outstandingBalanceAmt fields
+				- bump nextInterestAccrualDate out 7 days
+	*/
+
+	const loans = await LoanRepo.FindAllActiveLoans(serverId);
+	const now = new Date();
+	loans.forEach(async loan => {
+		let save = false;
+
+		if (now > loan.nextPaymentDueDate) {
+			save = true;
+		}
+
+		if (now >= loan.nextInterestAccrualDate) {
+			const interestAmt = loan.outstandingBalanceAmt * loan.interestRate;
+			loan.interestAccruedAmt += interestAmt;
+			loan.outstandingBalanceAmt += interestAmt;
+
+			loan.nextInterestAccrualDate.setDate(loan.nextInterestAccrualDate.getDate() + 7);
+
+			save = true;
+		}
+
+		if (save) await loan.save();
+	});
+};
+
 const calculateCreditLimitAndInterestRate = (creditScore: number): any => {
 	if (creditScore) return { interestRate: 0.05, creditLimit: 1000 };
 };
