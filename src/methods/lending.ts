@@ -52,7 +52,7 @@ export const getCreditScoreInfo = async (msg: Message): Promise<void> => {
 		const interestRate = creditLimitAndInterestRateInfo.interestRate;
 		const creditLimit = creditLimitAndInterestRateInfo.creditLimit;
 
-		msg.reply(`Your credit score of ${user.creditScore} allows you an interest rate of ${interestRate} and a credit limit of ${creditLimit} BillyBucks!`);
+		msg.reply(`Your credit score of ${user.creditScore} allows you an interest rate of ${interestRate * 100}% and a credit limit of ${creditLimit} BillyBucks!`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -100,7 +100,7 @@ export const nightlyCycle = async (serverId: string): Promise<void> => {
 		let save = false;
 
 		if (now > loan.nextPaymentDueDate) {
-			const penalty = Math.floor(loan.originalBalanceAmt * 0.1);
+			const penalty = Math.floor(loan.originalBalanceAmt * 0.05);
 			loan.penaltyAmt += penalty;
 			loan.outstandingBalanceAmt += penalty;
 
@@ -110,7 +110,7 @@ export const nightlyCycle = async (serverId: string): Promise<void> => {
 		}
 
 		if (now >= loan.nextInterestAccrualDate) {
-			const interestAmt = loan.outstandingBalanceAmt * loan.interestRate;
+			const interestAmt = Math.floor(loan.outstandingBalanceAmt * loan.interestRate);
 			loan.interestAccruedAmt += interestAmt;
 			loan.outstandingBalanceAmt += interestAmt;
 
@@ -124,22 +124,22 @@ export const nightlyCycle = async (serverId: string): Promise<void> => {
 };
 
 const calculateCreditLimitAndInterestRate = (creditScore: number): any => {
-	if (creditScore) return { interestRate: 0.05, creditLimit: 1000 };
+	if (creditScore) return { interestRate: 0.05, creditLimit: 2000 };
 };
 
 const calculateMinPaymentAmount = (amount: number): number => {
-	if (amount) return 50;
+	return Math.floor(amount / 10);
 };
 
 const showLoanInfo = (loan: Loan): string => {
 	return `Current Loan Balance: ${loan.outstandingBalanceAmt}\n` + 
 	`Original Loan Balance: ${loan.originalBalanceAmt}\n` + 
-	`Interest Rate: ${loan.interestRate}\n` + 
+	`Interest Rate: ${loan.interestRate * 100}%\n` + 
 	`Interest Accrued: ${loan.interestAccruedAmt}\n` + 
 	`Late Payment Penalty Amount: ${loan.penaltyAmt}\n` + 
-	`Date Opened: ${loan.createdAt.toLocaleDateString()}\n` + 
-	`Next Interest Accrual Date: ${loan.nextInterestAccrualDate.toLocaleDateString()}\n` + 
-	`Next Payment Due Date: ${loan.nextPaymentDueDate.toLocaleDateString()}\n` +
+	`Date Opened: ${formatDate(loan.createdAt)}\n` + 
+	`Next Interest Accrual Date: ${formatDate(loan.nextInterestAccrualDate)}\n` + 
+	`Next Payment Due Date: ${formatDate(loan.nextPaymentDueDate)}\n` +
 	`Minimum Payment: ${loan.minPaymentAmt}`;
 };
 
@@ -148,4 +148,8 @@ const replyWithErrorEmbed = (msg: Message, error: any): void => {
 	errorEmbed.setColor(Colors.red).setTitle("Error");
 	errorEmbed.setDescription(error);
 	msg.reply(errorEmbed);
+};
+
+const formatDate = (date : Date): string => {
+	return new Date(date.getTime()).toLocaleDateString();
 };
