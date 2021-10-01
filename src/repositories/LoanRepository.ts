@@ -36,17 +36,19 @@ export class LoanRepository {
 
 	public static async InsertOne(member: ILoanList, user: User): Promise<Loan> {
 		try {
-			let firstDate = new Date();
-			firstDate.setDate(firstDate.getDate() + 7);
+			let createdDate = new Date();
+			let firstDueDate = new Date();
+			firstDueDate.setDate(createdDate.getDate() + 7);
 
 			const newLoan = new Loan();
 			newLoan.serverId = member.serverId;
 			newLoan.originalBalanceAmt = member.amount;
 			newLoan.outstandingBalanceAmt = member.amount;
 			newLoan.interestRate = member.interestRate;
-			newLoan.nextInterestAccrualDate = firstDate;
+			newLoan.nextInterestAccrualDate = firstDueDate;
 			newLoan.minPaymentAmt = member.minPaymentAmt;
-			newLoan.nextPaymentDueDate = firstDate;
+			newLoan.nextPaymentDueDate = firstDueDate;
+			newLoan.createdAt = createdDate;
 
 			user.hasActiveLoan = true;
 			user.billyBucks += member.amount;
