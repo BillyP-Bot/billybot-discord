@@ -9,11 +9,11 @@ export const getActiveLoanInfo = async (msg: Message): Promise<void> => {
 	try {
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 		const loan = await LoanRepo.FindActiveLoanForUser(user, msg.guild.id);
-		if (!loan) throw "No active loan!";
-
-		msg.reply("Here is some info on your active loan:\n\n" + 
-		showLoanInfo(loan)
-		);
+		if (loan) {
+			replyWithSuccessEmbed(msg, "Active Loan Info:", showLoanInfo(loan));
+		} else {
+			replyWithErrorEmbed(msg, "No active loan found!");
+		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -38,7 +38,7 @@ export const bookNewLoan = async (msg: Message, prefix: string): Promise<void> =
 
 		const newLoan = await LoanRepo.InsertOne({ userId: msg.author.id, serverId: msg.guild.id, amount: amount, interestRate: interestRate, minPaymentAmt: minPaymentAmt }, user);
 		if (newLoan) {
-			msg.reply(`You booked a new loan for ${amount} BillyBucks! You now have ${user.billyBucks} BillyBucks!\n\n` + showLoanInfo(newLoan));
+			replyWithSuccessEmbed(msg, "Loan Booked!", `You booked a new loan for ${amount} BillyBucks!\n\nYou now have ${user.billyBucks} BillyBucks!\n\n` + showLoanInfo(newLoan));
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
@@ -52,7 +52,8 @@ export const getCreditScoreInfo = async (msg: Message): Promise<void> => {
 		const interestRate = creditLimitAndInterestRateInfo.interestRate;
 		const creditLimit = creditLimitAndInterestRateInfo.creditLimit;
 
-		msg.reply(`Your credit score of ${user.creditScore} allows you an interest rate of ${interestRate * 100}% and a credit limit of ${creditLimit} BillyBucks!`);
+		const replyBody = `Your credit score of ${user.creditScore} gives you an interest rate of ${interestRate * 100}% and a credit limit of ${creditLimit} BillyBucks on future loans!`;
+		replyWithSuccessEmbed(msg, "Credit Score Info:", replyBody);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -69,7 +70,7 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 
 		if (!loan) throw "No active loan!";
 		if (amount > user.billyBucks) throw `Can't pay ${amount}! You only have ${user.billyBucks} BillyBucks.`;
-		if (amount < loan.minPaymentAmt) throw `Not enough! The minimum required payment is ${loan.minPaymentAmt} BillyBucks!`;
+		if (amount < loan.minPaymentAmt) throw `Not enough! The minimum payment amount for your active loan is ${loan.minPaymentAmt} BillyBucks.`;
 
 		let paidOff = false;
 		if (amount >= loan.outstandingBalanceAmt) {
@@ -79,48 +80,20 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 			
 		const paid = await LoanRepo.MakePayment(loan, user, amount);
 		if (paid) {
-			let message;
+			let title, body;
 			if (paidOff) {
-				message = `You paid off the outstanding balance (${amount} BillyBucks) of your active loan and closed it out! Congratulations! You now have ${user.billyBucks} BillyBucks.\n\n`;
+				title = "Loan Closed!";
+				body = `You paid off the outstanding balance of ${amount} BillyBucks on your active loan and closed it out! Congratulations!\n\nYou now have ${user.billyBucks} BillyBucks.`;
 			} else {
-				message = `You made a payment of ${amount} BillyBucks toward your active loan! Well done! You now have ${user.billyBucks} BillyBucks.\n\n` + showLoanInfo(loan);
+				title = "Payment Processed!";
+				body = `You made a payment of ${amount} BillyBucks toward your active loan! Well done!\n\nYou now have ${user.billyBucks} BillyBucks.\n\n` + showLoanInfo(loan);
 			}
-			msg.reply(message);
+			replyWithSuccessEmbed(msg, title, body);
 		}
 
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
-};
-
-export const nightlyCycle = async (serverId: string): Promise<void> => {
-	const loans = await LoanRepo.FindAllActiveLoans(serverId);
-	const now = new Date();
-	loans.forEach(async loan => {
-		let save = false;
-
-		if (now > loan.nextPaymentDueDate) {
-			const penalty = Math.floor(loan.originalBalanceAmt * 0.05);
-			loan.penaltyAmt += penalty;
-			loan.outstandingBalanceAmt += penalty;
-
-			loan.nextPaymentDueDate.setDate(loan.nextInterestAccrualDate.getDate() + 7);
-
-			save = true;
-		}
-
-		if (now >= loan.nextInterestAccrualDate) {
-			const interestAmt = Math.floor(loan.outstandingBalanceAmt * loan.interestRate);
-			loan.interestAccruedAmt += interestAmt;
-			loan.outstandingBalanceAmt += interestAmt;
-
-			loan.nextInterestAccrualDate.setDate(loan.nextInterestAccrualDate.getDate() + 7);
-
-			save = true;
-		}
-
-		if (save) await loan.save();
-	});
 };
 
 const calculateCreditLimitAndInterestRate = (creditScore: number): any => {
@@ -136,11 +109,19 @@ const showLoanInfo = (loan: Loan): string => {
 	`Original Loan Balance: ${loan.originalBalanceAmt}\n` + 
 	`Interest Rate: ${loan.interestRate * 100}%\n` + 
 	`Interest Accrued: ${loan.interestAccruedAmt}\n` + 
-	`Late Payment Penalty Amount: ${loan.penaltyAmt}\n` + 
+	`Late Payment Penalty: ${loan.penaltyAmt}\n` + 
+	`Payments Made: ${loan.paymentsMadeAmt}\n` + 
+	`Minimum Payment: ${loan.minPaymentAmt}\n` + 
 	`Date Opened: ${formatDate(loan.createdAt)}\n` + 
 	`Next Interest Accrual Date: ${formatDate(loan.nextInterestAccrualDate)}\n` + 
-	`Next Payment Due Date: ${formatDate(loan.nextPaymentDueDate)}\n` +
-	`Minimum Payment: ${loan.minPaymentAmt}`;
+	`Next Payment Due Date: ${formatDate(loan.nextPaymentDueDate)}`;
+};
+
+const replyWithSuccessEmbed = (msg: Message, title: string, body: string): void => {
+	const successEmbed: MessageEmbed = new MessageEmbed();
+	successEmbed.setColor(Colors.green).setTitle(title);
+	successEmbed.setDescription(body);
+	msg.reply(successEmbed);
 };
 
 const replyWithErrorEmbed = (msg: Message, error: any): void => {

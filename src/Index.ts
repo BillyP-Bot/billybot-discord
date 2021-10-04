@@ -51,7 +51,7 @@ client.on("ready", () => {
 	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
-	//Jobs.NightlyCycleCron.start();
+	Jobs.NightlyCycleCron.start();
 });
 
 client.on("message", async (msg: Message) => {
@@ -113,8 +113,8 @@ client.on("message", async (msg: Message) => {
 		case /.*!loan.*/gmi.test(msg.content):
 			lending.getActiveLoanInfo(msg);
 			break;
-		case /.*!borrow.*/gmi.test(msg.content):
-			lending.bookNewLoan(msg, "!borrow");
+		case /.*!bookloan.*/gmi.test(msg.content):
+			lending.bookNewLoan(msg, "!bookloan");
 			break;
 		case /.*!payloan.*/gmi.test(msg.content):
 			lending.payActiveLoan(msg, "!payloan");

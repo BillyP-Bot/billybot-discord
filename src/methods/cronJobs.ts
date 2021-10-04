@@ -3,13 +3,13 @@ import { CronJob } from "cron";
 import path from "path";
 import { cwd } from "process";
 
-import * as lending from "./lending";
+import { LoanRepository as LoanRepo } from "../repositories/LoanRepository";
 
 export default class CronJobs {
 
 	private static EverySecond: string = "* * * * * *";
 	private static MondayNine: string = "0 0 9 * * 1";
-	private static EveryNightAt1AM: string = "0 0 1 * * *";
+	private static EveryNightAtMidnight: string = "0 0 0 * * *";
 	private client: Client;
 
 	constructor(client: Client) {
@@ -20,7 +20,7 @@ export default class CronJobs {
 		CronJobs.ItsTime(this.client);
 	}, null, null, "America/New_York");
 
-	public NightlyCycleCron = new CronJob(CronJobs.EveryNightAt1AM, () => {
+	public NightlyCycleCron = new CronJob(CronJobs.EverySecond, () => {
 		CronJobs.NightlyCycle(this.client);
 	}, null, null, "America/New_York");
 
@@ -39,7 +39,7 @@ export default class CronJobs {
 		const serverIds = client.guilds.cache.map(guild => guild.id);
 
 		serverIds.forEach(serverId => {
-			lending.nightlyCycle(serverId);
+			LoanRepo.NightlyCycle(serverId);
 		});
 	}
 }
