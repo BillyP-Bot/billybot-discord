@@ -20,7 +20,7 @@ export default class CronJobs {
 		CronJobs.ItsTime(this.client);
 	}, null, null, "America/New_York");
 
-	public NightlyCycleCron = new CronJob(CronJobs.EverySecond, () => {
+	public NightlyCycleCron = new CronJob(CronJobs.EveryNightAtMidnight, () => {
 		CronJobs.NightlyCycle(this.client);
 	}, null, null, "America/New_York");
 
