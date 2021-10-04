@@ -7,8 +7,6 @@ export class LoanRepository {
 	public static async FindOne(id: number, serverId: string): Promise<Loan> {
 		try {
 			const loan = await Loan.findOne({ id, serverId });
-			if (!loan) throw "Loan not found!";
-
 			return loan;
 		} catch (e) {
 			throw Error(e);
@@ -18,8 +16,6 @@ export class LoanRepository {
 	public static async FindActiveLoanForUser(user: User, serverId: string): Promise<Loan> {
 		try {
 			const loan = await Loan.findOne({ user, serverId, closedInd: false });
-			if (!loan) throw "No active loan!";
-
 			return loan;
 		} catch (e) {
 			throw Error(e);
@@ -66,12 +62,15 @@ export class LoanRepository {
 		try {
 			if (amount <= 0) throw "Payment amount must be a positive number!";
 
+			// pay off outstanding balance in full
 			if (amount >= loan.outstandingBalanceAmt) {
 				amount = loan.outstandingBalanceAmt;
 				loan.outstandingBalanceAmt = 0;
 				loan.closedDate = new Date();
 				loan.closedInd = true;
 				user.hasActiveLoan = false;
+
+			// pay of part of outstanding balance
 			} else {
 				loan.outstandingBalanceAmt -= amount;
 
@@ -81,10 +80,48 @@ export class LoanRepository {
 			}
 			
 			user.billyBucks -= amount;
+			loan.paymentsMadeAmt += amount;
 
 			await loan.save();
 			await user.save();
 			return true;
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async NightlyCycle(serverId: string): Promise<void> {
+		try {
+			const loans = await LoanRepository.FindAllActiveLoans(serverId);
+			if (!loans || loans.length === 0) return;
+
+			const today = new Date();
+			const tomorrow = new Date();
+			tomorrow.setDate(today.getDate() + 1);
+
+			loans.forEach(async loan => {
+				let needsSave = false;
+
+				// check for late payments
+				if (today > loan.nextPaymentDueDate) {
+					const penalty = Math.floor(loan.originalBalanceAmt * 0.05);
+					loan.penaltyAmt += penalty;
+					loan.outstandingBalanceAmt += penalty;
+					loan.nextPaymentDueDate.setDate(loan.nextInterestAccrualDate.getDate() + 7);
+					needsSave = true;
+				}
+
+				// check for interest accrual
+				if (tomorrow > loan.nextInterestAccrualDate) {
+					const interestAmt = Math.floor(loan.outstandingBalanceAmt * loan.interestRate);
+					loan.interestAccruedAmt += interestAmt;
+					loan.outstandingBalanceAmt += interestAmt;
+					loan.nextInterestAccrualDate.setDate(loan.nextInterestAccrualDate.getDate() + 7);
+					needsSave = true;
+				}
+
+				if (needsSave) await loan.save();
+			});
 		} catch (e) {
 			throw Error(e);
 		}

@@ -92,7 +92,7 @@ export default class Currency {
 
 			buckEmbed.setColor(Colors.green);
 			buckEmbed.setTitle(msg.author.username);
-			buckEmbed.setDescription(`you have ${bucks} BillyBucks!`);
+			buckEmbed.setDescription(`You have ${bucks} BillyBucks!`);
 
 			msg.reply(buckEmbed);
 		} catch (error) {

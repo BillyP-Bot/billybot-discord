@@ -26,11 +26,14 @@ export class Loan extends Base {
 	@Column()
 	penaltyAmt: number = 0;
 
-	@Column({type: "decimal"})
+	@Column({ type: "decimal" })
 	interestRate: number;
 
 	@Column()
 	nextInterestAccrualDate: Date;
+
+	@Column()
+	paymentsMadeAmt: number = 0;
 
 	@Column()
 	minPaymentAmt: number;
@@ -38,7 +41,7 @@ export class Loan extends Base {
 	@Column()
 	nextPaymentDueDate: Date;
 
-	@Column({nullable: true})
+	@Column({ nullable: true })
 	closedDate: Date;
 
 	@Column()
