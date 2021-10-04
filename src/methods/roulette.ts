@@ -42,7 +42,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		if (updated) {
 			buckEmbed.setColor(Colors.red);
 			buckEmbed.setTitle("You Lost!");
-			buckEmbed.setDescription(`It's ${oppColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!`);
+			buckEmbed.setDescription(`It's ${oppColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${bucks - bet} BillyBucks.`);
 			msg.reply(buckEmbed);
 		}
 	} catch (error) {
