@@ -10,24 +10,25 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		const bet: number = parseInt(args[0]);
 		const color: string = args[1];
 
-		if (!validateArgs(bet, color)) return replyWithError(msg, buckEmbed, "Invalid format! Type '!help' for proper usage.");
+		if (!validateArgs(bet, color)) return replyWithError(msg, buckEmbed, "Invalid format! Run '!help' for proper usage.");
 
-		if (bet <= 0) return replyWithError(msg, buckEmbed, "You must bet at least 1 BillyBuck!");
+		if (bet < 1) return replyWithError(msg, buckEmbed, "You must bet at least 1 BillyBuck!");
 
 		const bucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
 		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
 		const oppColor: string = color === "black" ? "red" : "black";
-		const didWin = isWinningSpin();
+		const won = isWinningSpin();
 		const updated = await User.UpdateBucks(
 			msg.author.id,
 			msg.guild.id,
-			didWin ? bet : -bet,
+			won ? bet : -bet,
 			true
 		);
+
 		// win
-		if (didWin) {
+		if (won) {
 			if (updated) {
 				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle("You Won!");
@@ -53,13 +54,13 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 };
 
 const isWinningSpin = (): boolean => {
-	const spinResult: number = getSpinResult();
-	return (spinResult <= 18 ? true : false);
+	return getSpinResult() <= 18;
 };
 
+const getSpinResult = (): number => Math.floor((Math.random() * 38) + 1);
+
 const validateArgs = (bet: number, color: string): boolean => {
-	if (isNaN(bet) || (color !== "red" && color !== "black"))
-		return false;
+	if (isNaN(bet) || (color !== "red" && color !== "black")) return false;
 	return true;
 };
 
@@ -69,5 +70,3 @@ const replyWithError = (msg: Message, buckEmbed: MessageEmbed, description: stri
 	buckEmbed.setDescription(description);
 	msg.reply(buckEmbed);
 };
-
-const getSpinResult = (): number => Math.floor((Math.random() * 38) + 1);

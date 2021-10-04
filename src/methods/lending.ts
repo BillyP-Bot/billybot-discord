@@ -97,7 +97,7 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 };
 
 const calculateCreditLimitAndInterestRate = (creditScore: number): any => {
-	if (creditScore) return { interestRate: 0.05, creditLimit: 2000 };
+	if (creditScore) return { interestRate: 0.03, creditLimit: 2000 };
 };
 
 const calculateMinPaymentAmount = (amount: number): number => {
@@ -117,7 +117,7 @@ const showLoanInfo = (loan: Loan): string => {
 	`Next Payment Due Date: ${formatDate(loan.nextPaymentDueDate)}`;
 };
 
-const replyWithSuccessEmbed = (msg: Message, title: string, body: string): void => {
+const replyWithSuccessEmbed = (msg: Message, title: any, body: any): void => {
 	const successEmbed: MessageEmbed = new MessageEmbed();
 	successEmbed.setColor(Colors.green).setTitle(title);
 	successEmbed.setDescription(body);
