@@ -33,12 +33,12 @@ export const bookNewLoan = async (msg: Message, prefix: string): Promise<void> =
 		const interestRate = creditLimitAndInterestRateInfo.interestRate;
 		const creditLimit = creditLimitAndInterestRateInfo.creditLimit;
 
-		if (amount < 100) throw "100 BillyBucks is the minimum loan amount!";
+		if (amount < 100) throw "Amount too low! 100 BillyBucks is the minimum loan amount!";
 		if (amount > creditLimit) throw `Amount too high! Your credit limit is ${creditLimit} BillyBucks.`;
 
 		const newLoan = await LoanRepo.InsertOne({ userId: msg.author.id, serverId: msg.guild.id, amount: amount, interestRate: interestRate, minPaymentAmt: minPaymentAmt }, user);
 		if (newLoan) {
-			replyWithSuccessEmbed(msg, "Loan Booked!", `You booked a new loan for ${amount} BillyBucks!\n\nYou now have ${user.billyBucks} BillyBucks!\n\n` + showLoanInfo(newLoan));
+			replyWithSuccessEmbed(msg, "Loan Booked!", `You booked a new loan for ${amount} BillyBucks!\n\nYou now have ${user.billyBucks} BillyBucks.\n\n` + showLoanInfo(newLoan));
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
