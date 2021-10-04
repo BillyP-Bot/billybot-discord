@@ -2,7 +2,6 @@
 import "reflect-metadata";
 import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
-import { UserRepository as _User} from "./repositories/UserRepository";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
@@ -20,6 +19,7 @@ import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
 import * as roulette from "./methods/roulette";
+import * as lending from "./methods/lending";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -50,6 +50,7 @@ client.on("ready", () => {
 	client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
+	Jobs.NightlyCycleCron.start();
 });
 
 client.on("message", async (msg: Message) => {
@@ -88,9 +89,9 @@ client.on("message", async (msg: Message) => {
 			dianne.fridayFunny(msg);
 			break;
 		case /.*!joe.*/gmi.test(msg.content):
-                        joe.joe(msg);
-                        break;
-                case /.*!fridayfunnies.*/gmi.test(msg.content):
+			joe.joe(msg);
+			break;
+		case /.*!fridayfunnies.*/gmi.test(msg.content):
 			dianne.fridayFunnies(msg);
 			break;
 		case /.*!whereshowwie.*/gmi.test(msg.content):
@@ -107,6 +108,18 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!spin.*/gmi.test(msg.content):
 			roulette.spin(msg, "!spin");
+			break;
+		case /.*!loan.*/gmi.test(msg.content):
+			lending.getActiveLoanInfo(msg);
+			break;
+		case /.*!bookloan.*/gmi.test(msg.content):
+			lending.bookNewLoan(msg, "!bookloan");
+			break;
+		case /.*!payloan.*/gmi.test(msg.content):
+			lending.payActiveLoan(msg, "!payloan");
+			break;
+		case /.*!creditscore.*/gmi.test(msg.content):
+			lending.getCreditScoreInfo(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
