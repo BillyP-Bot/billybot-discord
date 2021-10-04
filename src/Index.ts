@@ -2,7 +2,6 @@
 import "reflect-metadata";
 import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
-import { UserRepository as _User} from "./repositories/UserRepository";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
