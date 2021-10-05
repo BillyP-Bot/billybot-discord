@@ -26,6 +26,8 @@ export class UserRepository {
 			newUser.serverId = member.serverId;
 			newUser.billyBucks = 500;
 			newUser.lastAllowance = new Date();
+			newUser.creditScore = 500;
+			newUser.hasActiveLoan = false;
 
 			await newUser.save();
 			return true;
@@ -75,7 +77,7 @@ export class UserRepository {
 	public static async GetBucks(userId: string, serverId: string): Promise<number> {
 		try {
 			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
-			if (!exists) throw "user not found";
+			if (!exists) throw ("user not found");
 
 			return exists.billyBucks;
 		} catch (e) {
