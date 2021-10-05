@@ -41,6 +41,9 @@ export class Loan extends Base {
 	@Column()
 	nextPaymentDueDate: Date;
 
+	@Column()
+	mostRecentPaymentDate: Date;
+
 	@Column({ nullable: true })
 	closedDate: Date;
 

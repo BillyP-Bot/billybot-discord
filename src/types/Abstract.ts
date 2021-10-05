@@ -28,3 +28,9 @@ export interface ICommand {
 	prefix: string,
 	description: string
 }
+
+export interface ICreditScoreResult {
+	creditRating: string,
+	interestRate: number,
+	creditLimit: number
+}
