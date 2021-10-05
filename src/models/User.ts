@@ -1,4 +1,5 @@
-import { Index, Entity, Column } from "typeorm";
+import { Index, Entity, Column, OneToMany } from "typeorm";
+import { Loan } from "./Loan";
 
 import Base from "./Base";
 
@@ -18,8 +19,17 @@ export class User extends Base {
 	serverId: string;
 
 	@Column()
-	billyBucks: number;
+	billyBucks: number = 500;
 
 	@Column()
-	lastAllowance: Date;
+	lastAllowance: Date = new Date();
+
+	@Column({ default: 500 })
+	creditScore: number = 500;
+
+	@Column({ default: false })
+	hasActiveLoan: boolean = false;
+
+	@OneToMany(() => Loan, loan => loan.user, { eager: true })
+	loans: Loan[];
 }

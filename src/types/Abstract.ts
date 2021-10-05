@@ -16,7 +16,21 @@ export interface IUserList {
 	serverId: string
 }
 
+export interface ILoanList {
+	userId: string,
+	serverId: string,
+	amount: number,
+	interestRate: number,
+	minPaymentAmt: number
+}
+
 export interface ICommand {
 	prefix: string,
 	description: string
+}
+
+export interface ICreditScoreResult {
+	creditRating: string,
+	interestRate: number,
+	creditLimit: number
 }

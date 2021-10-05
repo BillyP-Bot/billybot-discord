@@ -94,7 +94,7 @@ export default class Currency {
 
 			buckEmbed.setColor(Colors.green);
 			buckEmbed.setTitle(msg.author.username);
-			buckEmbed.setDescription(`you have ${bucks} BillyBucks!`);
+			buckEmbed.setDescription(`You have ${bucks} BillyBucks!`);
 
 			msg.reply(buckEmbed);
 		} catch (error) {
@@ -163,10 +163,10 @@ export default class Currency {
 						return;
 				}
 				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
-					if (!found) {
-						buckEmbed.setColor(Colors.red);
-						buckEmbed.setTitle("Error");
-						buckEmbed.setDescription(`Could not find ${username} in this server.`);
+				if (!found) {
+					buckEmbed.setColor(Colors.red);
+					buckEmbed.setTitle("Error");
+					buckEmbed.setDescription(`Could not find ${username} in this server.`);
 						
 						msg.reply(buckEmbed);
 						return;
@@ -183,16 +183,16 @@ export default class Currency {
 							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
 							const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
 							
-							if (updated && updated2) {
-								buckEmbed.setColor(Colors.green);
-								buckEmbed.setTitle(user.username);
-								buckEmbed.setDescription(`You paid ${user.username} ${payAmount} BillyBucks!`);
+						if (updated && updated2) {
+							buckEmbed.setColor(Colors.green);
+							buckEmbed.setTitle(user.username);
+							buckEmbed.setDescription(`You paid ${user.username} ${payAmount} BillyBucks!`);
 		
-								msg.reply(buckEmbed);
-							}
-							return;
+							msg.reply(buckEmbed);
 						}
+						return;
 					}
+				}
 			}
 		}
 		catch (error) {
