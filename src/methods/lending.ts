@@ -4,6 +4,7 @@ import { Colors } from "../types/Constants";
 import { Loan } from "../models/Loan";
 import { LoanRepository as LoanRepo } from "../repositories/LoanRepository";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
+import { ICreditScoreResult } from "../types/Abstract";
 
 export const getActiveLoanInfo = async (msg: Message): Promise<void> => {
 	try {
@@ -95,7 +96,7 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 	}
 };
 
-const calculateCreditLimitAndInterestRate = (creditScore: number): any => {
+const calculateCreditLimitAndInterestRate = (creditScore: number): ICreditScoreResult => {
 	let creditRating, creditLimit, interestRate;
 	if (creditScore >= 300 && creditScore < 350) {
 		creditRating = "Very Poor";
