@@ -131,7 +131,7 @@ export default class Currency {
 			const guildId: string = react.message.guild.id;
 			const authorId: string = react.message.author.id;
 			//check configured
-			const author$: number = await User.GetBucks(authorId, react.message.guild.id);
+			await User.GetBucks(authorId, react.message.guild.id);
 			const user$: number = await User.GetBucks(userId, react.message.guild.id);
 			if (user$ > 0) {
 				await User.UpdateBucks(authorId, guildId, 1, true);
@@ -155,12 +155,12 @@ export default class Currency {
 
 			if (username) {
 				if (username === msg.author.username){
-						buckEmbed.setColor(Colors.red);
-						buckEmbed.setTitle("Error");
-						buckEmbed.setDescription(`You cannot pay yourself, ${username}!`);
+					buckEmbed.setColor(Colors.red);
+					buckEmbed.setTitle("Error");
+					buckEmbed.setDescription(`You cannot pay yourself, ${username}!`);
 						
-						msg.reply(buckEmbed);
-						return;
+					msg.reply(buckEmbed);
+					return;
 				}
 				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
 				if (!found) {
@@ -168,8 +168,8 @@ export default class Currency {
 					buckEmbed.setTitle("Error");
 					buckEmbed.setDescription(`Could not find ${username} in this server.`);
 						
-						msg.reply(buckEmbed);
-						return;
+					msg.reply(buckEmbed);
+					return;
 					}
 					else {
 						if (payAmount) {
