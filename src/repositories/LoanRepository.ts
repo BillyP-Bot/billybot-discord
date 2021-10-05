@@ -78,8 +78,9 @@ export class LoanRepository {
 				loan.closedInd = true;
 				user.hasActiveLoan = false;
 
-				// credit score bonus for paying off loan (must be at least 1 week since loan was opened to reap reward)
-				if (now > openDatePlus7) {
+				// credit score bonus for paying off loan 
+				// (must be at least 1 week since loan was opened and have no more than one late payment penalty to reap reward)
+				if (now > openDatePlus7 && loan.penaltyAmt <= Math.floor(loan.originalBalanceAmt * 0.05)) {
 					user.creditScore += 20;
 					user.creditScore += Math.floor(loan.interestAccruedAmt * 0.1);
 				}
