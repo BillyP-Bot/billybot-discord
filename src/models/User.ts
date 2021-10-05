@@ -24,10 +24,10 @@ export class User extends Base {
 	@Column()
 	lastAllowance: Date = new Date();
 
-	@Column()
+	@Column({ default: 500 })
 	creditScore: number = 500;
 
-	@Column()
+	@Column({ default: false })
 	hasActiveLoan: boolean = false;
 
 	@OneToMany(() => Loan, loan => loan.user, { eager: true })
