@@ -132,27 +132,12 @@ client.on("message", async (msg: Message) => {
 });
 
 client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
-	console.log(react, user);
 	try {
 		if (react.message.author.bot) return;
 
 		switch (true){
 			case (react.emoji.name === "BillyBuck"):
-				Currency.BuckReact(react, user.id, true);
-		}
-	} catch (error) {
-		logger.error(error);
-	}
-});
-
-client.on("messageReactionRemove", (react: MessageReaction , user: User) => {
-	console.log(react, user);
-	try {
-		if (react.message.author.bot) return;
-
-		switch (true){
-			case (react.emoji.name === "BillyBuck"):
-				Currency.BuckReact(react, user.id, false);
+				Currency.BuckReact(react, user.id);
 		}
 	} catch (error) {
 		logger.error(error);

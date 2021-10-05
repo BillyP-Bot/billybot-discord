@@ -126,22 +126,19 @@ export default class Currency {
 		}
 	}
 
-	public static async BuckReact(react: MessageReaction, userId: string, add: boolean): Promise<void> {
+	public static async BuckReact(react: MessageReaction, userId: string): Promise<void> {
 		try {
 			const guildId: string = react.message.guild.id;
 			const authorId: string = react.message.author.id;
-			const author$: number = await User.GetBucks(authorId, react.message.guild.id);
+			//check configured
+			await User.GetBucks(authorId, react.message.guild.id);
 			const user$: number = await User.GetBucks(userId, react.message.guild.id);
-			if (author$ && user$){ //Update bucks if configured and have money otherwise do nothing
-				if (user$ > 0 && add) {
-					User.UpdateBucks(authorId, guildId, 1, true);
-					User.UpdateBucks(userId, guildId, -1, true);
-				} else {
-					User.UpdateBucks(authorId, guildId, -1, true);
-					User.UpdateBucks(userId, guildId, 1, true);
-				}
+			if (user$ > 0) {
+				await User.UpdateBucks(authorId, guildId, 1, true);
+				await User.UpdateBucks(userId, guildId, -1, true);
 			}
-		} catch (error) {
+		}
+		catch (error) {
 			if (error === "user not found")
 				logger.warn(error);
 			else 
@@ -157,6 +154,14 @@ export default class Currency {
 			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
 			if (username) {
+				if (username === msg.author.username){
+					buckEmbed.setColor(Colors.red);
+					buckEmbed.setTitle("Error");
+					buckEmbed.setDescription(`You cannot pay yourself, ${username}!`);
+						
+					msg.reply(buckEmbed);
+					return;
+				}
 				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
 				if (!found) {
 					buckEmbed.setColor(Colors.red);
@@ -164,17 +169,19 @@ export default class Currency {
 					buckEmbed.setDescription(`Could not find ${username} in this server.`);
 						
 					msg.reply(buckEmbed);
-				}
-				else {
-					if (payAmount) {
-						const user: Discord.User = found.user;
-						if (+payAmount > userBucks && +payAmount > 0){
-							buckEmbed.setColor(Colors.red).setTitle("Error");
-							buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
-							msg.reply(buckEmbed);
-						}
-						const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
-						const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
+					return;
+					}
+					else {
+						if (payAmount) {
+							const user: Discord.User = found.user;
+							if (+payAmount > userBucks && +payAmount > 0){
+								buckEmbed.setColor(Colors.red).setTitle("Error");
+								buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
+								msg.reply(buckEmbed);
+								return;
+							}
+							const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
+							const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
 							
 						if (updated && updated2) {
 							buckEmbed.setColor(Colors.green);
