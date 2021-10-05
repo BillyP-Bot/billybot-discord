@@ -134,8 +134,8 @@ export default class Currency {
 			const author$: number = await User.GetBucks(authorId, react.message.guild.id);
 			const user$: number = await User.GetBucks(userId, react.message.guild.id);
 			if (user$ > 0) {
-				User.UpdateBucks(authorId, guildId, 1, true);
-				User.UpdateBucks(userId, guildId, -1, true);
+				await User.UpdateBucks(authorId, guildId, 1, true);
+				await User.UpdateBucks(userId, guildId, -1, true);
 			}
 		}
 		catch (error) {
