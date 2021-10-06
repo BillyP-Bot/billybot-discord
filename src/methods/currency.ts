@@ -154,6 +154,15 @@ export default class Currency {
 			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
 			if (username || mention) {
+				if (username === msg.author.username || mention.user.username === msg.author.username){
+					buckEmbed.setColor(Colors.red);
+					buckEmbed.setTitle("Error");
+					buckEmbed.setDescription(`You cannot pay yourself, ${username}!`);
+
+					msg.reply(buckEmbed);
+					return;
+				}
+
 				const found: Discord.GuildMember = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
 				if (!found) {
 					buckEmbed.setColor(Colors.red);
