@@ -57,6 +57,10 @@ client.on("message", async (msg: Message) => {
 	try {
 	if(msg.author.bot) return;
 
+	const mentions = message.getMentionedGuildMembers(msg);
+	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
+		message.billyPoggersReact(msg);
+
 	switch (true) {
 		case /.*(!help).*/gmi.test(msg.content):
 			Generic.Help(msg);

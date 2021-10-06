@@ -1,9 +1,10 @@
-import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji } from "discord.js";
+import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember } from "discord.js";
 
 import { Rest } from "../services/rest";
 import logger from "../services/logger";
 
 const adminMsgPrefix: string = "!adminMsg";
+const billyPUsernames: string[] = ["BT-Bot-Dev", "Billy Prod Bot", "BillyP Bot"];
 
 export const goodBot = (msg: Message): void => {
 	const billyHappy: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyHappy");
@@ -68,4 +69,29 @@ export const makeRole = (msg: Message, roleName: string, roleColor: string): Pro
 		reason: "This Role Must Exist",
 	}).catch((e: Error) => logger.error(e));
 	return msg.channel.send(`> Created Role ${roleName}.`);
+};
+
+export const getMentionedGuildMembers = (msg: Message): GuildMember[] => {
+	return msg.mentions.members.array();
+};
+
+export const didSomeoneMentionBillyP = (members: GuildMember[]): boolean => {
+	let toReturn = false;
+	members.forEach(member => {
+		const index = billyPUsernames.indexOf(member.user.username);
+		if (index >= 0 && member.user.bot) {
+			toReturn = true;
+			return;
+		}
+	});
+	return toReturn;
+};
+
+export const billyPoggersReact = (msg: Message): void => {
+	const billyPoggers: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyPoggers");
+	try {
+		msg.react(billyPoggers);
+	} catch (error) {
+		logger.error(error);
+	}
 };
