@@ -58,6 +58,7 @@ client.on("message", async (msg: Message) => {
 	if(msg.author.bot) return;
 
 	const mentions = message.getMentionedGuildMembers(msg);
+	const firstMention = mentions[0];
 	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
 		message.billyPoggersReact(msg);
 
@@ -69,10 +70,10 @@ client.on("message", async (msg: Message) => {
 			skistats.all(msg);
 			break;
 		case /.*!bucks.*/gmi.test(msg.content):
-			Currency.CheckBucks(msg, "!bucks");
+			Currency.CheckBucks(msg, "!bucks", firstMention);
 			break;
 		case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-			Currency.BillyPay(msg, "!billypay");
+			Currency.BillyPay(msg, "!billypay", firstMention);
 			break;
 		case /.*!configure.*/gmi.test(msg.content):
 			Currency.Configure(client, msg);

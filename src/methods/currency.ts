@@ -62,13 +62,13 @@ export default class Currency {
 		}
 	}
 
-	public static async CheckBucks(msg: Message, prefix: string): Promise<void> {
+	public static async CheckBucks(msg: Message, prefix: string, mention: GuildMember): Promise<void> {
 		try {
 			const param: string[] = msg.content.slice(prefix.length).trim().split(" ");
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 
-			if (param[0]) {
-				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === param[0].toUpperCase().trim());
+			if (param[0] || mention) {
+				const found: Discord.GuildMember = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === param[0].toUpperCase().trim());
 				if (!found) {
 					buckEmbed.setColor(Colors.red);
 					buckEmbed.setTitle("Error");
@@ -149,15 +149,15 @@ export default class Currency {
 		}
 	}
 
-	public static async BillyPay(msg: Message, prefix: string){
+	public static async BillyPay(msg: Message, prefix: string, mention: GuildMember){
 		try {
 			const username: string = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
 			const payAmount: string = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
-			if (username) {
-				const found: Discord.GuildMember = msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
+			if (username || mention) {
+				const found: Discord.GuildMember = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
 				if (!found) {
 					buckEmbed.setColor(Colors.red);
 					buckEmbed.setTitle("Error");
