@@ -4,12 +4,14 @@ import path from "path";
 import { cwd } from "process";
 
 import { LoanRepository as LoanRepo } from "../repositories/LoanRepository";
+import * as lottery from "./lottery";
 
 export default class CronJobs {
 
 	private static EverySecond: string = "* * * * * *";
 	private static MondayNine: string = "0 0 9 * * 1";
 	private static EveryNightAtMidnight: string = "0 0 0 * * *";
+	private static FridayNoon: string = "0 0 12 * * 5";
 	private client: Client;
 
 	constructor(client: Client) {
@@ -22,6 +24,10 @@ export default class CronJobs {
 
 	public NightlyCycleCron = new CronJob(CronJobs.EveryNightAtMidnight, () => {
 		CronJobs.NightlyCycle(this.client);
+	}, null, null, "America/New_York");
+
+	public LotteryCron = new CronJob(CronJobs.FridayNoon, () => {
+		CronJobs.DrawLotteryWinner(this.client);
 	}, null, null, "America/New_York");
 
 	public static ItsTime(client: Client): void {
@@ -40,6 +46,14 @@ export default class CronJobs {
 
 		serverIds.forEach(serverId => {
 			LoanRepo.NightlyCycle(serverId);
+		});
+	}
+
+	public static DrawLotteryWinner(client: Client): void {
+		const channels: any = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "general");
+
+		channels.forEach((channel: TextChannel) => {
+			lottery.drawLotteryWinner(channel.guild.id, channel);
 		});
 	}
 }

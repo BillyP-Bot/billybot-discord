@@ -105,4 +105,25 @@ export class UserRepository {
 			throw Error(e);
 		}
 	}
+
+	public static async UpdateUserInLotteryStatus(userId: string, inLottery: boolean, serverId: string): Promise<boolean> {
+		try {
+			const user = await User.findOne({ where: { userId: userId, serverId: serverId } });
+			if (!user) throw "User not found!";
+			
+			user.inLottery = inLottery;
+			await user.save();
+			return true;
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async FindUsersInLottery(serverId: string): Promise<User[]> {
+		try {
+			return await User.find({ serverId, inLottery: true });
+		} catch (e) {
+			throw Error(e);
+		}
+	}
 }
