@@ -30,6 +30,9 @@ export class User extends Base {
 	@Column({ default: false })
 	hasActiveLoan: boolean = false;
 
+	@Column({ default: false })
+	inLottery: boolean = false;
+
 	@OneToMany(() => Loan, loan => loan.user, { eager: true })
 	loans: Loan[];
 }
