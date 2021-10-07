@@ -20,6 +20,7 @@ import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
 import * as roulette from "./methods/roulette";
 import * as lending from "./methods/lending";
+import * as lottery from "./methods/lottery";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -51,6 +52,7 @@ client.on("ready", () => {
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
+	Jobs.LotteryCron.start();
 });
 
 client.on("message", async (msg: Message) => {
@@ -125,6 +127,12 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!creditscore.*/gmi.test(msg.content):
 			lending.getCreditScoreInfo(msg);
+			break;
+		case /.*!lotto.*/gmi.test(msg.content):
+			lottery.getLotteryInfo(msg);
+			break;
+		case /.*!buylottoticket.*/gmi.test(msg.content):
+			lottery.buyLotteryTicket(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
