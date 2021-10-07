@@ -41,6 +41,7 @@ export const Checks = {
 	payloan: /.*!payloan*/gmi,
 	loan: /.*!loan*/gmi,
 	creditscore: /.*!creditscore*/gmi,
+	billypay: /.*!billypay*/gmi, 
 	goodBot: /.*good bot*/gmi,
 	badBot: /.*bad bot*/gmi
 };
@@ -61,6 +62,7 @@ export class Commands {
 	public static readonly payloan: RegExp = /.*!payloan*/gmi;
 	public static readonly loan: RegExp = /.*!loan*/gmi;
 	public static readonly creditscore: RegExp = /.*!creditscore*/gmi;
+	public static readonly billypay: RegExp = /.*!billypay*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }
@@ -81,6 +83,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!bookloan", description: "Book a loan with BillyBank today! Usage: '!bookloan [amount]'" },
 	{ prefix: "!payloan", description: "Pay off part or all of the outstanding balance on your active loan. Usage: '!payloan [amount]'" },
 	{ prefix: "!loan", description: "Show info about your active loan." },
+	{ prefix: "!billypay", description: "Pay BillyBucks directly to another user! Usage: '!billypay [username/@user] [amount]'" },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];
