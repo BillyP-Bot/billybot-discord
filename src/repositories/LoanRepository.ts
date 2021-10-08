@@ -65,8 +65,9 @@ export class LoanRepository {
 			if (amount < 1) throw "Payment amount must be a positive number!";
 
 			let now = new Date(), mostRecentPaymentDatePlus3 = new Date(), newMostRecentPaymentDate = new Date(), openDatePlus7 = new Date();
-			mostRecentPaymentDatePlus3.setDate(loan.mostRecentPaymentDate.getDate() + 3);
 			newMostRecentPaymentDate.setHours(0, 0, 0, 0);
+			mostRecentPaymentDatePlus3.setDate(loan.mostRecentPaymentDate.getDate() + 3);
+			mostRecentPaymentDatePlus3.setHours(0, 0, 0, 0);
 			openDatePlus7.setDate(loan.createdAt.getDate() + 7);
 			openDatePlus7.setHours(0, 0, 0, 0);
 
