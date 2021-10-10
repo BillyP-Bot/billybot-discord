@@ -18,8 +18,9 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 
 		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
-		const oppColor: string = color === "black" ? "red" : "black";
-		const won = isWinningSpin();
+		const spinResult: [boolean, string] = isWinningSpin(color);
+		const won: boolean = spinResult[0];
+		const spunColor: string = spinResult[1];
 		const updated = await User.UpdateBucks(
 			msg.author.id,
 			msg.guild.id,
@@ -32,7 +33,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 			if (updated) {
 				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle("You Won!");
-				buckEmbed.setDescription(`It's ${color}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!\n\nYou now have ${bucks + bet} BillyBucks.`);
+				buckEmbed.setDescription(`It's ${spunColor}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!\n\nYou now have ${bucks + bet} BillyBucks.`);
 				msg.reply(buckEmbed);
 			}
 			return;
@@ -42,7 +43,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		if (updated) {
 			buckEmbed.setColor(Colors.red);
 			buckEmbed.setTitle("You Lost!");
-			buckEmbed.setDescription(`It's ${oppColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${bucks - bet} BillyBucks.`);
+			buckEmbed.setDescription(`It's ${spunColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${bucks - bet} BillyBucks.`);
 			msg.reply(buckEmbed);
 		}
 	} catch (error) {
@@ -53,14 +54,28 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	}
 };
 
-const isWinningSpin = (): boolean => {
-	return getSpinResult() <= 18;
+const isWinningSpin = (color: string): [boolean, string] => {
+	return [getSpinResult() === color, color];
 };
 
-const getSpinResult = (): number => Math.floor((Math.random() * 38) + 1);
+const getSpinResult = (): string => {
+	const rollNum: number = Math.floor(Math.random() * 37); 
+	var color: string = "";
+
+	if (rollNum <= 1) {
+		color = "green";
+	}
+	if (rollNum >= 2 && rollNum <= 19) {
+		color = "black";
+	}
+	if (rollNum >= 20 && rollNum <= 38) {
+		color = "red";
+	}
+	return color;
+};
 
 const validateArgs = (bet: number, color: string): boolean => {
-	if (isNaN(bet) || (color !== "red" && color !== "black")) return false;
+	if (isNaN(bet) || (color !== "red" && color !== "black" && color !== "green")) return false;
 	return true;
 };
 
