@@ -56,7 +56,7 @@ const isWinningSpin = (color: string): {won: boolean, spunColor: string} => {
 	const spunColor: string = getSpinResult();
 	return {
 		won: spunColor === color,
-		spunColor
+		spunColor: spunColor
 	};
 };
 
