@@ -2,7 +2,6 @@ import { Message, MessageEmbed } from "discord.js";
 
 import { Colors } from "../types/Constants";
 import { UserRepository as User } from "../repositories/UserRepository";
-
 export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	try {
 		const buckEmbed: MessageEmbed = new MessageEmbed();
@@ -18,13 +17,12 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 
 		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
-		const spinResult: [boolean, string] = isWinningSpin(color);
-		const won: boolean = spinResult[0];
-		const spunColor: string = spinResult[1];
+		const {won, spunColor} = isWinningSpin(color);
+		const potWinnings: number = setWinnings(bet, won, spunColor);
 		const updated = await User.UpdateBucks(
 			msg.author.id,
 			msg.guild.id,
-			won ? bet : -bet,
+			won ? potWinnings : -potWinnings,
 			true
 		);
 
@@ -33,7 +31,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 			if (updated) {
 				buckEmbed.setColor(Colors.green);
 				buckEmbed.setTitle("You Won!");
-				buckEmbed.setDescription(`It's ${spunColor}! You win ${bet} BillyBucks! Lady LUUUCCCCKKK!\n\nYou now have ${bucks + bet} BillyBucks.`);
+				buckEmbed.setDescription(`It's ${spunColor}! You win ${potWinnings} BillyBucks! Lady LUUUCCCCKKK!\n\nYou now have ${bucks + potWinnings} BillyBucks.`);
 				msg.reply(buckEmbed);
 			}
 			return;
@@ -43,7 +41,7 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 		if (updated) {
 			buckEmbed.setColor(Colors.red);
 			buckEmbed.setTitle("You Lost!");
-			buckEmbed.setDescription(`It's ${spunColor}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${bucks - bet} BillyBucks.`);
+			buckEmbed.setDescription(`It's ${spunColor}! You lose your bet of ${potWinnings} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${bucks - potWinnings} BillyBucks.`);
 			msg.reply(buckEmbed);
 		}
 	} catch (error) {
@@ -54,24 +52,40 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	}
 };
 
-const isWinningSpin = (color: string): [boolean, string] => {
-	return [getSpinResult() === color, color];
+const isWinningSpin = (color: string): {won: boolean, spunColor: string} => { 
+	const spunColor: string = getSpinResult();
+	return {
+		won: spunColor === color,
+		spunColor
+	};
 };
 
 const getSpinResult = (): string => {
 	const rollNum: number = Math.floor(Math.random() * 37); 
-	var color: string = "";
 
 	if (rollNum <= 1) {
-		color = "green";
+		return "green";
 	}
-	if (rollNum >= 2 && rollNum <= 19) {
-		color = "black";
+	else if (rollNum >= 2 && rollNum <= 19) {
+		return "black";
 	}
-	if (rollNum >= 20 && rollNum <= 38) {
-		color = "red";
+	else { // rollNum >= 20 && rollNum <= 38
+		return "red";
 	}
-	return color;
+};
+
+const setWinnings = (bet: number, won: boolean, spunColor: string): number =>{
+	if (won){
+		if (spunColor === "green"){
+			return bet * 17;
+		}
+		else {
+			return bet;
+		}
+	}
+	else {
+		return bet;
+	}
 };
 
 const validateArgs = (bet: number, color: string): boolean => {
