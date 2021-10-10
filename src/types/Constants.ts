@@ -82,7 +82,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!allowance", description: "Collect your weekly BillyBuck allowance! Only available once a week." },
 	{ prefix: "!whereshowwie", description: "Get updates on Howard's job status." },
 	{ prefix: "!configure", description: "Command for admins to prep the server." },
-	{ prefix: "!spin", description: "Let's play Roulette! Usage: '!spin [betAmount] [red/black]'" },
+	{ prefix: "!spin", description: "Let's play Roulette! Usage: '!spin [betAmount] [red/black/green]'" },
 	{ prefix: "!creditscore", description: "Show your current credit score, interest rate, and credit limit that BillyBank will offer you!" },
 	{ prefix: "!bookloan", description: "Book a loan with BillyBank today! Usage: '!bookloan [amount]'" },
 	{ prefix: "!payloan", description: "Pay off part or all of the outstanding balance on your active loan. Usage: '!payloan [amount]'" },
