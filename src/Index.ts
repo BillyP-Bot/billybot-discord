@@ -21,6 +21,7 @@ import * as joe from "./methods/joe";
 import * as roulette from "./methods/roulette";
 import * as lending from "./methods/lending";
 import * as lottery from "./methods/lottery";
+import * as baseball from "./methods/baseball";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -133,6 +134,12 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!buylottoticket.*/gmi.test(msg.content):
 			lottery.buyLotteryTicket(msg);
+			break;
+		case /.*!baseball.*/gmi.test(msg.content):
+			baseball.game(msg, "!baseball", firstMention);
+			break;
+		case /.*!swing.*/gmi.test(msg.content):
+			baseball.swing(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
