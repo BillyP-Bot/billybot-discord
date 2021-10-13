@@ -37,6 +37,12 @@ export class User extends Base {
 	@Column({ default: false })
 	inBaseballGame: boolean = false;
 
+	@Column({ default: 0 })
+	baseballWins: number = 0;
+
+	@Column({ default: 0 })
+	baseballLosses: number = 0;
+
 	@OneToMany(() => Loan, loan => loan.user, { eager: true })
 	loans: Loan[];
 
