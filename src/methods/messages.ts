@@ -1,4 +1,5 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember } from "discord.js";
+import { Colors } from "../types/Constants";
 
 import { Rest } from "../services/rest";
 import logger from "../services/logger";
@@ -94,4 +95,18 @@ export const billyPoggersReact = (msg: Message): void => {
 	} catch (error) {
 		logger.error(error);
 	}
+};
+
+export const replyWithSuccessEmbed = (msg: Message, title: any, body: any): void => {
+	const successEmbed: MessageEmbed = new MessageEmbed();
+	successEmbed.setColor(Colors.green).setTitle(title);
+	successEmbed.setDescription(body);
+	msg.reply(successEmbed);
+};
+
+export const replyWithErrorEmbed = (msg: Message, error: any): void => {
+	const errorEmbed: MessageEmbed = new MessageEmbed();
+	errorEmbed.setColor(Colors.red).setTitle("Error");
+	errorEmbed.setDescription(error);
+	msg.reply(errorEmbed);
 };
