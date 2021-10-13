@@ -135,8 +135,11 @@ client.on("message", async (msg: Message) => {
 		case /.*!buylottoticket.*/gmi.test(msg.content):
 			lottery.buyLotteryTicket(msg);
 			break;
+		case /.*!baseballrecord.*/gmi.test(msg.content):
+			baseball.getRecord(msg, "!baseballrecord", firstMention);
+			break;
 		case /.*!baseball.*/gmi.test(msg.content):
-			baseball.game(msg, "!baseball", firstMention);
+			baseball.baseball(msg, "!baseball", firstMention);
 			break;
 		case /.*!swing.*/gmi.test(msg.content):
 			baseball.swing(msg);
