@@ -6,7 +6,7 @@ import { BaseballRepository as BaseballRepo } from "../repositories/BaseballRepo
 import { User } from "../models/User";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
 
-const innings: number = 2;
+const innings: number = 9;
 
 // !baseball @[username] / !baseball
 export const game = async (msg: Message, prefix: string, mention: GuildMember): Promise<void> => {
