@@ -1,6 +1,5 @@
 import { Baseball } from "../models/Baseball";
 import { User } from "../models/User";
-import { UserRepository as UserRepo } from "../repositories/UserRepository";
 
 export class BaseballRepository {
 
@@ -43,18 +42,40 @@ export class BaseballRepository {
 
 	public static async UpdateHomeTeam(game: Baseball, newHomeTeam: User): Promise<boolean> {
 		try {
-			const existingHomeTeam = await UserRepo.FindOne(game.homeTeam.userId, game.serverId);
-			if (existingHomeTeam) {
-				const index = existingHomeTeam.homeGames.indexOf(game);
-				existingHomeTeam.homeGames.splice(index, 1);
-			}
-			
+			const existingHomeTeam = game.homeTeam;
+			existingHomeTeam.homeGames.splice(existingHomeTeam.homeGames.indexOf(game), 1);
+
 			newHomeTeam.homeGames.push(game);
 			game.homeTeam = newHomeTeam;
 			
 			await existingHomeTeam.save();
 			await newHomeTeam.save();
 			await game.save();
+			return true;
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async RemoveOne(game: Baseball, winnerUserId: string): Promise<boolean> {
+		try {
+			game.awayTeam.awayGames.splice(game.awayTeam.awayGames.indexOf(game), 1);
+			game.homeTeam.homeGames.splice(game.homeTeam.homeGames.indexOf(game), 1);
+
+			game.awayTeam.inBaseballGame = false;
+			game.homeTeam.inBaseballGame = false;
+
+			if (game.awayTeam.userId === winnerUserId) {
+				game.awayTeam.baseballWins++;
+				game.homeTeam.baseballLosses++;
+			} else {
+				game.awayTeam.baseballLosses++;
+				game.homeTeam.baseballWins++;
+			}
+
+			await game.awayTeam.save();
+			await game.homeTeam.save();
+			await game.remove();
 			return true;
 		} catch (e) {
 			throw Error(e);

@@ -6,6 +6,8 @@ import { BaseballRepository as BaseballRepo } from "../repositories/BaseballRepo
 import { User } from "../models/User";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
 
+const innings: number = 2;
+
 // !baseball @[username] / !baseball
 export const game = async (msg: Message, prefix: string, mention: GuildMember): Promise<void> => {
 	try {
@@ -21,7 +23,7 @@ export const game = async (msg: Message, prefix: string, mention: GuildMember): 
 
 			// show the current state of the game
 			const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
-			if (game) return replyWithGamestateEmbed(msg, game);
+			if (game) return showGamestate(msg, game);
 		} else {
 			// if the user is not already in an active game but there are no users mentioned to send a challenge to, throw error
 			if (args.length === 0 && !mention) throw "No active baseball game found! Run ```!baseball @[username]``` to challenge another user to a game, or to accept another user's pending challenge to you.";
@@ -62,9 +64,217 @@ export const game = async (msg: Message, prefix: string, mention: GuildMember): 
 
 // !swing
 export const swing = async (msg: Message): Promise<void> => {
-	replyWithSuccessEmbed(msg, "Baseball", `<@${msg.author.id}> swung!`);
+	try {
+		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
+		const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
+		if (!game) throw "No active baseball game found! Run ```!baseball @[username]``` to challenge another user to a game, or to accept another user's pending challenge to you.";
 
-	// TODO
+		const atBatUserId = game.inning.charAt(0) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
+		if (user.userId !== atBatUserId) throw `Whoah, easy killer! Wait your turn! Your opponent <@${atBatUserId}> is currently at bat.`;
+
+		const atBatOutcome = getAtBatOutcome(game);
+		const updatedGame = atBatOutcome.game;
+
+		let saved, removed;
+
+		// check if game is over
+		let gameOverOutput = "";
+		if (updatedGame.gameOver) {
+			const winnerUserId = updatedGame.awayTeamRuns > updatedGame.homeTeamRuns ? updatedGame.awayTeam.userId : updatedGame.homeTeam.userId;
+			gameOverOutput = `Game Over! <@${winnerUserId}> wins!\n\n`;
+			removed = await BaseballRepo.RemoveOne(game, winnerUserId);
+		} else {
+			saved = await BaseballRepo.UpdateOne(game);
+		}
+		
+		if (removed || saved) {
+			const body = `${atBatOutcome.output}\n\n` + 
+			gameOverOutput +
+			getGamestate(updatedGame);
+			return replyWithSuccessEmbed(msg, "Baseball", body);
+		}
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
+	}
+};
+
+// 21 outcomes: hit (6), walk (3), out (12)
+const getAtBatOutcome = (game: Baseball): {game: Baseball, output: any } => {
+	const roll = getAtBatRoll();
+	switch (true) {
+	case roll <= 6:
+		return hit(game, roll);
+	case roll <= 9:
+		return walk(game);
+	default:
+		return out(game, roll);
+	}
+};
+
+// random int 1 thru 21 inclusive
+const getAtBatRoll = (): number => {
+	return Math.floor(Math.random() * 21) + 1;
+};
+
+const hit = (game: Baseball, roll: number): {game: Baseball, output: any } => {
+	let result, output;
+	switch (true) {
+	case roll <= 2:
+		result = advanceBatterAndBaserunners(game.bases, 1); // single
+		output = "It's a single!";
+		break;
+	case roll <= 4:
+		result = advanceBatterAndBaserunners(game.bases, 2); // double
+		output = "It's a double!";
+		break;
+	case roll <= 5:
+		result = advanceBatterAndBaserunners(game.bases, 3); // triple
+		output = "It's a triple!";
+		break;
+	default:
+		result = advanceBatterAndBaserunners(game.bases, 4); // home run
+		output = "Home run! It's outta here!";
+		break;
+	}
+
+	if (result) {
+		output += getRunsScoredDisplayText(result.runsScored);
+		game.bases = result.bases;
+		game.inning.charAt(0) === "T" ? game.awayTeamRuns += result.runsScored : game.homeTeamRuns += result.runsScored;
+	}
+
+	if (isGameOver(game)) game.gameOver = true;
+	return { game, output };
+};
+
+const walk = (game: Baseball): {game: Baseball, output: any } => {
+	let output = "That's a walk!";
+	const result = advanceBatterAndBaserunners(game.bases, 1, true); // optional 3rd param indicates to only advance baserunners if forced
+
+	if (result) {
+		output += getRunsScoredDisplayText(result.runsScored);
+		game.bases = result.bases;
+		game.inning.charAt(0) === "T" ? game.awayTeamRuns += result.runsScored : game.homeTeamRuns += result.runsScored;
+	}
+
+	if (isGameOver(game)) game.gameOver = true;
+	return { game, output };
+};
+
+const out = (game: Baseball, roll: number): {game: Baseball, output: any } => {
+	let result, output;
+	switch(true) {
+	case roll <= 10:
+		if (game.outs < 2) {
+			result = advanceBaserunnersOnly(game.bases, 1); // sac fly
+			output = "It's a sac fly! The batter is out, but the runners advance!";
+		} else {
+			output = "Fly out!";
+		}
+		game.outs++;
+		break;
+	case roll <= 11:
+		if (game.outs < 2 && game.bases.charAt(0) === "1") { // ground out (double play if force available)
+			output = "It's a double play!";
+			game.outs += 2;
+			if (game.bases === "111") {
+				game.bases = "011";
+			} else if (game.bases === "110") {
+				game.bases = Math.floor(Math.random() * 2) === 0 ? "010" : "001";
+			} else if (game.bases === "101") {
+				game.bases = "001";
+			} else if (game.bases === "100") {
+				game.bases = "000";
+			}
+		} else {
+			output = "Ground out!";
+			game.outs ++;
+		}
+		break;
+	case roll <= 14:
+		output = "Ground out!";
+		game.outs++; // ground out
+		break;
+	case roll <= 16:
+		output = "Pop out!";
+		game.outs++; // pop out
+		break;
+	case roll <= 19:
+		output = "Fly out!";
+		game.outs++; // fly out
+		break;
+	default:
+		output = "Strikeout!";
+		game.outs++; // strike out
+	}
+
+	if (result) {
+		output += getRunsScoredDisplayText(result.runsScored);
+		game.bases = result.bases;
+		game.inning.charAt(0) === "T" ? game.awayTeamRuns += result.runsScored : game.homeTeamRuns += result.runsScored;
+	}
+
+	if (isGameOver(game)) {
+		game.gameOver = true;
+	} else if (game.outs === 3){
+		game.outs = 0;
+		game.bases = "000";
+		game.inning = advanceInning(game.inning);
+		output += " The side is retired.";
+	}
+	return { game, output };
+};
+
+// the game is over if either of the following is true:
+// - it is the bottom half of the last inning (9th by default) or later, and either the away team is winning with 3 outs recorded or the home team is winning regardless of the number of outs.
+// - it is the top half of the last inning (9th by default), and the home team is winning with 3 outs recorded (no need to play the bottom half of the last inning).
+const isGameOver = (game: Baseball): boolean => {
+	const inningHalf = getInningHalf(game.inning);
+	const inningNum = getInningNum(game.inning);
+
+	return (inningHalf === "B" && inningNum >= innings && ((game.awayTeamRuns > game.homeTeamRuns && game.outs === 3) || game.homeTeamRuns > game.awayTeamRuns)) || 
+		(inningHalf === "T" && inningNum === innings && game.awayTeamRuns < game.homeTeamRuns && game.outs === 3);
+};
+
+const advanceInning = (inning: string): string => {
+	const isTop: boolean = getInningHalf(inning) === "T";
+	const inningNum: number = getInningNum(inning);
+
+	return (isTop ? "B" : "T") + (isTop ? inningNum : inningNum + 1).toString();
+};
+
+const getInningHalf = (inning: string): string => {
+	return inning.charAt(0);
+};
+
+const getInningNum = (inning: string): number => {
+	return parseInt(inning.slice(1));
+};
+
+const advanceBatterAndBaserunners = (bases: string, num: number, isWalk?: boolean): { bases: string, runsScored: number } => {
+	if (isWalk) bases = bases.replace("0", "");
+	return roundTheBases(bases, num, false);
+};
+
+const advanceBaserunnersOnly = (bases: string, num: number): { bases: string, runsScored: number } => {
+	return roundTheBases(bases, num, true);
+};
+
+const roundTheBases = (bases: string, num: number, baserunnersOnly: boolean): { bases: string, runsScored: number } => {
+	let toPrepend: string = baserunnersOnly ? "0" : "1";
+	for (let i = 0; i < num - 1; i++) {
+		toPrepend = "0" + toPrepend;
+	}
+
+	let newBases = toPrepend + bases;
+
+	let runsScored = 0;
+	const runsScoredString = newBases.slice(3);
+	for (let i = 0; i < runsScoredString.length; i++) {
+		if (runsScoredString[i] === "1") runsScored++;
+	}
+
+	return { bases: newBases.substring(0, 3), runsScored };
 };
 
 const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTeam: User, homeTeam: User): Promise<void> => {
@@ -72,28 +282,33 @@ const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTea
 	awayTeam.inBaseballGame = true;
 	homeTeam.inBaseballGame = true;
 
-	const updated = await BaseballRepo.UpdateOne(game) &&
-					await UserRepo.UpdateOne(awayTeam) &&
-					await UserRepo.UpdateOne(homeTeam);
+	const updatedGame = await BaseballRepo.UpdateOne(game);
+	const updatedUser = await UserRepo.UpdateOne(awayTeam) &&
+						await UserRepo.UpdateOne(homeTeam);
 
-	if (updated) return replyWithSuccessEmbed(msg, "Baseball", `<@${homeTeam.userId}> accepted a baseball game challenge from <@${awayTeam.userId}>. Play ball!`);
+	if (updatedGame && updatedUser) {
+		const body = `<@${homeTeam.userId}> accepted a baseball game challenge from <@${awayTeam.userId}>. Play ball!\n\n` + 
+		getGamestate(updatedGame);
+		return replyWithSuccessEmbed(msg, "Baseball", body);
+	}
+	
 };
 
-const replyWithGamestateEmbed = (msg: Message, game: Baseball): void => {
+const showGamestate = (msg: Message, game: Baseball): void => {
 	replyWithSuccessEmbed(msg, "Baseball", getGamestate(game));
 };
 
 const getGamestate = (game: Baseball): string => {
 	return `<@${game.awayTeam.userId}>: ${game.awayTeamRuns} | <@${game.homeTeam.userId}>: ${game.homeTeamRuns}\n\n` + 
-	getInningAndOutsDisplayText(game.inning, game.outs) + "\n" +
-	getBaserunnersDisplayText(game.bases) + "\n\n" + 
-	getUserActionPromptDisplayText(game);
+	(!game.gameOver ? (getInningAndOutsDisplayText(game.inning, game.outs) + " | " +
+		getBaserunnersDisplayText(game.bases) + "\n\n" + 
+		getUserActionPromptDisplayText(game)) : "");
 };
 
 const getInningAndOutsDisplayText = (inning: string, outs: number): string => {
-	let inningHalf: string = (inning.charAt(0) === "T" ? "Top" : "Bottom") + " of the ";
+	const inningHalf: string = (getInningHalf(inning) === "T" ? "Top" : "Bottom") + " of the ";
+	const inningNum: string = getInningNum(inning).toString();
 	let inningNumSuffix: string;
-	const inningNum: string = inning.slice(1);
 	
 	if (inningNum.endsWith("1") && !inningNum.endsWith("11")) {
 		inningNumSuffix = "st";
@@ -105,9 +320,14 @@ const getInningAndOutsDisplayText = (inning: string, outs: number): string => {
 		inningNumSuffix = "th";
 	}
 
-	let outsText: string = `, ${outs} Out${outs === 1 ? "" : "s"}`;
+	let outsText: string = ` | ${outs} Out${outs === 1 ? "" : "s"}`;
 
 	return inningHalf + inningNum + inningNumSuffix + outsText;
+};
+
+const getRunsScoredDisplayText = (runsScored: number): string => {
+	if (runsScored === 0) return "";
+	return `\n\n${runsScored} run${runsScored > 1 ? "s" : ""} score${runsScored == 1 ? "s" : ""} on the play.`;
 };
 
 const getBaserunnersDisplayText = (bases: string): string => {
@@ -126,7 +346,7 @@ const getBaserunnersDisplayText = (bases: string): string => {
 
 const getUserActionPromptDisplayText = (game: Baseball): string => {
 	const teamAtBatUserId: string = game.inning.charAt(0) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
-	return `<@${teamAtBatUserId}> is up to bat. Here comes the pitch! Run ` + "```!swing``` to take a swing.";
+	return `<@${teamAtBatUserId}> is up to bat. Here comes the pitch! Run ` + "```!swing``` to take a swing!";
 };
 
 const findGuildMemberByUsername = (msg: Message, username: string): GuildMember => {
