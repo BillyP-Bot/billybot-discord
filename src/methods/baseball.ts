@@ -1,5 +1,4 @@
-import { Message, MessageEmbed, GuildMember } from "discord.js";
-import { Colors } from "../types/Constants";
+import { Message, GuildMember } from "discord.js";
 
 import { Baseball } from "../models/Baseball";
 import { BaseballRepository as BaseballRepo } from "../repositories/BaseballRepository";
@@ -7,6 +6,7 @@ import { User } from "../models/User";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
 import { IAtBatOutcome } from "../types/Abstract";
 import { IBaserunningResult } from "../types/Abstract";
+import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 
 const innings: number = 5;
 
@@ -404,18 +404,4 @@ const findGuildMemberByUsername = (msg: Message, username: string): GuildMember 
 	const found = msg.guild.members.cache.find(member => member.user.username.toUpperCase().trim() === username.toUpperCase().trim());
 	if (found) return found;
 	else throw `${username}: User not found!`;
-};
-
-const replyWithSuccessEmbed = (msg: Message, title: any, body: any): void => {
-	const successEmbed: MessageEmbed = new MessageEmbed();
-	successEmbed.setColor(Colors.green).setTitle(title);
-	successEmbed.setDescription(body);
-	msg.reply(successEmbed);
-};
-
-const replyWithErrorEmbed = (msg: Message, error: any): void => {
-	const errorEmbed: MessageEmbed = new MessageEmbed();
-	errorEmbed.setColor(Colors.red).setTitle("Error");
-	errorEmbed.setDescription(error);
-	msg.reply(errorEmbed);
 };
