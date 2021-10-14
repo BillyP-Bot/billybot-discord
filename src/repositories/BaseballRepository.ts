@@ -13,12 +13,13 @@ export class BaseballRepository {
 		}
 	}
 
-	public static async InsertOne(serverId: string, awayTeam: User, homeTeam: User): Promise<Baseball> {
+	public static async InsertOne(serverId: string, awayTeam: User, homeTeam: User, wager: number): Promise<Baseball> {
 		try {
 			const newGame = new Baseball();
 			newGame.serverId = serverId;
 			newGame.awayTeam = awayTeam;
 			newGame.homeTeam = homeTeam;
+			newGame.wager = wager;
 
 			awayTeam.awayGames.push(newGame);
 			homeTeam.homeGames.push(newGame);
@@ -40,13 +41,14 @@ export class BaseballRepository {
 		}
 	}
 
-	public static async UpdateHomeTeam(game: Baseball, newHomeTeam: User): Promise<boolean> {
+	public static async UpdateHomeTeamAndWager(game: Baseball, newHomeTeam: User, wager: number): Promise<boolean> {
 		try {
 			const existingHomeTeam = game.homeTeam;
 			existingHomeTeam.homeGames.splice(existingHomeTeam.homeGames.indexOf(game), 1);
 
 			newHomeTeam.homeGames.push(game);
 			game.homeTeam = newHomeTeam;
+			game.wager = wager;
 			
 			await existingHomeTeam.save();
 			await newHomeTeam.save();
@@ -68,9 +70,11 @@ export class BaseballRepository {
 			if (game.awayTeam.userId === winnerUserId) {
 				game.awayTeam.baseballWins++;
 				game.homeTeam.baseballLosses++;
+				game.awayTeam.billyBucks += (2 * game.wager);
 			} else {
 				game.awayTeam.baseballLosses++;
 				game.homeTeam.baseballWins++;
+				game.homeTeam.billyBucks += (2 * game.wager);
 			}
 
 			await game.awayTeam.save();
