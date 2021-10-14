@@ -97,7 +97,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!lotto", description: "View the current jackpot and list of entrants in this week's lottery!" },
 	{ prefix: "!buylottoticket", description: "Buy a ticket for a chance to win this week's lottery!" },
 	{ prefix: "!baseballrecord", description: "Show your baseball win/loss record, or for the specified user: '!baseballrecord @[username]'" },
-	{ prefix: "!baseball", description: "Challenge another user to a game for an optional wager amount, or accept a challenge that has already been extended to you: '!baseball @[username] wager'" },
+	{ prefix: "!baseball", description: "Challenge another user to a game for an optional wager amount, or accept a challenge that has already been extended to you: '!baseball @[username] [wager]'" },
 	{ prefix: "!swing", description: "Advance the current baseball game when you are at bat!" },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
