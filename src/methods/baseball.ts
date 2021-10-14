@@ -8,7 +8,7 @@ import { IAtBatOutcome } from "../types/Abstract";
 import { IBaserunningResult } from "../types/Abstract";
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 
-const innings: number = 5;
+const innings: number = 3;
 
 /*
 	!baseball @[username]
@@ -21,20 +21,20 @@ export const baseball = async (msg: Message, prefix: string, mention: GuildMembe
 	try {
 		const args: string[] = msg.content.slice(prefix.length).trim().split(" ");
 		if (args[0] === "") args.splice(0, 1);
-		if (args.length > 1) throw "Invalid format! Expects 0 or 1 argument.";
+		if (args.length > 2) throw "Invalid format! Expects 0, 1, or 2 argument(s).";
 
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 
 		// if the user is already in an active game, show the gamestate (or error if the user tries to @ a player to start another)
 		if (user.inBaseballGame) {
-			if (args.length > 0 || mention) throw "You are already in an ongoing baseball game! Cannot start another. Run ```!baseball``` with no arguments to view the state of your active game.";
+			if (args.length > 0 || mention) throw "You are already in an ongoing baseball game! Cannot start another. Run... ```!baseball``` ...with no arguments to view the state of your active game.";
 
 			// show the current state of the game
 			const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
 			if (game) return showGamestate(msg, game);
 		} else {
 			// if the user is not already in an active game but there are no users mentioned to send a challenge to, throw error
-			if (args.length === 0 && !mention) throw "No active baseball game found! Run ```!baseball @[username]``` to challenge another user to a game, or to accept another user's pending challenge to you.";
+			if (args.length === 0 && !mention) throw "No active baseball game found! Run... ```!baseball @[username]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
 
 			const opponentGuildMember = mention ? mention : findGuildMemberByUsername(msg, args[0]);
 			if (msg.author.id === opponentGuildMember.user.id) throw "You cannot challenge yourself to a baseball game!";
@@ -45,25 +45,40 @@ export const baseball = async (msg: Message, prefix: string, mention: GuildMembe
 			// is there already an existing challenge from the opponent user?
 			const existingChallengeFromOpponentUser = await BaseballRepo.FindActiveGameForUser(opponentUser, msg.guild.id, true);
 			if (existingChallengeFromOpponentUser) {
-				// if that challenge sent to this user, accept the challenge and start the game
+				// if that challenge was sent to this user, accept the challenge and start the game
 				if (existingChallengeFromOpponentUser.homeTeam.userId === user.userId) {
-					return acceptChallengeAndStartGame(msg, existingChallengeFromOpponentUser, opponentUser, user);
-				} else throw `<@${opponentUser.userId}> already has a pending baseball game challenge sent to <@${existingChallengeFromOpponentUser.homeTeam.userId}>!`;
+					// can only accept the challenge if each user can cover the wager amount
+					if (user.billyBucks < existingChallengeFromOpponentUser.wager) throw `Cannot accept challenge from <@${opponentUser.userId}> for ${existingChallengeFromOpponentUser.wager} BillyBucks, you only have ${user.billyBucks}!`;
+					if (opponentUser.billyBucks < existingChallengeFromOpponentUser.wager) throw `Cannot accept challenge from <@${opponentUser.userId}> for ${existingChallengeFromOpponentUser.wager} BillyBucks, <@${opponentUser.userId}> only has ${opponentUser.billyBucks}!`;
+					return acceptChallengeAndStartGame(msg, existingChallengeFromOpponentUser, opponentUser, user, existingChallengeFromOpponentUser.wager);
+				} else throw `Cannot challenge this user! <@${opponentUser.userId}> already has a pending baseball game challenge sent to <@${existingChallengeFromOpponentUser.homeTeam.userId}>!`;
 			}
+
+			// check for wager amount
+			let wager, wagerText;
+			if (args[0] && args[1]) {
+				wager = parseInt(args[1]);
+				if (isNaN(wager) || wager < 0) throw "Invalid wager amount! Must be a non-negative number.";
+			} else wager = 0;
+			wagerText = (wager > 0) ? ` for ${wager} BillyBucks` : "";
+
+			// enforce wager limits for outgoing game challenges
+			if (user.billyBucks < wager) throw `Cannot wager ${wager} BillyBucks, you only have ${user.billyBucks}!`;
+			if (opponentUser.billyBucks < wager) throw `Cannot wager ${wager} BillyBucks, <@${opponentUser.userId}> only has ${opponentUser.billyBucks}!`;
 
 			// does a challenge sent by this user already exist (but has not yet been accepted)? if so, allow user to challenge a different user.
 			// (if original opponent user challenged is not responding or has since accepted a different challenge, for example)
 			const existingChallengeToOpponentUser = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id, true);
 			if (existingChallengeToOpponentUser) {
-				const updated = await BaseballRepo.UpdateHomeTeam(existingChallengeToOpponentUser, opponentUser);
-				if (updated) return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}> challenged <@${opponentUser.userId}> to a baseball game!\n\n` + 
-				`<@${opponentUser.userId}>: run\`\`\`!baseball @${user.username}\`\`\` to accept the challenge.`);
+				const updated = await BaseballRepo.UpdateHomeTeamAndWager(existingChallengeToOpponentUser, opponentUser, wager);
+				if (updated) return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}> challenged <@${opponentUser.userId}> to a baseball game${wagerText}!\n\n` + 
+				`<@${opponentUser.userId}>: Run...\`\`\`!baseball @${user.username}\`\`\` ...to accept the challenge.`);
 			}
 
 			// if there is no existing challenge already, create a new one to send to the opponent user
-			const newChallengeCreated = await BaseballRepo.InsertOne(msg.guild.id, user, opponentUser);
-			if (newChallengeCreated) return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}> challenged <@${opponentUser.userId}> to a baseball game!\n\n` + 
-				`<@${opponentUser.userId}>: run\`\`\`!baseball @${user.username}\`\`\` to accept the challenge.`);
+			const newChallengeCreated = await BaseballRepo.InsertOne(msg.guild.id, user, opponentUser, wager);
+			if (newChallengeCreated) return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}> challenged <@${opponentUser.userId}> to a baseball game${wagerText}!\n\n` + 
+				`<@${opponentUser.userId}>: Run...\`\`\`!baseball @${user.username}\`\`\` ...to accept the challenge.`);
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
@@ -91,8 +106,9 @@ export const swing = async (msg: Message): Promise<void> => {
 		// check if game is over
 		let gameOverOutput = "";
 		if (updatedGame.gameOver) {
+			const wagerText = updatedGame.wager > 0 ? ` and scoops the pot of ${updatedGame.wager * 2} BillyBucks` : "";
 			const winnerUserId = updatedGame.awayTeamRuns > updatedGame.homeTeamRuns ? updatedGame.awayTeam.userId : updatedGame.homeTeam.userId;
-			gameOverOutput = `Game Over! <@${winnerUserId}> wins!\n\n`;
+			gameOverOutput = `Game Over! <@${winnerUserId}> wins${wagerText}!\n\n`;
 			removed = await BaseballRepo.RemoveOne(game, winnerUserId);
 		} else {
 			saved = await BaseballRepo.UpdateOne(game);
@@ -270,7 +286,6 @@ const out = (game: Baseball, roll: number): IAtBatOutcome => {
 const advanceInning = (inning: string): string => {
 	const isTop: boolean = getInningHalf(inning) === "T";
 	const inningNum: number = getInningNum(inning);
-
 	return (isTop ? "B" : "T") + (isTop ? inningNum : inningNum + 1).toString();
 };
 
@@ -317,21 +332,24 @@ const atLeastOneBaserunnerIsOn = (bases: string): boolean => {
 	return bases.indexOf("1") >= 0;
 };
 
-const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTeam: User, homeTeam: User): Promise<void> => {
+const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTeam: User, homeTeam: User, wager: number): Promise<void> => {
 	game.inning = "T1";
 	awayTeam.inBaseballGame = true;
 	homeTeam.inBaseballGame = true;
+	awayTeam.billyBucks -= wager;
+	homeTeam.billyBucks -= wager;
+
+	let wagerText = wager > 0 ? ` for ${wager} BillyBucks` : "";
+	let wagerDetailText = wager > 0 ? `Each player deposits ${wager} BillyBucks into the secure BillyBank™ Designated Baseball Escrow Account. ` : "";
 
 	const updatedGame = await BaseballRepo.UpdateOne(game);
-	const updatedUsers = await UserRepo.UpdateOne(awayTeam) &&
-						await UserRepo.UpdateOne(homeTeam);
+	const updatedUsers = await UserRepo.UpdateOne(awayTeam) && await UserRepo.UpdateOne(homeTeam);
 
 	if (updatedGame && updatedUsers) {
-		const body = `<@${homeTeam.userId}> accepted a baseball game challenge from <@${awayTeam.userId}>. Play ball!\n\n` + 
-		getGamestate(updatedGame);
+		const body = `<@${homeTeam.userId}> accepted a baseball game challenge${wagerText} from <@${awayTeam.userId}>! ` + 
+		wagerDetailText + "Play ball!\n\n" + getGamestate(updatedGame);
 		return replyWithSuccessEmbed(msg, "Baseball", body);
 	}
-	
 };
 
 const showGamestate = (msg: Message, game: Baseball): void => {
@@ -340,6 +358,7 @@ const showGamestate = (msg: Message, game: Baseball): void => {
 
 const getGamestate = (game: Baseball): string => {
 	return `<@${game.awayTeam.userId}>: ${game.awayTeamRuns} | <@${game.homeTeam.userId}>: ${game.homeTeamRuns}\n\n` + 
+	getWagerDisplayText(game.wager) + "\n\n" + 
 	(!game.gameOver ? (getInningAndOutsDisplayText(game.inning, game.outs) + " | " +
 		getBaserunnersDisplayText(game.bases) + "\n\n" + 
 		getUserActionPromptDisplayText(game)) : "");
@@ -368,6 +387,10 @@ const getInningAndOutsDisplayText = (inning: string, outs: number): string => {
 const getRunsScoredDisplayText = (runsScored: number): string => {
 	if (runsScored === 0) return "";
 	return `\n\n${runsScored} run${runsScored > 1 ? "s" : ""} score${runsScored == 1 ? "s" : ""} on the play.`;
+};
+
+const getWagerDisplayText = (wager: number): string => {
+	return wager > 0 ? `Wager: ${wager}` : "";
 };
 
 const getBaserunnersDisplayText = (bases: string): string => {

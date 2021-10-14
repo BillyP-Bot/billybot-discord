@@ -15,7 +15,7 @@ export class Baseball extends Base {
 	awayTeam: User;
 
 	@Index()
-	@ManyToOne(() => User, user => user.homeGames, { nullable: true })
+	@ManyToOne(() => User, user => user.homeGames)
 	homeTeam: User;
 
 	@Column()
@@ -35,4 +35,7 @@ export class Baseball extends Base {
 
 	@Column()
 	gameOver: boolean = false;
+
+	@Column()
+	wager: number;
 }
