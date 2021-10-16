@@ -126,6 +126,61 @@ export const swing = async (msg: Message): Promise<void> => {
 };
 
 /*
+	!forfeit
+	withdraw challenge or forfeit current game/wager
+*/
+export const forfeit = async (msg: Message): Promise<void> => {
+	try {
+		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
+		let game;
+
+		if (user.inBaseballGame) {
+			game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
+			if (!game) throw `Unexpected error retrieving active game for <@${user.userId}>!`;
+
+			const opponentUserId: string = user.userId === game.awayTeam.userId ? game.homeTeam.userId : game.awayTeam.userId;
+			const wagerText: string = game.wager > 0 ? ` and scoops the pot of ${game.wager * 2} BillyBucks` : "";
+
+			const removed = await BaseballRepo.RemoveOne(game, opponentUserId);
+			if (!removed) throw "Unexpected error forfeiting active game!";
+
+			replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}> forfeited! <@${opponentUserId}> wins by default${wagerText}!`);
+		} else {
+			game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id, true);
+			if (!game) throw `No active game or outgoing pending challenges found for <@${user.userId}>!`;
+
+			const opponentUserId: string = game.homeTeam.userId;
+
+			const removed = await BaseballRepo.RemoveOne(game);
+			if (!removed) throw "Unexpected error forfeiting outgoing pending challenge!";
+
+			replyWithSuccessEmbed(msg, "Baseball", `Your outgoing pending challenge to <@${opponentUserId}> was rescinded!`);
+		}
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
+	}
+};
+
+/*
+	!cooperstown
+	show the top three users with most baseball wins
+*/
+export const cooperstown = async (msg: Message): Promise<void> => {
+	try {
+		const sluggers: User[] = await UserRepo.GetSluggers(msg.guild.id);
+
+		let body = "";
+		sluggers.forEach(slugger => {
+			body += `<@${slugger.userId}>: ${slugger.baseballWins} win${slugger.baseballWins === 1 ? "" : "s"}\n\n`;
+		});
+
+		replyWithSuccessEmbed(msg, "Baseball Hall of Fame", body);
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
+	}
+};
+
+/*
 	!baseballrecord @[username]
 	get the win/loss record for the specified user, or for the current user if run with no arguments
 */
@@ -358,7 +413,7 @@ const showGamestate = (msg: Message, game: Baseball): void => {
 
 const getGamestate = (game: Baseball): string => {
 	return `<@${game.awayTeam.userId}>: ${game.awayTeamRuns} | <@${game.homeTeam.userId}>: ${game.homeTeamRuns}\n\n` + 
-	getWagerDisplayText(game.wager) + "\n\n" + 
+	getWagerDisplayText(game.wager) +
 	(!game.gameOver ? (getInningAndOutsDisplayText(game.inning, game.outs) + " | " +
 		getBaserunnersDisplayText(game.bases) + "\n\n" + 
 		getUserActionPromptDisplayText(game)) : "");
@@ -390,7 +445,7 @@ const getRunsScoredDisplayText = (runsScored: number): string => {
 };
 
 const getWagerDisplayText = (wager: number): string => {
-	return wager > 0 ? `Wager: ${wager}` : "";
+	return wager > 0 ? `Wager: ${wager}\n\n` : "";
 };
 
 const getBaserunnersDisplayText = (bases: string): string => {
