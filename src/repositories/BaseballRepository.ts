@@ -59,7 +59,7 @@ export class BaseballRepository {
 		}
 	}
 
-	public static async RemoveOne(game: Baseball, winnerUserId: string): Promise<boolean> {
+	public static async RemoveOne(game: Baseball, winnerUserId?: string): Promise<boolean> {
 		try {
 			game.awayTeam.awayGames.splice(game.awayTeam.awayGames.indexOf(game), 1);
 			game.homeTeam.homeGames.splice(game.homeTeam.homeGames.indexOf(game), 1);
@@ -67,14 +67,16 @@ export class BaseballRepository {
 			game.awayTeam.inBaseballGame = false;
 			game.homeTeam.inBaseballGame = false;
 
-			if (game.awayTeam.userId === winnerUserId) {
-				game.awayTeam.baseballWins++;
-				game.homeTeam.baseballLosses++;
-				game.awayTeam.billyBucks += (2 * game.wager);
-			} else {
-				game.awayTeam.baseballLosses++;
-				game.homeTeam.baseballWins++;
-				game.homeTeam.billyBucks += (2 * game.wager);
+			if (winnerUserId) {
+				if (game.awayTeam.userId === winnerUserId) {
+					game.awayTeam.baseballWins++;
+					game.homeTeam.baseballLosses++;
+					game.awayTeam.billyBucks += (2 * game.wager);
+				} else {
+					game.awayTeam.baseballLosses++;
+					game.homeTeam.baseballWins++;
+					game.homeTeam.billyBucks += (2 * game.wager);
+				}
 			}
 
 			await game.awayTeam.save();

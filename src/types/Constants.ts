@@ -47,6 +47,8 @@ export const Checks = {
 	baseballrecord: /.*!baseballrecord*/gmi,
 	baseball: /.*!baseball*/gmi,
 	swing: /.*!swing*/gmi,
+	forfeit: /.*!forfeit*/gmi,
+	cooperstown: /.*!cooperstown*/gmi,
 	goodBot: /.*good bot*/gmi,
 	badBot: /.*bad bot*/gmi
 };
@@ -73,6 +75,8 @@ export class Commands {
 	public static readonly baseballrecord: RegExp = /.*!baseballrecord*/gmi;
 	public static readonly baseball: RegExp = /.*!baseball*/gmi;
 	public static readonly swing: RegExp = /.*!swing*/gmi;
+	public static readonly forfeit: RegExp = /.*!swing*/gmi;
+	public static readonly cooperstown: RegExp = /.*!cooperstown*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }
@@ -96,9 +100,11 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!billypay", description: "Pay BillyBucks directly to another user! Usage: '!billypay [username/@user] [amount]'" },
 	{ prefix: "!lotto", description: "View the current jackpot and list of entrants in this week's lottery!" },
 	{ prefix: "!buylottoticket", description: "Buy a ticket for a chance to win this week's lottery!" },
-	{ prefix: "!baseballrecord", description: "Show your baseball win/loss record, or for the specified user: '!baseballrecord @[username]'" },
 	{ prefix: "!baseball", description: "Challenge another user to a game for an optional wager amount, or accept a challenge that has already been extended to you: '!baseball @[username] [wager]'" },
 	{ prefix: "!swing", description: "Advance the current baseball game when you are at bat!" },
+	{ prefix: "!forfeit", description: "Withdraw outgoing pending baseball challenge or forfeit active game/wager." },
+	{ prefix: "!baseballrecord", description: "Show your baseball win/loss record, or for the specified user: '!baseballrecord @[username]'" },
+	{ prefix: "!cooperstown", description: "Show the top 3 users with the most baseball wins." },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];

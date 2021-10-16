@@ -136,4 +136,25 @@ export class UserRepository {
 			throw Error(e);
 		}
 	}
+
+	public static async GetSluggers(serverId: string): Promise<User[]> {
+		try {
+			const records = await User.find({
+				where: {
+					serverId: serverId
+				},
+				order: {  baseballWins: -1 },
+				take: 3
+			});
+			let normalized: any[] = [];
+
+			records.forEach(entry => {
+				normalized.push({ userId: entry.userId, baseballWins: entry.baseballWins });
+			});
+
+			return normalized;
+		} catch (e) {
+			throw Error(e);
+		}
+	}
 }

@@ -144,6 +144,12 @@ client.on("message", async (msg: Message) => {
 		case /.*!swing.*/gmi.test(msg.content):
 			baseball.swing(msg);
 			break;
+		case /.*!forfeit.*/gmi.test(msg.content):
+			baseball.forfeit(msg);
+			break;
+		case /.*!cooperstown.*/gmi.test(msg.content):
+			baseball.cooperstown(msg);
+			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
 			kyle.kyleNoWorking(msg);
