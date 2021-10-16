@@ -33,8 +33,13 @@ export const baseball = async (msg: Message, prefix: string, mention: GuildMembe
 			const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
 			if (game) return showGamestate(msg, game);
 		} else {
-			// if the user is not already in an active game but there are no users mentioned to send a challenge to, throw error
-			if (args.length === 0 && !mention) throw "No active baseball game found! Run... ```!baseball @[username]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
+			// if the user is not already in an active game but there are no users mentioned to send a challenge to, throw error unless they have sent a pending game challenge
+			if (args.length === 0 && !mention) {
+				const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id, true);
+				if (!game) throw "No active baseball game found! Run... ```!baseball @[username]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
+				const wagerText = game.wager > 0 ? ` for ${game.wager} BillyBucks` : "";
+				return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}>, you have a pending game challenge${wagerText} sent to <@${game.homeTeam.userId}>!`);
+			}
 
 			const opponentGuildMember = mention ? mention : findGuildMemberByUsername(msg, args[0]);
 			if (msg.author.id === opponentGuildMember.user.id) throw "You cannot challenge yourself to a baseball game!";
@@ -95,7 +100,7 @@ export const swing = async (msg: Message): Promise<void> => {
 		const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
 		if (!game) throw "No active baseball game found! Run ```!baseball @[username]``` to challenge another user to a game, or to accept another user's pending challenge to you.";
 
-		const atBatUserId = game.inning.charAt(0) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
+		const atBatUserId = getInningHalf(game.inning) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
 		if (user.userId !== atBatUserId) throw `Whoah, easy there, slugger! Wait your turn! Your opponent <@${atBatUserId}> is currently at bat.`;
 
 		const atBatOutcome = getAtBatOutcome(game);
@@ -118,7 +123,11 @@ export const swing = async (msg: Message): Promise<void> => {
 			const body = `${atBatOutcome.output}\n\n` + 
 			gameOverOutput +
 			getGamestate(updatedGame);
-			return replyWithSuccessEmbed(msg, "Baseball", body);
+			replyWithSuccessEmbed(msg, "Baseball", body);
+			if (body.includes("The side is retired") && !updatedGame.gameOver) {
+				const atBatUserId = getInningHalf(updatedGame.inning) === "T" ? updatedGame.awayTeam.userId : updatedGame.homeTeam.userId;
+				msg.channel.send(`<@${atBatUserId}>, you're up to bat!`);
+			}
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
@@ -403,7 +412,9 @@ const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTea
 	if (updatedGame && updatedUsers) {
 		const body = `<@${homeTeam.userId}> accepted a baseball game challenge${wagerText} from <@${awayTeam.userId}>! ` + 
 		wagerDetailText + "Play ball!\n\n" + getGamestate(updatedGame);
-		return replyWithSuccessEmbed(msg, "Baseball", body);
+		
+		replyWithSuccessEmbed(msg, "Baseball", body);
+		msg.channel.send(`<@${awayTeam.userId}>, you're up to bat!`);
 	}
 };
 
