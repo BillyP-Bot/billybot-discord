@@ -36,7 +36,7 @@ export const baseball = async (msg: Message, prefix: string, mention: GuildMembe
 			// if the user is not already in an active game but there are no users mentioned to send a challenge to, throw error unless they have sent a pending game challenge
 			if (args.length === 0 && !mention) {
 				const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id, true);
-				if (!game) throw "No active baseball game found! Run... ```!baseball @[username]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
+				if (!game) throw "No active baseball game found! Run... ```!baseball @[username] [wager]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
 				const wagerText = game.wager > 0 ? ` for ${game.wager} BillyBucks` : "";
 				return replyWithSuccessEmbed(msg, "Baseball", `<@${user.userId}>, you have a pending game challenge${wagerText} sent to <@${game.homeTeam.userId}>!`);
 			}
@@ -98,7 +98,7 @@ export const swing = async (msg: Message): Promise<void> => {
 	try {
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 		const game = await BaseballRepo.FindActiveGameForUser(user, msg.guild.id);
-		if (!game) throw "No active baseball game found! Run ```!baseball @[username]``` to challenge another user to a game, or to accept another user's pending challenge to you.";
+		if (!game) throw "No active baseball game found! Run... ```!baseball @[username] [wager]``` ...to challenge another user to a game, or to accept another user's pending challenge to you.";
 
 		const atBatUserId = getInningHalf(game.inning) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
 		if (user.userId !== atBatUserId) throw `Whoah, easy there, slugger! Wait your turn! Your opponent <@${atBatUserId}> is currently at bat.`;
@@ -475,7 +475,7 @@ const getBaserunnersDisplayText = (bases: string): string => {
 
 const getUserActionPromptDisplayText = (game: Baseball): string => {
 	const teamAtBatUserId: string = game.inning.charAt(0) === "T" ? game.awayTeam.userId : game.homeTeam.userId;
-	return `<@${teamAtBatUserId}> is up to bat. Here comes the pitch! Run ` + "```!swing``` to take a swing!";
+	return `<@${teamAtBatUserId}> is up to bat. Here comes the pitch! Run... ` + "```!swing``` ...to take a swing!";
 };
 
 // the game is over if either of the following is true:
