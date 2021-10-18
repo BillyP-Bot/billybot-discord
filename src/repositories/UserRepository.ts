@@ -36,6 +36,16 @@ export class UserRepository {
 		}
 	}
 
+	public static async UpdateOne(user: User): Promise<boolean> {
+		try {
+			let updated;
+			if (user) updated = await user.save();
+			if (updated) return true;
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
 	public static async UpdateBucks(userId: string, serverId: string, bucks: number, increment: boolean): Promise<boolean> {
 		try {
 			const exists = await User.findOne({ where: { userId: userId, serverId: serverId } });
@@ -122,6 +132,27 @@ export class UserRepository {
 	public static async FindUsersInLottery(serverId: string): Promise<User[]> {
 		try {
 			return await User.find({ serverId, inLottery: true });
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async GetSluggers(serverId: string): Promise<User[]> {
+		try {
+			const records = await User.find({
+				where: {
+					serverId: serverId
+				},
+				order: {  baseballWins: -1 },
+				take: 3
+			});
+			let normalized: any[] = [];
+
+			records.forEach(entry => {
+				normalized.push({ userId: entry.userId, baseballWins: entry.baseballWins });
+			});
+
+			return normalized;
 		} catch (e) {
 			throw Error(e);
 		}

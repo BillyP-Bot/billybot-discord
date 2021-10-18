@@ -1,5 +1,6 @@
 import { Index, Entity, Column, OneToMany } from "typeorm";
 import { Loan } from "./Loan";
+import { Baseball } from "./Baseball";
 
 import Base from "./Base";
 
@@ -33,6 +34,21 @@ export class User extends Base {
 	@Column({ default: false })
 	inLottery: boolean = false;
 
+	@Column({ default: false })
+	inBaseballGame: boolean = false;
+
+	@Column({ default: 0 })
+	baseballWins: number = 0;
+
+	@Column({ default: 0 })
+	baseballLosses: number = 0;
+
 	@OneToMany(() => Loan, loan => loan.user, { eager: true })
 	loans: Loan[];
+
+	@OneToMany(() => Baseball, baseball => baseball.awayTeam, { eager: true })
+	awayGames: Baseball[];
+
+	@OneToMany(() => Baseball, baseball => baseball.homeTeam, { eager: true })
+	homeGames: Baseball[];
 }
