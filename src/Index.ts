@@ -152,7 +152,16 @@ client.on("message", async (msg: Message) => {
 			baseball.cooperstown(msg);
 			break;
 		case /.*!stock.*/gmi.test(msg.content):
-			stocks.getPrice(msg, "!stock");
+			stocks.showPrice(msg, "!stock");
+			break;
+		case /.*!buystock.*/gmi.test(msg.content):
+			stocks.buy(msg, "!buystock");
+			break;
+		case /.*!sellstock.*/gmi.test(msg.content):
+			stocks.sell(msg, "!sellstock");
+			break;
+		case /.*!portfolio.*/gmi.test(msg.content):
+			stocks.portfolio(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
