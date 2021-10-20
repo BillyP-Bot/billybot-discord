@@ -49,6 +49,10 @@ export const Checks = {
 	swing: /.*!swing*/gmi,
 	forfeit: /.*!forfeit*/gmi,
 	cooperstown: /.*!cooperstown*/gmi,
+	stock: /.*!stock*/gmi,
+	buystock: /.*!buystock*/gmi,
+	sellstock: /.*!sellstock*/gmi,
+	portfolio: /.*!portfolio*/gmi,
 	goodBot: /.*good bot*/gmi,
 	badBot: /.*bad bot*/gmi
 };
@@ -77,6 +81,10 @@ export class Commands {
 	public static readonly swing: RegExp = /.*!swing*/gmi;
 	public static readonly forfeit: RegExp = /.*!swing*/gmi;
 	public static readonly cooperstown: RegExp = /.*!cooperstown*/gmi;
+	public static readonly stock: RegExp = /.*!stock*/gmi;
+	public static readonly buystock: RegExp = /.*!buystock*/gmi;
+	public static readonly sellstock: RegExp = /.*!sellstock*/gmi;
+	public static readonly portfolio: RegExp = /.*!portfolio*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }
@@ -105,6 +113,10 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!forfeit", description: "Withdraw outgoing pending baseball challenge or forfeit active game/wager." },
 	{ prefix: "!baseballrecord", description: "Show your baseball win/loss record, or for the specified user: '!baseballrecord @[username]'" },
 	{ prefix: "!cooperstown", description: "Show the top 3 users with the most baseball wins." },
+	{ prefix: "!stock", description: "Show the current price of the stock for the specified ticker symbol: '!stock [tickerSymbol]'" },
+	{ prefix: "!buystock", description: "Buy stock in the specified ticker symbol for the given amount of BillyBucks: '!buystock [tickerSymbol] [amount]'" },
+	{ prefix: "!sellstock", description: "Sell all stock you own for the specified ticker symbol: '!sellstock [tickerSymbol]'" },
+	{ prefix: "!portfolio", description: "View info on your active investments." },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];

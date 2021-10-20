@@ -1,0 +1,44 @@
+import { User } from "../models/User";
+import { Stock } from "../models/Stock";
+
+export class StockRepository {
+	public static async FindStocksForUser(serverId: string, user: User): Promise<Stock[]> {
+		try {
+			return await Stock.find({ serverId, user });
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async FindStockForUserBySymbol(serverId: string, user: User, tickerSymbol: string): Promise<Stock> {
+		try {
+			return await Stock.findOne({ serverId, user, tickerSymbol });
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async InsertOne(serverId: string, user: User, tickerSymbol: string, billyBucksInvested: number, boughtAtPrice: number): Promise<Stock> {
+		try {
+			const newStock = new Stock();
+			newStock.serverId = serverId;
+			newStock.user = user;
+			newStock.tickerSymbol = tickerSymbol;
+			newStock.billyBucksInvested = billyBucksInvested;
+			newStock.boughtAtPrice = boughtAtPrice;
+
+			return await newStock.save();
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async RemoveOne(stock: Stock, user: User): Promise<Stock> {
+		try {
+			user.stocks.splice(user.stocks.indexOf(stock), 1);
+			return await stock.remove();
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+}

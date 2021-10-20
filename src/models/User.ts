@@ -1,6 +1,7 @@
 import { Index, Entity, Column, OneToMany } from "typeorm";
 import { Loan } from "./Loan";
 import { Baseball } from "./Baseball";
+import { Stock } from "./Stock";
 
 import Base from "./Base";
 
@@ -51,4 +52,7 @@ export class User extends Base {
 
 	@OneToMany(() => Baseball, baseball => baseball.homeTeam, { eager: true })
 	homeGames: Baseball[];
+
+	@OneToMany(() => Stock, stock => stock.user, { eager: true })
+	stocks: Stock[];
 }
