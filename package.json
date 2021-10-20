@@ -45,6 +45,7 @@
     "request": "^2.88.2",
     "typeorm": "^0.2.34",
     "winston": "^3.3.3",
+    "yahoo-stock-prices": "^1.1.0",
     "ytdl-core": "^4.4.5",
     "ytdl-core-discord": "^1.2.5"
   }

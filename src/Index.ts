@@ -22,6 +22,7 @@ import * as roulette from "./methods/roulette";
 import * as lending from "./methods/lending";
 import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
+import * as stocks from "./methods/stocks";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -149,6 +150,9 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!cooperstown.*/gmi.test(msg.content):
 			baseball.cooperstown(msg);
+			break;
+		case /.*!stock.*/gmi.test(msg.content):
+			stocks.getPrice(msg, "!stock");
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
