@@ -27,7 +27,20 @@ export class StockRepository {
 			newStock.billyBucksInvested = billyBucksInvested;
 			newStock.boughtAtPrice = boughtAtPrice;
 
+			user.stocks.push(newStock);
+
+			await user.save();
 			return await newStock.save();
+		} catch (e) {
+			throw Error(e);
+		}
+	}
+
+	public static async UpdateOne(stock: Stock): Promise<boolean> {
+		try {
+			let updated;
+			if (stock) updated = await stock.save();
+			if (updated) return true;
 		} catch (e) {
 			throw Error(e);
 		}

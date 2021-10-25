@@ -8,7 +8,7 @@ import { UserRepository as UserRepo } from "../repositories/UserRepository";
 const api = require("yahoo-stock-prices");
 
 /*
-	!stock
+	!stock [tickerSymbol]
 	show the current price of the stock for the specified ticker symbol
 */
 export const showPrice = async (msg: Message, prefix: string): Promise<void> => {
@@ -45,20 +45,26 @@ export const buy = async (msg: Message, prefix: string): Promise<void> => {
 
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 
-		const alreadyInvested = await StockRepo.FindStockForUserBySymbol(msg.guild.id, user, symbol);
-		if (alreadyInvested) throw `You are already invested in ${symbol}! You must sell it before buying more.`;
-
 		if (user.billyBucks < amount) throw `Cannot invest ${amount} BillyBucks, you only have ${user.billyBucks}!`;
 
 		const currentPrice: number = (await getCurrentStockInfo(symbol)).price;
 		if (!currentPrice) throw `Cannot find ticker symbol: '${symbol}'!`;
 
+		let bought;
+		const alreadyInvested = await StockRepo.FindStockForUserBySymbol(msg.guild.id, user, symbol);
+		if (alreadyInvested) {
+			const avgPrice: number = parseFloat((((alreadyInvested.boughtAtPrice * alreadyInvested.billyBucksInvested) + (currentPrice * amount)) / (alreadyInvested.billyBucksInvested + amount)).toFixed(2));
+			alreadyInvested.boughtAtPrice = avgPrice;
+			alreadyInvested.billyBucksInvested += amount;
+			bought = await StockRepo.UpdateOne(alreadyInvested);
+		} else bought = await StockRepo.InsertOne(msg.guild.id, user, symbol, amount, currentPrice);
+
 		user.billyBucks -= amount;
 		const paid = await UserRepo.UpdateOne(user);
-		const bought = await StockRepo.InsertOne(msg.guild.id, user, symbol, amount, currentPrice);
+		
 		if (!paid || !bought) throw `Unexpected error encountered buying '${symbol}'!`;
 
-		replyWithSuccessEmbed(msg, "Stock Purchased", `You invested ${amount} BillyBucks in '${symbol}'!`);
+		replyWithSuccessEmbed(msg, "Stock Purchased", `You invested ${amount} BillyBucks in '${symbol}' at ${currentPrice}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -71,7 +77,7 @@ export const buy = async (msg: Message, prefix: string): Promise<void> => {
 export const sell = async (msg: Message, prefix: string): Promise<void> => {
 	try {
 		const args: string[] = msg.content.slice(prefix.length).trim().split(" ");
-		if (args[0] === "" || args.length !== 1) throw "Ticker symbol required! Usage: ```!sellstock [tickerSymbol]```";
+		if (args[0] === "") throw "Ticker symbol required! Usage: ```!sellstock [tickerSymbol]```";
 
 		const symbol: string = args[0].toUpperCase();
 
@@ -91,7 +97,7 @@ export const sell = async (msg: Message, prefix: string): Promise<void> => {
 		const removed = await StockRepo.RemoveOne(stock, user);
 		if (!sold || !removed) throw `Unexpected error occurred selling '${symbol}'!`;
 
-		replyWithSuccessEmbed(msg, "Stock Sold", `You sold your stock in '${symbol}' for ${sellValue} BillyBucks!`);
+		replyWithSuccessEmbed(msg, "Stock Sold", `You sold your stock in '${symbol}' for ${sellValue} BillyBucks at ${currentPrice}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -105,7 +111,8 @@ export const portfolio = async (msg: Message): Promise<void> => {
 	try {
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 		const stocks: Stock[] = await StockRepo.FindStocksForUser(msg.guild.id, user);
-		if (!stocks || stocks.length === 0) throw "No active investments!";
+		if (!stocks) throw `Error retrieving portfolio info for <@${user.userId}>!`;
+		if (stocks.length === 0) return replyWithSuccessEmbed(msg, "Stock Portfolio:", "No active investments!");
 
 		let body = "";
 		for (let i = 0; i < stocks.length; i++) {
@@ -116,15 +123,19 @@ export const portfolio = async (msg: Message): Promise<void> => {
 			const currency: string = res.currency;
 
 			const multiplier: number = currentPrice / stock.boughtAtPrice;
-			const sellValue: number = Math.floor(stock.billyBucksInvested * multiplier);
+			const sellValue: number = Math.round(stock.billyBucksInvested * multiplier);
 			const netGainOrLoss: number = sellValue - stock.billyBucksInvested;
+			const pctGainOrLoss: string = ((multiplier - 1) * 100).toFixed(2);
 
 			body += `**${stock.tickerSymbol}**\n`;
-			body += `Price Bought At: ${stock.boughtAtPrice} ${currency}\n`;
-			body += `Current Price: ${currentPrice} ${currency}\n`;
 			body += `Amount Invested: ${stock.billyBucksInvested} BillyBucks\n`;
-			body += `Net Gain/Loss: ${netGainOrLoss > 0  ? "+" : ""}${netGainOrLoss} BillyBucks\n\n`;
+			body += `Current Value: ${sellValue} BillyBucks\n`;
+			body += `Net Gain/Loss: ${netGainOrLoss >= 0  ? "+" : ""}${netGainOrLoss} BillyBucks (${parseFloat(pctGainOrLoss) >= 0  ? "+" : ""}${pctGainOrLoss}%)\n`;
+			body += `Avg. Price Bought At: ${stock.boughtAtPrice} ${currency}\n`;
+			body += `Current Price: ${currentPrice.toFixed(2)} ${currency}\n\n`;
 		}
+
+		body += `Uninvested Cash: ${user.billyBucks} BillyBucks`;
 
 		replyWithSuccessEmbed(msg, "Stock Portfolio:", body);
 	} catch (error) {
