@@ -29,13 +29,21 @@ export class StockApi {
 		baseURL: StockApi.base
 	});
 
-	public static async GetPrice(ticker: string): Promise<number> {
+	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string }> {
 		const symbol = ticker.toUpperCase().trim();
 		const { data } = await StockApi.client.get(symbol);
-		const price = data.split(`"${symbol}":{"sourceInterval"`)[1]
+
+		const price = parseFloat(data.split(`"${symbol}":{"sourceInterval"`)[1]
 			.split("regularMarketPrice")[1]
 			.split("fmt\":\"")[1]
-			.split("\"")[0];
-		return parseFloat(price);
+			.split("\"")[0]);
+
+		const currencyMatch = data.match(/Currency in ([A-Za-z]{3})/);
+		let currency = null;
+		if (currencyMatch) {
+			currency = currencyMatch[1];
+		}
+		
+		return { price, currency };
 	}
 }
