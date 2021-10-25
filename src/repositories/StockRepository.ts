@@ -49,6 +49,7 @@ export class StockRepository {
 	public static async RemoveOne(stock: Stock, user: User): Promise<Stock> {
 		try {
 			user.stocks.splice(user.stocks.indexOf(stock), 1);
+			await user.save();
 			return await stock.remove();
 		} catch (e) {
 			throw Error(e);
