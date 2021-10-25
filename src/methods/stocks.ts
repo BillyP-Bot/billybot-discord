@@ -47,24 +47,25 @@ export const buy = async (msg: Message, prefix: string): Promise<void> => {
 
 		if (user.billyBucks < amount) throw `Cannot invest ${amount} BillyBucks, you only have ${user.billyBucks}!`;
 
-		const currentPrice: number = (await getCurrentStockInfo(symbol)).price;
-		if (!currentPrice) throw `Cannot find ticker symbol: '${symbol}'!`;
+		const currentStockInfo = await getCurrentStockInfo(symbol);
+		if (!currentStockInfo) throw `Cannot find ticker symbol: '${symbol}'!`;
 
 		let bought;
 		const alreadyInvested = await StockRepo.FindStockForUserBySymbol(msg.guild.id, user, symbol);
 		if (alreadyInvested) {
-			const avgPrice: number = parseFloat((((alreadyInvested.boughtAtPrice * alreadyInvested.billyBucksInvested) + (currentPrice * amount)) / (alreadyInvested.billyBucksInvested + amount)).toFixed(2));
+			const avgPrice: number = parseFloat((((alreadyInvested.boughtAtPrice * alreadyInvested.billyBucksInvested) + (currentStockInfo.price * amount)) / (alreadyInvested.billyBucksInvested + amount)).toFixed(2));
 			alreadyInvested.boughtAtPrice = avgPrice;
 			alreadyInvested.billyBucksInvested += amount;
 			bought = await StockRepo.UpdateOne(alreadyInvested);
-		} else bought = await StockRepo.InsertOne(msg.guild.id, user, symbol, amount, currentPrice);
+		} else bought = await StockRepo.InsertOne(msg.guild.id, user, symbol, amount, currentStockInfo.price);
 
 		user.billyBucks -= amount;
 		const paid = await UserRepo.UpdateOne(user);
 		
 		if (!paid || !bought) throw `Unexpected error encountered buying '${symbol}'!`;
 
-		replyWithSuccessEmbed(msg, "Stock Purchased", `You invested ${amount} BillyBucks in '${symbol}' at ${currentPrice}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
+		replyWithSuccessEmbed(msg, "Stock Purchased", `You invested ${amount} BillyBucks in '${symbol}' at ` +
+			`${currentStockInfo.price} ${currentStockInfo.currency}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -86,10 +87,10 @@ export const sell = async (msg: Message, prefix: string): Promise<void> => {
 		const stock = await StockRepo.FindStockForUserBySymbol(msg.guild.id, user, symbol);
 		if (!stock) throw `Cannot sell '${symbol}'! You are not invested in it.`;
 
-		const currentPrice: number = (await getCurrentStockInfo(symbol)).price;
-		if (!currentPrice) throw `Cannot find ticker symbol: '${symbol}'!`;
+		const currentStockInfo = await getCurrentStockInfo(symbol);
+		if (!currentStockInfo) throw `Cannot find ticker symbol: '${symbol}'!`;
 
-		const multiplier: number = currentPrice / stock.boughtAtPrice;
+		const multiplier: number = currentStockInfo.price / stock.boughtAtPrice;
 		const sellValue: number = Math.floor(stock.billyBucksInvested * multiplier);
 
 		user.billyBucks += sellValue;
@@ -97,7 +98,8 @@ export const sell = async (msg: Message, prefix: string): Promise<void> => {
 		const removed = await StockRepo.RemoveOne(stock, user);
 		if (!sold || !removed) throw `Unexpected error occurred selling '${symbol}'!`;
 
-		replyWithSuccessEmbed(msg, "Stock Sold", `You sold your stock in '${symbol}' for ${sellValue} BillyBucks at ${currentPrice}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
+		replyWithSuccessEmbed(msg, "Stock Sold", `You sold your stock in '${symbol}' for ${sellValue} BillyBucks at ` +
+			`${currentStockInfo.price} ${currentStockInfo.currency}!\n\nYou now have ${user.billyBucks} BillyBucks.`);
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
 	}
@@ -118,9 +120,9 @@ export const portfolio = async (msg: Message): Promise<void> => {
 		for (let i = 0; i < stocks.length; i++) {
 			const stock = stocks[i];
 
-			const res = await getCurrentStockInfo(stock.tickerSymbol);
-			const currentPrice: number = res.price;
-			const currency: string = res.currency;
+			const currentStockInfo = await getCurrentStockInfo(stock.tickerSymbol);
+			const currentPrice: number = currentStockInfo.price;
+			const currency: string = currentStockInfo.currency;
 
 			const multiplier: number = currentPrice / stock.boughtAtPrice;
 			const sellValue: number = Math.round(stock.billyBucksInvested * multiplier);
