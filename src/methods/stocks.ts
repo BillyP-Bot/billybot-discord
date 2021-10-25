@@ -4,8 +4,7 @@ import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 import { Stock } from "../models/Stock";
 import { StockRepository as StockRepo } from "../repositories/StockRepository";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
-
-const api = require("yahoo-stock-prices");
+import { StockApi as api } from "../services/rest";
 
 /*
 	!stock [tickerSymbol]
@@ -146,5 +145,5 @@ export const portfolio = async (msg: Message): Promise<void> => {
 };
 
 const getCurrentStockInfo = async (tickerSymbol: string): Promise<{ price: number, currency: string }> => {
-	return await api.getCurrentData(tickerSymbol);
+	return await api.GetCurrentData(tickerSymbol);
 };
