@@ -90,7 +90,7 @@ export const sell = async (msg: Message, prefix: string): Promise<void> => {
 		if (!currentStockInfo) throw `Cannot find ticker symbol: '${symbol}'!`;
 
 		const multiplier: number = currentStockInfo.price / stock.boughtAtPrice;
-		const sellValue: number = Math.floor(stock.billyBucksInvested * multiplier);
+		const sellValue: number = Math.round(stock.billyBucksInvested * multiplier);
 
 		user.billyBucks += sellValue;
 		const sold = await UserRepo.UpdateOne(user);
