@@ -69,6 +69,9 @@ client.on("message", async (msg: Message) => {
 		case /.*(!help).*/gmi.test(msg.content):
 			Generic.Help(msg);
 			break;
+		case /.*(!sheesh).*/gmi.test(msg.content):
+			await message.sheesh(msg);
+			break;
 		case /.*(!skistats).*/gmi.test(msg.content):
 			skistats.all(msg);
 			break;

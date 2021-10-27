@@ -9,8 +9,8 @@ const billyPUsernames: string[] = ["BT-Bot-Dev", "Billy Prod Bot", "BillyP Bot"]
 
 export const goodBot = (msg: Message): void => {
 	const billyHappy: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyHappy");
-	
-	try{
+
+	try {
 		msg.react(billyHappy);
 	} catch (error) {
 		logger.error(error);
@@ -19,8 +19,8 @@ export const goodBot = (msg: Message): void => {
 
 export const badBot = (msg: Message): void => {
 	const billyMad: GuildEmoji = msg.guild.emojis.cache.find((e: GuildEmoji) => e.name === "BillyMad");
-	
-	try{
+
+	try {
 		msg.react(billyMad);
 	} catch (error) {
 		logger.error(error);
@@ -42,6 +42,10 @@ export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 	generalChannels.forEach(async (channel: TextChannel) => {
 		await channel.send(card);
 	});
+};
+
+export const sheesh = async (msg: Message): Promise<Message> => {
+	return await msg.channel.send("this is a work in progress");
 };
 
 export const includesAndResponse = (msg: Message, prompts: string[][]): void => {
