@@ -33,10 +33,12 @@ export class StockApi {
 		const symbol = ticker.toUpperCase().trim();
 		const { data } = await StockApi.client.get(symbol);
 
-		const price = parseFloat(data.split(`"${symbol}":{"sourceInterval"`)[1]
+		let price: string = data.split(`"${symbol}":{"sourceInterval"`)[1]
 			.split("regularMarketPrice")[1]
 			.split("fmt\":\"")[1]
-			.split("\"")[0]);
+			.split("\"")[0];
+
+		price = price.replace(",", "");
 
 		const currencyMatch = data.match(/Currency in ([A-Za-z]{3})/);
 		let currency = null;
@@ -44,6 +46,6 @@ export class StockApi {
 			currency = currencyMatch[1];
 		}
 		
-		return { price, currency };
+		return { price: parseFloat(price), currency };
 	}
 }
