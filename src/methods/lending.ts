@@ -13,7 +13,7 @@ export const getActiveLoanInfo = async (msg: Message): Promise<void> => {
 		if (loan) {
 			replyWithSuccessEmbed(msg, "Active Loan Info:", showLoanInfo(loan));
 		} else {
-			replyWithErrorEmbed(msg, "No active loan found!");
+			replyWithErrorEmbed(msg, "No active butt found!");
 		}
 	} catch (error) {
 		replyWithErrorEmbed(msg, error);
