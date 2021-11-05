@@ -94,7 +94,7 @@ export const sell = async (msg: Message, prefix: string): Promise<void> => {
 
 		user.billyBucks += sellValue;
 		const sold = await UserRepo.UpdateOne(user);
-		const removed = await StockRepo.RemoveOne(stock, user);
+		const removed = await StockRepo.RemoveOne(stock);
 		if (!sold || !removed) throw `Unexpected error occurred selling '${symbol}'!`;
 
 		replyWithSuccessEmbed(msg, "Stock Sold", `You sold your stock in '${symbol}' for ${sellValue} BillyBucks at ` +
