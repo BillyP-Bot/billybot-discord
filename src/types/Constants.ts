@@ -53,6 +53,7 @@ export const Checks = {
 	buystock: /.*!buystock*/gmi,
 	sellstock: /.*!sellstock*/gmi,
 	portfolio: /.*!portfolio*/gmi,
+	disc: /.*!disc*/gmi,
 	goodBot: /.*good bot*/gmi,
 	badBot: /.*bad bot*/gmi
 };
@@ -85,6 +86,7 @@ export class Commands {
 	public static readonly buystock: RegExp = /.*!buystock*/gmi;
 	public static readonly sellstock: RegExp = /.*!sellstock*/gmi;
 	public static readonly portfolio: RegExp = /.*!portfolio*/gmi;
+	public static readonly disc: RegExp = /.*!disc*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
 }
@@ -117,6 +119,7 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!buystock", description: "Buy stock in the specified ticker symbol for the given amount of BillyBucks: '!buystock [tickerSymbol] [amount]'" },
 	{ prefix: "!sellstock", description: "Sell all stock you own for the specified ticker symbol: '!sellstock [tickerSymbol]'" },
 	{ prefix: "!portfolio", description: "View info on your active investments." },
+	{ prefix: "!disc", description: "Show info about a disc golf disc! Usage: '!disc [name]'" },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
 	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
 ];
