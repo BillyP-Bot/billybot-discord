@@ -14,6 +14,7 @@ import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
 import * as dianne from "./methods/dianne";
+import * as disc from "./methods/disc";
 import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
@@ -165,6 +166,9 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!portfolio.*/gmi.test(msg.content):
 			stocks.portfolio(msg);
+			break;
+		case /.*!disc.*/gmi.test(msg.content):
+			disc.disc(msg, "!disc");
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
