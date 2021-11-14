@@ -20,10 +20,10 @@ export const disc = async (msg: Message, prefix: string) => {
 		if (!disc) throw `No disc found for name: '${name}'`;
 
 		let output =
-			(disc.name.toLowerCase() !== disc.slug ? `\`${disc.slug}\`\n\n` : "") +
+			(disc.name.toLowerCase() !== disc.name_slug ? `\`${disc.name_slug}\`\n\n` : "") +
 			`Brand: \`${disc.brand}\`\n` +
-			`Category: \`${CategoryMap.get(disc.category)}\`\n` +
-			`Stability: \`${StabilityMap.get(disc.stability)}\`\n\n` +
+			`Category: \`${disc.category}\`\n` +
+			`Stability: \`${disc.stability}\`\n\n` +
 			`Speed: \`${disc.speed}\`\n` +
 			`Glide: \`${disc.glide}\`\n` +
 			`Turn: \`${disc.turn}\`\n` +
@@ -32,7 +32,7 @@ export const disc = async (msg: Message, prefix: string) => {
 			`${disc.link}\n\n` +
 			(res.data.length > 1 ?
 				"Other discs with a similar name:\n" +
-				getOtherDiscNames(res.data, disc.slug) : ""
+				getOtherDiscNames(res.data, disc.name_slug) : ""
 			);
 
 		replyWithSuccessEmbed(msg, disc.name, output);
@@ -46,8 +46,8 @@ const getOtherDiscNames = (discs: IDisc[], currentDiscSlug: string): string => {
 	let names = "";
 	let count = 1;
 	for (const disc of discs) {
-		if (disc.slug !== currentDiscSlug) {
-			names += (names ? ", " : "") + disc.name + (disc.name.toLowerCase() !== disc.slug ? ` (${disc.slug})` : "");
+		if (disc.name_slug !== currentDiscSlug) {
+			names += (names ? ", " : "") + disc.name + (disc.name.toLowerCase() !== disc.name_slug ? ` (${disc.name_slug})` : "");
 			count++;
 			if (count > 10) break;
 		}
@@ -55,22 +55,6 @@ const getOtherDiscNames = (discs: IDisc[], currentDiscSlug: string): string => {
 	return names;
 };
 
-const CategoryMap = new Map([
-	["distance-driver", "Distance Driver"],
-	["hybrid-driver", "Hybrid Driver"],
-	["control-driver", "Control Driver"],
-	["midrange", "Midrange"],
-	["putter", "Putter"]
-]);
-
-const StabilityMap = new Map([
-	["very-overstable", "Very Overstable"],
-	["overstable", "Overstable"],
-	["stable", "Stable"],
-	["understable", "Understable"],
-	["very-understable", "Very Understable"]
-]);
-
 const compareDiscSlugsAlphabeticallyForSort = (a: IDisc, b: IDisc): number => {
-	return a.slug.localeCompare(b.slug);
+	return a.name_slug.localeCompare(b.name_slug);
 };
