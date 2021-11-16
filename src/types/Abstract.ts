@@ -45,3 +45,17 @@ export interface IBaserunningResult {
 	bases: string,
 	rbi: number
 }
+
+export interface IDisc {
+	name: string,
+	brand: string,
+	category: string,
+	speed: string,
+	glide: string,
+	turn: string,
+	fade: string,
+	stability: string,
+	link: string,
+	pic: string,
+	name_slug: string
+}
