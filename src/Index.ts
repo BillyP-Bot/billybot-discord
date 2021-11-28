@@ -170,6 +170,9 @@ client.on("message", async (msg: Message) => {
 		case /.*!disc.*/gmi.test(msg.content):
 			disc.disc(msg, "!disc");
 			break;
+		case /.*!sheesh.*/gmi.test(msg.content):
+			message.sheesh(msg);
+			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
 			kyle.kyleNoWorking(msg);

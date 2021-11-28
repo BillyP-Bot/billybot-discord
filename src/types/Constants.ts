@@ -55,7 +55,8 @@ export const Checks = {
 	portfolio: /.*!portfolio*/gmi,
 	disc: /.*!disc*/gmi,
 	goodBot: /.*good bot*/gmi,
-	badBot: /.*bad bot*/gmi
+	badBot: /.*bad bot*/gmi,
+	sheesh: /.*!sheesh*/gmi,
 };
 
 export class Commands {
@@ -89,6 +90,7 @@ export class Commands {
 	public static readonly disc: RegExp = /.*!disc*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
+	public static readonly sheesh: RegExp = /.*!sheesh*/gmi;
 }
 
 export const CommandDescriptor: ICommand[] = [
@@ -121,5 +123,6 @@ export const CommandDescriptor: ICommand[] = [
 	{ prefix: "!portfolio", description: "View info on your active investments." },
 	{ prefix: "!disc", description: "Show info about a disc golf disc! Usage: '!disc [name]'" },
 	{ prefix: "good bot", description: "Give me a pat on the head :)" },
-	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." }
+	{ prefix: "bad bot", description: "Tell me if I'm doing a bad job." },
+	{ prefix: "!sheesh", description: "Sheeeeeeeeeeeeeesssshhhhh..." }
 ];
