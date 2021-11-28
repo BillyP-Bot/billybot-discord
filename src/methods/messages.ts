@@ -27,6 +27,14 @@ export const badBot = (msg: Message): void => {
 	}
 };
 
+export const sheesh = (msg: Message): void => {
+	try {
+		msg.channel.send("Sheeeeeeeeeeeeeeeeesssshhhhh...");
+	} catch (error) {
+		logger.error(error);
+	}
+};
+
 export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 	const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
 	const generalChannels = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "general");
