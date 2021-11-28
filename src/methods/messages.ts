@@ -52,10 +52,6 @@ export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 	});
 };
 
-export const sheesh = async (msg: Message): Promise<Message> => {
-	return await msg.channel.send("this is a work in progress");
-};
-
 export const includesAndResponse = (msg: Message, prompts: string[][]): void => {
 	const m: string = msg.content.toUpperCase().trim();
 
