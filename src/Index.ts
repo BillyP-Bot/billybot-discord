@@ -182,11 +182,15 @@ client.on("message", async (msg: Message) => {
 
 client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
 	try {
-		if (react.message.author.bot) return;
-
-		switch (true){
-			case (react.emoji.name === "BillyBuck"):
-				Currency.BuckReact(react, user.id);
+		if (react.message.author.bot) {
+			if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
+				react.message.channel.send(`<@${user.id}> 🖕`);
+			}
+		} else {
+			switch (true){
+				case (react.emoji.name === "BillyBuck"):
+					Currency.BuckReact(react, user.id);
+			}
 		}
 	} catch (error) {
 		logger.error(error);
