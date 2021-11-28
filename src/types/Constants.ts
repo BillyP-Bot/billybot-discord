@@ -90,7 +90,7 @@ export class Commands {
 	public static readonly disc: RegExp = /.*!disc*/gmi;
 	public static readonly goodBot: RegExp = /.*good bot*/gmi;
 	public static readonly badBot: RegExp = /.*bad bot*/gmi;
-	public static readonly sheesh: RegExp = /.*sheesh*/gmi;
+	public static readonly sheesh: RegExp = /.*!sheesh*/gmi;
 }
 
 export const CommandDescriptor: ICommand[] = [
