@@ -49,3 +49,15 @@ export class StockApi {
 		return { price: parseFloat(price), currency };
 	}
 }
+
+export class BtBackend {
+
+	public static readonly Client = axios.create({
+		baseURL: config.BT_BOT_API_ENDPOINT,
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${config.BT_BOT_AUTH_TOKEN}`,
+			"x-api-key": config.BT_BOT_X_API_TOKEN
+		}
+	});
+}

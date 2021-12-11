@@ -51,7 +51,7 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
+	// client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
