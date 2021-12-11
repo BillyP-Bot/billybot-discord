@@ -143,12 +143,13 @@ export default class Currency {
 
 	public static async BuckReact({ message }: MessageReaction, userId: string): Promise<void> {
 		try {
-			BtBackend.Client.put("user/pay", {
+			const { data } = await BtBackend.Client.put("user/pay", {
 				server: message.guild.id,
 				amount: 1,
 				payerId: userId,
 				recipientId: message.author.id
 			});
+			console.log(data);
 		}
 		catch (error) {
 			if (error === "user not found")
