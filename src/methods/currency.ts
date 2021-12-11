@@ -141,17 +141,14 @@ export default class Currency {
 		}
 	}
 
-	public static async BuckReact(react: MessageReaction, userId: string): Promise<void> {
+	public static async BuckReact({ message }: MessageReaction, userId: string): Promise<void> {
 		try {
-			const guildId: string = react.message.guild.id;
-			const authorId: string = react.message.author.id;
-			//check configured
-			await User.GetBucks(authorId, react.message.guild.id);
-			const user$: number = await User.GetBucks(userId, react.message.guild.id);
-			if (user$ > 0) {
-				await User.UpdateBucks(authorId, guildId, 1, true);
-				await User.UpdateBucks(userId, guildId, -1, true);
-			}
+			BtBackend.Client.put("user/pay", {
+				server: message.guild.id,
+				amount: 1,
+				payerId: userId,
+				recipientId: message.author.id
+			});
 		}
 		catch (error) {
 			if (error === "user not found")
