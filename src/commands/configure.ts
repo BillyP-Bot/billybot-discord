@@ -1,4 +1,4 @@
-import { Message, Collection, GuildMember } from "discord.js";
+import { Message } from "discord.js";
 
 import { client } from "../helpers/client";
 import { BtBackend } from "../services/rest";
@@ -18,8 +18,8 @@ export default {
 		const serverId: string = msg.guild.id;
 		const guild = await client.guilds.fetch(serverId);
 
-		const members: Collection<string, GuildMember> = await guild.members.fetch();
-		const notBots: Collection<string, GuildMember> = members.filter(a => a.user.bot == false);
+		const members = await guild.members.fetch();
+		const notBots = members.filter(a => a.user.bot == false);
 
 		notBots.forEach(({ user }) => {
 			users.push({

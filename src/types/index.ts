@@ -30,3 +30,5 @@ export interface IUser {
 	has_active_loan?: boolean,
 	in_lottery?: boolean
 }
+
+export type RouletteColor = "RED" | "BLACK" | "GREEN";

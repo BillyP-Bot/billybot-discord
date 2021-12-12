@@ -1,15 +1,10 @@
 /* eslint-disable indent */
-import "dotenv";
-import "reflect-metadata";
-import { Client, Guild, Intents, Message, MessageEmbed, MessageReaction } from "discord.js";
+import "dotenv/config";
+import { Guild, Message, MessageEmbed} from "discord.js";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
-
-// import { Database } from "./services/db";
 import CronJobs from "./methods/cronJobs";
-import Currency from "./methods/currency";
-import Generic from "./methods/generic";
 import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
@@ -19,7 +14,6 @@ import * as skistats from "./methods/skiStats";
 import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
-import * as roulette from "./methods/roulette";
 import * as lending from "./methods/lending";
 import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
@@ -30,6 +24,7 @@ import path from "path";
 
 import { client } from "./helpers/client";
 import { ICommandHandler } from "./types";
+import { BtBackend } from "./services/rest";
 
 const commandsDir = path.join(__dirname, "./commands");
 const commands: ICommandHandler[] = [];
@@ -55,7 +50,7 @@ const messageHandler = async (msg: Message) => {
 		if (!cmd) return;
 
 		const args = msg.content.split(" ").slice(1).filter(a => a !== null && a.trim() != "");
-		if(cmd.requiredArgs && args.length < cmd.arguments.length)
+		if (cmd.requiredArgs && args.length < cmd.arguments.length)
 			throw new Error(`This Command Has Required Arguments\nCommand Usage:\n${cmd.properUsage}`);
 
 		await cmd.resolver(msg, args);
@@ -71,7 +66,6 @@ const messageHandler = async (msg: Message) => {
 	}
 };
 
-// instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
 const triggersAndResponses: string[][] = [
@@ -87,7 +81,7 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	// client.user.setAvatar(Images.billyMad);
+	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
@@ -105,30 +99,9 @@ client.on("messageCreate", async (msg: Message) => {
 			message.billyPoggersReact(msg);
 
 		switch (true) {
-			// case /.*(!help).*/gmi.test(msg.content):
-			// 	Generic.Help(msg);
-			// 	break;
-			case /.*(!sheesh).*/gmi.test(msg.content):
-				await message.sheesh(msg);
-				break;
 			case /.*(!skistats).*/gmi.test(msg.content):
 				skistats.all(msg);
 				break;
-			// case /.*!bucks.*/gmi.test(msg.content):
-			// 	Currency.CheckBucks(msg, "!bucks", firstMention);
-			// 	break;
-			// case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-			// 	Currency.BillyPay(msg, "!billypay", firstMention);
-			// 	break;
-			// case /.*!configure.*/gmi.test(msg.content):
-			// 	Currency.Configure(client, msg);
-			// 	break;
-			// case /.*!allowance.*/gmi.test(msg.content):
-			// 	Currency.Allowance(msg);
-			// 	break;
-			// case /.*!noblemen.*/gmi.test(msg.content):
-			// 	Currency.GetNobles(msg);
-			// 	break;
 			case /.*!boydTownRoad.*/gmi.test(msg.content):
 				boyd.townRoad(msg);
 				break;
@@ -155,9 +128,6 @@ client.on("messageCreate", async (msg: Message) => {
 				break;
 			case /.*bad bot.*/gmi.test(msg.content):
 				message.badBot(msg);
-				break;
-			case /.*!spin.*/gmi.test(msg.content):
-				roulette.spin(msg, "!spin");
 				break;
 			case /.*!loan.*/gmi.test(msg.content):
 				lending.getActiveLoanInfo(msg);
@@ -207,9 +177,6 @@ client.on("messageCreate", async (msg: Message) => {
 			case /.*!disc.*/gmi.test(msg.content):
 				disc.disc(msg, "!disc");
 				break;
-			case /.*!sheesh.*/gmi.test(msg.content):
-				message.sheesh(msg);
-				break;
 			default:
 				message.includesAndResponse(msg, triggersAndResponses);
 				kyle.kyleNoWorking(msg);
@@ -229,7 +196,12 @@ client.on("messageReactionAdd", async (react, user) => {
 	} else {
 		switch (true) {
 			case (react.emoji.name === "BillyBuck"):
-				Currency.BuckReact(react as MessageReaction, user.id);
+				BtBackend.Client.put("user/pay", {
+					server: react.message.guild.id,
+					amount: 1,
+					payerId: user.id,
+					recipientId: react.message.author.id
+				});
 		}
 	}
 });
