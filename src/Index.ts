@@ -7,11 +7,9 @@ import logger from "./services/logger";
 import CronJobs from "./methods/cronJobs";
 import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
-import * as boyd from "./methods/boyd";
 import * as disc from "./methods/disc";
 import * as skistats from "./methods/skiStats";
 import * as kyle from "./methods/kyle";
-import * as joe from "./methods/joe";
 import * as lending from "./methods/lending";
 import * as baseball from "./methods/baseball";
 import * as stocks from "./methods/stocks";
@@ -96,15 +94,6 @@ client.on("messageCreate", async (msg: Message) => {
 		switch (true) {
 			case /.*(!skistats).*/gmi.test(msg.content):
 				skistats.all(msg);
-				break;
-			case /.*!boydTownRoad.*/gmi.test(msg.content):
-				boyd.townRoad(msg);
-				break;
-			case /.*!stop.*/gmi.test(msg.content):
-				boyd.exitStream(msg);
-				break;
-			case /.*!joe.*/gmi.test(msg.content):
-				joe.joe(msg);
 				break;
 			case msg.channel.type !== "DM" && msg.channel.name === "admin-announcements":
 				message.adminMsg(msg, client);
