@@ -3,7 +3,7 @@
 		"experimentalDecorators": true,
 		"module": "commonjs",
 		"esModuleInterop": true,
-		"target": "es6",
+		"target": "ESNext",
 		"noImplicitAny": true,
 		"moduleResolution": "node",
 		"sourceMap": true,

@@ -1,12 +1,12 @@
 /* eslint-disable indent */
 import "dotenv";
 import "reflect-metadata";
-import { Client, Guild, Intents, Message, MessageReaction } from "discord.js";
+import { Client, Guild, Intents, Message, MessageEmbed, MessageReaction } from "discord.js";
 
 import config from "./helpers/config";
 import logger from "./services/logger";
 
-import { Database } from "./services/db";
+// import { Database } from "./services/db";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
@@ -25,39 +25,54 @@ import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
 import * as stocks from "./methods/stocks";
 
-// const intents: Intents = new Intents();
-// intents.add(Intents.ALL);
-const client: Client = new Client({
-	intents: [
-		Intents.FLAGS.GUILDS,
-		Intents.FLAGS.GUILD_MEMBERS,
-		Intents.FLAGS.GUILD_BANS,
-		Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
-		Intents.FLAGS.GUILD_INTEGRATIONS,
-		Intents.FLAGS.GUILD_WEBHOOKS,
-		Intents.FLAGS.GUILD_INVITES,
-		Intents.FLAGS.GUILD_VOICE_STATES,
-		Intents.FLAGS.GUILD_PRESENCES,
-		Intents.FLAGS.GUILD_MESSAGES,
-		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-		Intents.FLAGS.GUILD_MESSAGE_TYPING,
-		Intents.FLAGS.DIRECT_MESSAGES,
-		Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
-		Intents.FLAGS.DIRECT_MESSAGE_TYPING
-	],
-	partials: ["MESSAGE", "CHANNEL", "REACTION"],
-});
+import { readdirSync } from "fs";
+import path from "path";
+
+import { client } from "./helpers/client";
+import { ICommandHandler } from "./types";
+
+const commandsDir = path.join(__dirname, "./commands");
+const commands: ICommandHandler[] = [];
+
+const importCommands = () => {
+	const files = readdirSync(commandsDir);
+	console.log(files);
+	for (const file of files) {
+		const handler = require(`${commandsDir}/${file}`).default as ICommandHandler;
+		commands.push(handler);
+	}
+	console.log(`${commands.length} commands registered`);
+};
+
+const messageHandler = async (msg: Message) => {
+	try {
+		if (!msg.guild) return;
+		if (msg.author.bot) return;
+		if (!msg.content.startsWith("!")) return;
+
+		const _case = msg.content.split("!")[1];
+		const cmd = commands.find(a => a.case == _case?.split(" ")[0]);
+		if (!cmd) return;
+
+		const args = msg.content.split(" ").slice(1).filter(a => a !== null && a.trim() != "");
+		if(cmd.requiredArgs && args.length < cmd.arguments.length)
+			throw new Error(`This Command Has Required Arguments\nCommand Usage:\n${cmd.properUsage}`);
+
+		await cmd.resolver(msg, args);
+	} catch (error) {
+		console.log(error);
+		const embed = new MessageEmbed()
+			.setColor("RED")
+			.addFields([
+				{ name: "Error:", value: `\`\`\`${error.message}\`\`\`` || "```An Error Has Occured```" }
+			])
+			.setTimestamp();
+		await msg.channel.send({ embeds: [embed] });
+	}
+};
 
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
-
-(async () => {
-	try {
-		await Database.Connect();
-	} catch (error) {
-		logger.info(error);
-	}
-})();
 
 const triggersAndResponses: string[][] = [
 	["!loop", "no !loop please"],
@@ -72,7 +87,7 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
+	// client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
@@ -80,6 +95,7 @@ client.on("ready", () => {
 });
 
 client.on("messageCreate", async (msg: Message) => {
+	await messageHandler(msg);
 	try {
 		if (msg.author.bot) return;
 
@@ -89,30 +105,30 @@ client.on("messageCreate", async (msg: Message) => {
 			message.billyPoggersReact(msg);
 
 		switch (true) {
-			case /.*(!help).*/gmi.test(msg.content):
-				Generic.Help(msg);
-				break;
+			// case /.*(!help).*/gmi.test(msg.content):
+			// 	Generic.Help(msg);
+			// 	break;
 			case /.*(!sheesh).*/gmi.test(msg.content):
 				await message.sheesh(msg);
 				break;
 			case /.*(!skistats).*/gmi.test(msg.content):
 				skistats.all(msg);
 				break;
-			case /.*!bucks.*/gmi.test(msg.content):
-				Currency.CheckBucks(msg, "!bucks", firstMention);
-				break;
-			case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-				Currency.BillyPay(msg, "!billypay", firstMention);
-				break;
-			case /.*!configure.*/gmi.test(msg.content):
-				Currency.Configure(client, msg);
-				break;
-			case /.*!allowance.*/gmi.test(msg.content):
-				Currency.Allowance(msg);
-				break;
-			case /.*!noblemen.*/gmi.test(msg.content):
-				Currency.GetNobles(msg);
-				break;
+			// case /.*!bucks.*/gmi.test(msg.content):
+			// 	Currency.CheckBucks(msg, "!bucks", firstMention);
+			// 	break;
+			// case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
+			// 	Currency.BillyPay(msg, "!billypay", firstMention);
+			// 	break;
+			// case /.*!configure.*/gmi.test(msg.content):
+			// 	Currency.Configure(client, msg);
+			// 	break;
+			// case /.*!allowance.*/gmi.test(msg.content):
+			// 	Currency.Allowance(msg);
+			// 	break;
+			// case /.*!noblemen.*/gmi.test(msg.content):
+			// 	Currency.GetNobles(msg);
+			// 	break;
 			case /.*!boydTownRoad.*/gmi.test(msg.content):
 				boyd.townRoad(msg);
 				break;
@@ -222,6 +238,7 @@ client.on("unhandledRejection", error => {
 	logger.error("Unhanded promise rejection: ", error);
 });
 
-client.login(config.BOT_TOKEN).catch(e => {
-	logger.error(e);
-});
+(async () => {
+	importCommands();
+	await client.login(config.BOT_TOKEN);
+})();
