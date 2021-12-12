@@ -11,7 +11,7 @@ export interface ICommandHandler {
 	requiredArgs: boolean,
 	arguments: string[],
 	properUsage: string,
-	resolver: (msg: Message, args?: string[]) => Promise<void>,
+	resolver: (msg: Message, args?: string[]) => Promise<void>
 }
 
 /**
@@ -21,7 +21,7 @@ export interface ICommandHandler {
  */
 export interface IPhraseHandler {
 	case: RegExp,
-	resolver: (msg: Message) => Promise<void>,
+	resolver: (msg: Message) => Promise<void>
 }
 
 /**
@@ -38,6 +38,16 @@ export interface IUser {
 	creditScore?: number,
 	has_active_loan?: boolean,
 	in_lottery?: boolean
+}
+
+/**
+ *
+ * @export
+ * @interface IAdminCommandHandler
+ */
+export interface IAdminCommandHandler {
+	case: (msg: Message) => boolean,
+	resolver: (msg: Message, args?: string[]) => Promise<void>
 }
 
 export type RouletteColor = "RED" | "BLACK" | "GREEN";

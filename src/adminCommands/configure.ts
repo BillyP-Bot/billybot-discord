@@ -2,17 +2,11 @@ import { Message } from "discord.js";
 
 import { client } from "../helpers/client";
 import { BtBackend } from "../services/rest";
-import { ICommandHandler, IUser } from "../types";
+import { IAdminCommandHandler, IUser } from "../types";
 
 export default {
-	case: "configure",
-	requiredArgs: false,
-	arguments: [],
-	properUsage: "!configure",
+	case: (msg: Message) => /!configure/.test(msg.content),
 	resolver: async (msg: Message) => {
-		const devRole = msg.member.roles.cache.find(a => a.name == "BillyPBotDev");
-		if (!devRole) throw new Error("user permission denied");
-
 		const users: Partial<IUser>[] = [];
 
 		const serverId: string = msg.guild.id;
@@ -32,4 +26,4 @@ export default {
 		const { inserted } = data;
 		await msg.reply(`configuration done! ${inserted} users updated.`);
 	}
-} as ICommandHandler;
+} as IAdminCommandHandler;
