@@ -40,7 +40,7 @@ const messageHandler = async (msg: Message) => {
 			throw new Error(`This Command Has Required Arguments\nCommand Usage:\n${cmd.properUsage}`);
 
 		cmd.resolver(msg, args);
-	} catch (error) {
+	} catch (error: any) {
 		console.log(error);
 		const embed = new MessageEmbed();
 		embed.setColor("RED");
@@ -68,7 +68,7 @@ const adminCommandHandler = async (msg: Message) => {
 	try {
 		if (!msg.guild) return;
 		if (msg.author.bot) return;
-		const devRole = msg.member.roles.cache.find(a => a.name == "BillyPBotDev");
+		const devRole = msg?.member?.roles.cache.find(a => a.name == "BillyPBotDev");
 		if (!devRole) throw new Error("user permission denied");
 
 		const command = adminCommands.find(a => a.case(msg) === true);
@@ -82,13 +82,13 @@ const adminCommandHandler = async (msg: Message) => {
 
 client.on("guildCreate", (guild: Guild) => {
 	const owner = guild.members.cache.find(a => a.id == guild.ownerId);
-	owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
+	owner?.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
 client.on("ready", () => {
-	logger.info(`Logged in as ${client.user.tag}!`);
-	config.IS_PROD && client.user.setAvatar(Images.billyMad);
-	client.user.setActivity(Activities.farmville);
+	logger.info(`Logged in as ${client?.user?.tag}!`);
+	config.IS_PROD && client?.user?.setAvatar(Images.billyMad);
+	client?.user?.setActivity(Activities.farmville);
 });
 
 client.on("messageCreate", async (msg: Message) => {
@@ -155,18 +155,18 @@ client.on("messageCreate", async (msg: Message) => {
 
 client.on("messageReactionAdd", async (react, user) => {
 	if (react.partial) await react.fetch();
-	if (react.message.author.bot) {
-		if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
+	if (react?.message?.author?.bot) {
+		if (react.emoji.name === "🖕" && client?.user?.username === react.message.author.username) {
 			react.message.channel.send(`<@${user.id}> 🖕`);
 		}
 	} else {
 		switch (true) {
 			case (react.emoji.name === "BillyBuck"):
 				BtBackend.Client.put("user/pay", {
-					server: react.message.guild.id,
+					server: react?.message?.guild?.id,
 					amount: 1,
 					payerId: user.id,
-					recipientId: react.message.author.id
+					recipientId: react?.message?.author?.id
 				});
 		}
 	}

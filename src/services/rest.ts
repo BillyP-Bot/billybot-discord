@@ -13,11 +13,7 @@ export class Rest {
 	});
 
 	public static async Post(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>> {
-		try {
-			return await Rest.BackendClient.post(url, data, config);
-		} catch (error) {
-			throw new Error(error);
-		}
+		return await Rest.BackendClient.post(url, data, config);
 	}
 }
 
@@ -29,7 +25,7 @@ export class StockApi {
 		baseURL: StockApi.base
 	});
 
-	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string }> {
+	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string | null }> {
 		const symbol = ticker.toUpperCase().trim();
 		const { data } = await StockApi.client.get(symbol);
 
