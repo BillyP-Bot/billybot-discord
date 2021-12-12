@@ -8,10 +8,8 @@ import CronJobs from "./methods/cronJobs";
 import { Images, Activities } from "./types/Constants";
 import * as message from "./methods/messages";
 import * as boyd from "./methods/boyd";
-import * as dianne from "./methods/dianne";
 import * as disc from "./methods/disc";
 import * as skistats from "./methods/skiStats";
-import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
 import * as lending from "./methods/lending";
@@ -105,17 +103,8 @@ client.on("messageCreate", async (msg: Message) => {
 			case /.*!stop.*/gmi.test(msg.content):
 				boyd.exitStream(msg);
 				break;
-			case /.*!diane.*/gmi.test(msg.content):
-				dianne.fridayFunny(msg);
-				break;
 			case /.*!joe.*/gmi.test(msg.content):
 				joe.joe(msg);
-				break;
-			case /.*!fridayfunnies.*/gmi.test(msg.content):
-				dianne.fridayFunnies(msg);
-				break;
-			case /.*!whereshowwie.*/gmi.test(msg.content):
-				whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 				break;
 			case msg.channel.type !== "DM" && msg.channel.name === "admin-announcements":
 				message.adminMsg(msg, client);
