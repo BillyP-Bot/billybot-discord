@@ -15,7 +15,6 @@ import * as whatshowardupto from "./methods/whatshowardupto";
 import * as kyle from "./methods/kyle";
 import * as joe from "./methods/joe";
 import * as lending from "./methods/lending";
-import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
 import * as stocks from "./methods/stocks";
 
@@ -83,9 +82,7 @@ client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	client.user.setActivity(Activities.farmville);
-	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
-	Jobs.LotteryCron.start();
 });
 
 client.on("messageCreate", async (msg: Message) => {
@@ -140,12 +137,6 @@ client.on("messageCreate", async (msg: Message) => {
 				break;
 			case /.*!creditscore.*/gmi.test(msg.content):
 				lending.getCreditScoreInfo(msg);
-				break;
-			case /.*!lotto.*/gmi.test(msg.content):
-				lottery.getLotteryInfo(msg);
-				break;
-			case /.*!buylottoticket.*/gmi.test(msg.content):
-				lottery.buyLotteryTicket(msg);
 				break;
 			case /.*!baseballrecord.*/gmi.test(msg.content):
 				baseball.getRecord(msg, "!baseballrecord", firstMention);

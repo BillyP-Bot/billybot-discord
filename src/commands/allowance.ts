@@ -6,7 +6,7 @@ import { ICommandHandler } from "../types";
 export default {
 	case: "allowance",
 	requiredArgs: false,
-	arguments: [""],
+	arguments: [],
 	properUsage: "!allowance",
 	resolver: async (msg: Message) => {
 		try {
