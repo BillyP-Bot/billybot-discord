@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 
 import { BtBackend } from "../services/rest";
-import { ICommandHandler } from "../Types";
+import { ICommandHandler } from "../types";
 
 export default {
 	case: "spin",

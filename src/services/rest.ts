@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import config from "../helpers/config";
+import { config } from "../helpers/config";
 
 export class Rest {
 

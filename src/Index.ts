@@ -1,19 +1,15 @@
 /* eslint-disable indent */
 import "dotenv/config";
+import { join } from "path";
 import { readdirSync } from "fs";
-import path from "path";
-import { Guild, Message, MessageEmbed} from "discord.js";
+import { Guild, Message, MessageEmbed } from "discord.js";
 
-import config from "./helpers/config";
+import { config } from "./helpers/config";
 import logger from "./services/logger";
 import { Images, Activities } from "./types/Constants";
 import { client } from "./helpers/client";
 import { IAdminCommandHandler, ICommandHandler, IPhraseHandler } from "./types";
 import { BtBackend } from "./services/rest";
-
-const commandsDir = path.join(__dirname, "./commands");
-const phrasesDir = path.join(__dirname, "./phrases");
-const adminsDir = path.join(__dirname, "./adminCommands");
 
 const commands: ICommandHandler[] = [];
 const phrases: IPhraseHandler[] = [];
@@ -181,8 +177,8 @@ client.on("unhandledRejection", error => {
 });
 
 (async () => {
-	importCommands<ICommandHandler>(commandsDir, commands);
-	importCommands<IPhraseHandler>(phrasesDir, phrases);
-	importCommands<IAdminCommandHandler>(adminsDir, adminCommands);
+	importCommands<ICommandHandler>(join(__dirname, "./commands"), commands);
+	importCommands<IPhraseHandler>(join(__dirname, "./phrases"), phrases);
+	importCommands<IAdminCommandHandler>(join(__dirname, "./adminCommands"), adminCommands);
 	await client.login(config.BOT_TOKEN);
 })();

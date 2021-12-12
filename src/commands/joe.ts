@@ -1,6 +1,6 @@
 import { Message } from "discord.js";
 
-import { ICommandHandler } from "../Types";
+import { ICommandHandler } from "../types";
 
 export default {
 	case: "joe",

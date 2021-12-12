@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Message } from "discord.js";
 
-import { ICommandHandler } from "../Types";
-import config from "../helpers/config";
+import { ICommandHandler } from "../types";
+import { config } from "../helpers/config";
 
 export default {
 	case: "whereshowwie",

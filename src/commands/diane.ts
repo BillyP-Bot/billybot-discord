@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Message } from "discord.js";
 
-import { ICommandHandler } from "../Types";
+import { ICommandHandler } from "../types";
 
 const getRandomIntInclusive = (min: number, max: number): number => {
 	min = Math.ceil(min);
