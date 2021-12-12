@@ -18,11 +18,13 @@ import { readdirSync } from "fs";
 import path from "path";
 
 import { client } from "./helpers/client";
-import { ICommandHandler } from "./types";
+import { ICommandHandler, IPhraseHandler } from "./types";
 import { BtBackend } from "./services/rest";
 
 const commandsDir = path.join(__dirname, "./commands");
+const phrasesDir = path.join(__dirname, "./phrases");
 const commands: ICommandHandler[] = [];
+const phrases: IPhraseHandler[] = [];
 
 const importCommands = () => {
 	const files = readdirSync(commandsDir);
@@ -32,6 +34,16 @@ const importCommands = () => {
 		commands.push(handler);
 	}
 	console.log(`${commands.length} commands registered`);
+};
+
+const importPhrases = () => {
+	const files = readdirSync(phrasesDir);
+	console.log(files);
+	for (const file of files) {
+		const handler = require(`${phrasesDir}/${file}`).default as IPhraseHandler;
+		phrases.push(handler);
+	}
+	console.log(`${phrases.length} phrases registered`);
 };
 
 const messageHandler = async (msg: Message) => {
@@ -48,7 +60,7 @@ const messageHandler = async (msg: Message) => {
 		if (cmd.requiredArgs && args.length < cmd.arguments.length)
 			throw new Error(`This Command Has Required Arguments\nCommand Usage:\n${cmd.properUsage}`);
 
-		await cmd.resolver(msg, args);
+		cmd.resolver(msg, args);
 	} catch (error) {
 		console.log(error);
 		const embed = new MessageEmbed()
@@ -61,13 +73,21 @@ const messageHandler = async (msg: Message) => {
 	}
 };
 
-const Jobs: CronJobs = new CronJobs(client);
+const phraseHandler = async (msg: Message) => {
+	try {
+		if (!msg.guild) return;
+		if (msg.author.bot) return;
 
-const triggersAndResponses: string[][] = [
-	["!loop", "no !loop please"],
-	["vendor", "Don't blame the vendor!"],
-	["linear", "We have to work exponentially, not linearly!"]
-];
+		const phrase = phrases.find(a => a.case.test(msg.content));
+		if (!phrase) return;
+
+		phrase.resolver(msg);
+	} catch (error) {
+		console.log(error);
+	}
+};
+
+const Jobs: CronJobs = new CronJobs(client);
 
 client.on("guildCreate", (guild: Guild) => {
 	const owner = guild.members.cache.find(a => a.id == guild.ownerId);
@@ -83,77 +103,78 @@ client.on("ready", () => {
 
 client.on("messageCreate", async (msg: Message) => {
 	await messageHandler(msg);
-	try {
-		if (msg.author.bot) return;
+	await phraseHandler(msg);
+	// try {
+	// 	if (msg.author.bot) return;
 
-		const mentions = message.getMentionedGuildMembers(msg);
-		const firstMention = mentions[0];
-		if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
-			message.billyPoggersReact(msg);
+	// 	const mentions = message.getMentionedGuildMembers(msg);
+	// 	const firstMention = mentions[0];
+	// 	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
+	// 		message.billyPoggersReact(msg);
 
-		switch (true) {
-			case /.*(!skistats).*/gmi.test(msg.content):
-				skistats.all(msg);
-				break;
-			case msg.channel.type !== "DM" && msg.channel.name === "admin-announcements":
-				message.adminMsg(msg, client);
-				break;
-			case /.*good bot.*/gmi.test(msg.content):
-				message.goodBot(msg);
-				break;
-			case /.*bad bot.*/gmi.test(msg.content):
-				message.badBot(msg);
-				break;
-			case /.*!loan.*/gmi.test(msg.content):
-				lending.getActiveLoanInfo(msg);
-				break;
-			case /.*!bookloan.*/gmi.test(msg.content):
-				lending.bookNewLoan(msg, "!bookloan");
-				break;
-			case /.*!payloan.*/gmi.test(msg.content):
-				lending.payActiveLoan(msg, "!payloan");
-				break;
-			case /.*!creditscore.*/gmi.test(msg.content):
-				lending.getCreditScoreInfo(msg);
-				break;
-			case /.*!baseballrecord.*/gmi.test(msg.content):
-				baseball.getRecord(msg, "!baseballrecord", firstMention);
-				break;
-			case /.*!baseball.*/gmi.test(msg.content):
-				baseball.baseball(msg, "!baseball", firstMention);
-				break;
-			case /.*!swing.*/gmi.test(msg.content):
-				baseball.swing(msg);
-				break;
-			case /.*!forfeit.*/gmi.test(msg.content):
-				baseball.forfeit(msg);
-				break;
-			case /.*!cooperstown.*/gmi.test(msg.content):
-				baseball.cooperstown(msg);
-				break;
-			case /.*!stock.*/gmi.test(msg.content):
-				stocks.showPrice(msg, "!stock");
-				break;
-			case /.*!buystock.*/gmi.test(msg.content):
-				stocks.buy(msg, "!buystock");
-				break;
-			case /.*!sellstock.*/gmi.test(msg.content):
-				stocks.sell(msg, "!sellstock");
-				break;
-			case /.*!portfolio.*/gmi.test(msg.content):
-				stocks.portfolio(msg);
-				break;
-			case /.*!disc.*/gmi.test(msg.content):
-				disc.disc(msg, "!disc");
-				break;
-			default:
-				message.includesAndResponse(msg, triggersAndResponses);
-				kyle.kyleNoWorking(msg);
-				kyle.getKyleCommand(msg);
-		}
-	} catch (error) {
-		console.log(error);
-	}
+	// 	switch (true) {
+	// 		case /.*(!skistats).*/gmi.test(msg.content):
+	// 			skistats.all(msg);
+	// 			break;
+	// 		case msg.channel.type !== "DM" && msg.channel.name === "admin-announcements":
+	// 			message.adminMsg(msg, client);
+	// 			break;
+	// 		// case /.*good bot.*/gmi.test(msg.content):
+	// 		// 	message.goodBot(msg);
+	// 		// 	break;
+	// 		case /.*bad bot.*/gmi.test(msg.content):
+	// 			message.badBot(msg);
+	// 			break;
+	// 		case /.*!loan.*/gmi.test(msg.content):
+	// 			lending.getActiveLoanInfo(msg);
+	// 			break;
+	// 		case /.*!bookloan.*/gmi.test(msg.content):
+	// 			lending.bookNewLoan(msg, "!bookloan");
+	// 			break;
+	// 		case /.*!payloan.*/gmi.test(msg.content):
+	// 			lending.payActiveLoan(msg, "!payloan");
+	// 			break;
+	// 		case /.*!creditscore.*/gmi.test(msg.content):
+	// 			lending.getCreditScoreInfo(msg);
+	// 			break;
+	// 		case /.*!baseballrecord.*/gmi.test(msg.content):
+	// 			baseball.getRecord(msg, "!baseballrecord", firstMention);
+	// 			break;
+	// 		case /.*!baseball.*/gmi.test(msg.content):
+	// 			baseball.baseball(msg, "!baseball", firstMention);
+	// 			break;
+	// 		case /.*!swing.*/gmi.test(msg.content):
+	// 			baseball.swing(msg);
+	// 			break;
+	// 		case /.*!forfeit.*/gmi.test(msg.content):
+	// 			baseball.forfeit(msg);
+	// 			break;
+	// 		case /.*!cooperstown.*/gmi.test(msg.content):
+	// 			baseball.cooperstown(msg);
+	// 			break;
+	// 		case /.*!stock.*/gmi.test(msg.content):
+	// 			stocks.showPrice(msg, "!stock");
+	// 			break;
+	// 		case /.*!buystock.*/gmi.test(msg.content):
+	// 			stocks.buy(msg, "!buystock");
+	// 			break;
+	// 		case /.*!sellstock.*/gmi.test(msg.content):
+	// 			stocks.sell(msg, "!sellstock");
+	// 			break;
+	// 		case /.*!portfolio.*/gmi.test(msg.content):
+	// 			stocks.portfolio(msg);
+	// 			break;
+	// 		case /.*!disc.*/gmi.test(msg.content):
+	// 			disc.disc(msg, "!disc");
+	// 			break;
+	// 		default:
+	// 			message.includesAndResponse(msg, triggersAndResponses);
+	// 			kyle.kyleNoWorking(msg);
+	// 			kyle.getKyleCommand(msg);
+	// 	}
+	// } catch (error) {
+	// 	console.log(error);
+	// }
 });
 
 client.on("messageReactionAdd", async (react, user) => {
@@ -181,5 +202,6 @@ client.on("unhandledRejection", error => {
 
 (async () => {
 	importCommands();
+	importPhrases();
 	await client.login(config.BOT_TOKEN);
 })();

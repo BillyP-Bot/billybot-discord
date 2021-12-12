@@ -14,6 +14,15 @@ export interface ICommandHandler {
 	resolver: (msg: Message, args?: string[]) => Promise<void>,
 }
 
+/**
+ *
+ * @export
+ * @interface IPhraseHandler
+ */
+export interface IPhraseHandler {
+	case: RegExp,
+	resolver: (msg: Message) => Promise<void>,
+}
 
 /**
  *
