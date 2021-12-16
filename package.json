@@ -6,7 +6,7 @@
     "node": "16.x",
     "npm": "*"
   },
-  "main": "build/Index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "tsc",
     "postinstall": "npm run build",

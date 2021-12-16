@@ -85,72 +85,16 @@ client.on("guildCreate", (guild: Guild) => {
 	owner?.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
-client.on("ready", () => {
+client.on("ready", async () => {
 	logger.info(`Logged in as ${client?.user?.tag}!`);
 	config.IS_PROD && client?.user?.setAvatar(Images.billyMad);
 	client?.user?.setActivity(Activities.farmville);
 });
 
 client.on("messageCreate", async (msg: Message) => {
-	await messageHandler(msg);
-	await phraseHandler(msg);
-	await adminCommandHandler(msg);
-
-	// 	const mentions = message.getMentionedGuildMembers(msg);
-	// 	const firstMention = mentions[0];
-	// 	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
-	// 		message.billyPoggersReact(msg);
-
-	// 	switch (true) {
-	// 		case /.*(!skistats).*/gmi.test(msg.content):
-	// 			skistats.all(msg);
-	// 			break;
-	// 		case /.*!loan.*/gmi.test(msg.content):
-	// 			lending.getActiveLoanInfo(msg);
-	// 			break;
-	// 		case /.*!bookloan.*/gmi.test(msg.content):
-	// 			lending.bookNewLoan(msg, "!bookloan");
-	// 			break;
-	// 		case /.*!payloan.*/gmi.test(msg.content):
-	// 			lending.payActiveLoan(msg, "!payloan");
-	// 			break;
-	// 		case /.*!creditscore.*/gmi.test(msg.content):
-	// 			lending.getCreditScoreInfo(msg);
-	// 			break;
-	// 		case /.*!baseballrecord.*/gmi.test(msg.content):
-	// 			baseball.getRecord(msg, "!baseballrecord", firstMention);
-	// 			break;
-	// 		case /.*!baseball.*/gmi.test(msg.content):
-	// 			baseball.baseball(msg, "!baseball", firstMention);
-	// 			break;
-	// 		case /.*!swing.*/gmi.test(msg.content):
-	// 			baseball.swing(msg);
-	// 			break;
-	// 		case /.*!forfeit.*/gmi.test(msg.content):
-	// 			baseball.forfeit(msg);
-	// 			break;
-	// 		case /.*!cooperstown.*/gmi.test(msg.content):
-	// 			baseball.cooperstown(msg);
-	// 			break;
-	// 		case /.*!stock.*/gmi.test(msg.content):
-	// 			stocks.showPrice(msg, "!stock");
-	// 			break;
-	// 		case /.*!buystock.*/gmi.test(msg.content):
-	// 			stocks.buy(msg, "!buystock");
-	// 			break;
-	// 		case /.*!sellstock.*/gmi.test(msg.content):
-	// 			stocks.sell(msg, "!sellstock");
-	// 			break;
-	// 		case /.*!portfolio.*/gmi.test(msg.content):
-	// 			stocks.portfolio(msg);
-	// 			break;
-	// 		case /.*!disc.*/gmi.test(msg.content):
-	// 			disc.disc(msg, "!disc");
-	// 			break;
-	// 		default:
-	// 			message.includesAndResponse(msg, triggersAndResponses);
-	// 			kyle.kyleNoWorking(msg);
-	// 			kyle.getKyleCommand(msg);
+	messageHandler(msg);
+	phraseHandler(msg);
+	adminCommandHandler(msg);
 });
 
 client.on("messageReactionAdd", async (react, user) => {
