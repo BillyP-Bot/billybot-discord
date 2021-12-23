@@ -6,8 +6,8 @@
     "node": "16.x",
     "npm": "*"
   },
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/Index.js",
+  "types": "build/Index.d.ts",
   "scripts": {
     "build": "tsc",
     "postinstall": "npm run build",
