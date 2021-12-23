@@ -3,9 +3,12 @@ import { Message } from "discord.js";
 import { IPhraseHandler } from "../types";
 
 export default {
-	case: /.*bad bot.*/gmi,
+	case: (msg: Message) => {
+		if(msg.channel.type === "DM") return false;
+		return /.*bad bot.*/gmi.test(msg.content);
+	},
 	resolver: (msg: Message) => {
 		const billyHappy = msg.guild.emojis.cache.find((e) => e.name === "BillyMad");
-		msg.react(billyHappy);
+		billyHappy && msg.react(billyHappy);
 	}
 } as IPhraseHandler;

@@ -24,7 +24,6 @@ const importCommands = <T>(filesDir: string, commands: Array<T>) => {
 	}
 	console.log(`${commands.length} commands registered`);
 };
-
 const messageHandler = async (msg: Message) => {
 	try {
 		if (!msg.guild) return;
@@ -56,10 +55,15 @@ const phraseHandler = async (msg: Message) => {
 		if (!msg.guild) return;
 		if (msg.author.bot) return;
 
-		const phrase = phrases.find(a => a.case.test(msg.content));
-		if (!phrase) return;
+		const filtered = phrases.filter(a => a.case(msg));
+		if (!filtered) return;
 
-		phrase.resolver(msg);
+		const resolvers = filtered.reduce((acc, phrase) => {
+			acc.push(phrase.resolver(msg));
+			return acc;
+		}, [] as Promise<void>[]);
+
+		await Promise.all(resolvers);
 	} catch (error) {
 		console.log(error);
 	}
@@ -92,9 +96,13 @@ client.on("ready", async () => {
 });
 
 client.on("messageCreate", async (msg: Message) => {
-	messageHandler(msg);
-	phraseHandler(msg);
-	adminCommandHandler(msg);
+	try {
+		messageHandler(msg);
+		phraseHandler(msg);
+		adminCommandHandler(msg);
+	} catch (error) {
+		console.log(error);
+	}
 });
 
 client.on("messageReactionAdd", async (react, user) => {

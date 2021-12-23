@@ -20,7 +20,7 @@ export interface ICommandHandler {
  * @interface IPhraseHandler
  */
 export interface IPhraseHandler {
-	case: RegExp,
+	case: (msg: Message) => boolean,
 	resolver: (msg: Message) => Promise<void>
 }
 

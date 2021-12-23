@@ -13,7 +13,7 @@
     "lint": "eslint --fix --ext .ts,.tsx .",
     "watch": "tsc --watch",
     "start": "node .",
-    "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts"
+    "dev": "ts-node-dev"
   },
   "author": "daniel walsh",
   "devDependencies": {
