@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 
 import { ICommandHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 export default {
 	case: "ping",
@@ -8,6 +9,10 @@ export default {
 	arguments: [],
 	properUsage: "!ping",
 	resolver: async (msg: Message) => {
-		await msg.reply("pong");
+		try {
+			await msg.reply("pong");
+		} catch (error) {
+			ErrorMessage(msg, error);	
+		}
 	}
 } as ICommandHandler;

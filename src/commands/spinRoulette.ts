@@ -1,6 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 
 import { BtBackend } from "../services/rest";
+import { ErrorMessage } from "../helpers/message";
 import { ICommandHandler } from "../types";
 
 export default {
@@ -9,11 +10,11 @@ export default {
 	arguments: ["number", "color"],
 	properUsage: "!spin [number] [color]",
 	resolver: async (msg: Message, args: string[]) => {
-		let [bet, color] = args;
-		const amount = parseInt(bet);
-		color = color.toUpperCase().trim();
-		if(isNaN(amount) || color !== ("RED" || "GREEN" || "BLACK")) throw new Error("invalid format");
 		try {
+			let [bet, color] = args;
+			const amount = parseInt(bet);
+			color = color.toUpperCase().trim();
+			if(isNaN(amount) || color !== ("RED" || "GREEN" || "BLACK")) throw new Error("invalid format");
 			const buckEmbed = new MessageEmbed();
 			const { data } = await BtBackend.Client.post("user/roulette", { userId: msg.author.id, serverId: msg.guild.id, color, amount });
 			const { gameResult } = data;
@@ -29,7 +30,7 @@ export default {
 			buckEmbed.setDescription(`It's ${gameResult.colorResult}! You lose your bet of ${amount} BillyBucks! You're a DEAD MAAANNN!\n\nYou now have ${gameResult.billy_bucks} BillyBucks.`);
 			msg.channel.send({ embeds: [buckEmbed] });
 		} catch (error) {
-			throw new Error(error.response.data.error);
+			ErrorMessage(msg, error);
 		}
 	}
 } as ICommandHandler;

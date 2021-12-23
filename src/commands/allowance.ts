@@ -2,6 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 
 import { BtBackend } from "../services/rest";
 import { ICommandHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 export default {
 	case: "allowance",
@@ -33,7 +34,7 @@ export default {
 
 			await msg.channel.send({ embeds: [embed] });
 		} catch (error) {
-			throw new Error(error.response.data.error);
+			ErrorMessage(msg, error);
 		}
 	}
 } as ICommandHandler;

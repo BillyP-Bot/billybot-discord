@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 
 import { IPhraseHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 export default {
 	case: (msg: Message) => {
@@ -8,6 +9,10 @@ export default {
 		return /.*linear.*/gmi.test(msg.content);
 	},
 	resolver: (msg: Message) => {
-		msg.reply("We have to work exponentially, not linearly!");
+		try {
+			msg.reply("We have to work exponentially, not linearly!");
+		} catch (error) {
+			ErrorMessage(msg, error);	
+		}
 	}
 } as IPhraseHandler;

@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 
 import { IPhraseHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 export default {
 	case: (msg: Message) => {
@@ -8,7 +9,11 @@ export default {
 		return /.*good bot.*/gmi.test(msg.content);
 	},
 	resolver: (msg: Message) => {
-		const billyHappy = msg.guild.emojis.cache.find((e) => e.name === "BillyHappy");
-		billyHappy && msg.react(billyHappy);
+		try {
+			const billyHappy = msg.guild.emojis.cache.find((e) => e.name === "BillyHappy");
+			billyHappy && msg.react(billyHappy);
+		} catch (error) {
+			ErrorMessage(msg, error);	
+		}
 	}
 } as IPhraseHandler;

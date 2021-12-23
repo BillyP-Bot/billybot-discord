@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 import { join, extname } from "path";
 import { readdirSync } from "fs";
-import { Guild, Message, MessageEmbed } from "discord.js";
+import { Guild, Message } from "discord.js";
 
 import { config } from "./helpers/config";
 import logger from "./services/logger";
@@ -9,6 +9,7 @@ import { Images, Activities } from "./types/Constants";
 import { client } from "./helpers/client";
 import { IAdminCommandHandler, ICommandHandler, IPhraseHandler } from "./types";
 import { BtBackend } from "./services/rest";
+import { ErrorMessage } from "./helpers/message";
 
 const commands: ICommandHandler[] = [];
 const phrases: IPhraseHandler[] = [];
@@ -40,14 +41,7 @@ const messageHandler = async (msg: Message) => {
 
 		cmd.resolver(msg, args);
 	} catch (error: any) {
-		console.log(error);
-		const embed = new MessageEmbed();
-		embed.setColor("RED");
-		embed.addFields([
-			{ name: "Error:", value: `\`\`\`${error.message}\`\`\`` || "```An Error Has Occured```" }
-		]);
-		embed.setTimestamp();
-		msg.channel.send({ embeds: [embed] });
+		ErrorMessage(msg, error);
 	}
 };
 const phraseHandler = async (msg: Message) => {

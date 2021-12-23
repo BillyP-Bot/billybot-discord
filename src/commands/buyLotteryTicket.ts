@@ -1,5 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 
+import { ErrorMessage } from "../helpers/message";
 import { BtBackend } from "../services/rest";
 import { ICommandHandler } from "../types";
 
@@ -28,7 +29,7 @@ export default {
 			);
 			await msg.channel.send({ embeds: [embed] });
 		} catch (error) {
-			throw new Error(error.response.data.error);
+			ErrorMessage(msg, error);
 		}
 	}
 } as ICommandHandler;

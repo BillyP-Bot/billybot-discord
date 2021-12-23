@@ -2,6 +2,7 @@ import axios from "axios";
 import { Message } from "discord.js";
 
 import { ICommandHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 const getRandomIntInclusive = (min: number, max: number): number => {
 	min = Math.ceil(min);
@@ -34,32 +35,35 @@ export default {
 	arguments: [],
 	properUsage: "!diane",
 	resolver: async (msg: Message) => {
+		try {
+			const now = new Date();
+			const isStale = (Math.abs(now.getTime() - lastFetch.getTime()) / 36e5) > 24;
+			
+			if (cachedImages.length !== 0 && !isStale) {
+				msg.reply({
+					content: "I just found this great meme on my Facebook feed!\n\n",
+					files: getRandomMeme(cachedImages)
+				});
+				return;
+			}
+		
+			cachedImages.length = 0;
+			lastFetch = new Date();
 
-		const now = new Date();
-		const isStale = (Math.abs(now.getTime() - lastFetch.getTime()) / 36e5) > 24;
-
-		if (cachedImages.length !== 0 && !isStale) {
+			const { data } = await (await axios.get("https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=boolean")).data as IRedditMemes;
+		
+			const memes = data.children.reduce((acc, { data }) => {
+				!data.over_18 && data.url && acc.push(data.url);
+				cachedImages.push(...acc);
+				return acc;
+			}, [] as string[]);
+		
 			msg.reply({
 				content: "I just found this great meme on my Facebook feed!\n\n",
-				files: getRandomMeme(cachedImages)
+				files: getRandomMeme(memes)
 			});
-			return;
+		} catch (error) {
+			ErrorMessage(msg, error);
 		}
-		
-		cachedImages.length = 0;
-		lastFetch = new Date();
-
-		const { data } = await (await axios.get("https://www.reddit.com/r/terriblefacebookmemes/hot.json?limit=50&over_18=boolean")).data as IRedditMemes;
-
-		const memes = data.children.reduce((acc, { data }) => {
-			!data.over_18 && data.url && acc.push(data.url);
-			cachedImages.push(...acc);
-			return acc;
-		}, [] as string[]);
-
-		msg.reply({
-			content: "I just found this great meme on my Facebook feed!\n\n",
-			files: getRandomMeme(memes)
-		});
 	}
 } as ICommandHandler;

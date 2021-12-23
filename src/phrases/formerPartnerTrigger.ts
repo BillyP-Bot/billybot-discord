@@ -1,6 +1,7 @@
 import { Message } from "discord.js";
 
 import { IPhraseHandler } from "../types";
+import { ErrorMessage } from "../helpers/message";
 
 export default {
 	case: (msg: Message) => {
@@ -10,7 +11,11 @@ export default {
 		return true;
 	},
 	resolver: (msg: Message) => {
-		const react = msg.guild.emojis.cache.find(e => e.name === "BillyMad");
-		react && msg.react(react);
+		try {
+			const react = msg.guild.emojis.cache.find(e => e.name === "BillyMad");
+			react && msg.react(react);
+		} catch (error) {
+			ErrorMessage(msg, error);	
+		}
 	}
 } as IPhraseHandler;
