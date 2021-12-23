@@ -1,202 +1,126 @@
 /* eslint-disable indent */
-import "reflect-metadata";
-import "dotenv";
-import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
+import "dotenv/config";
+import { join } from "path";
+import { readdirSync } from "fs";
+import { Guild, Message, MessageEmbed } from "discord.js";
 
-import config from "./helpers/config";
+import { config } from "./helpers/config";
 import logger from "./services/logger";
-
-import { Database } from "./services/db";
-import CronJobs from "./methods/cronJobs";
-import Currency from "./methods/currency";
-import Generic from "./methods/generic";
 import { Images, Activities } from "./types/Constants";
-import * as message from "./methods/messages";
-import * as boyd from "./methods/boyd";
-import * as dianne from "./methods/dianne";
-import * as disc from "./methods/disc";
-import * as skistats from "./methods/skiStats";
-import * as whatshowardupto from "./methods/whatshowardupto";
-import * as kyle from "./methods/kyle";
-import * as joe from "./methods/joe";
-import * as roulette from "./methods/roulette";
-import * as lending from "./methods/lending";
-import * as lottery from "./methods/lottery";
-import * as baseball from "./methods/baseball";
-import * as stocks from "./methods/stocks";
+import { client } from "./helpers/client";
+import { IAdminCommandHandler, ICommandHandler, IPhraseHandler } from "./types";
+import { BtBackend } from "./services/rest";
 
-const intents: Intents = new Intents();
-intents.add(Intents.ALL);
-const client: Client = new Client();
-// instantiate all cronjobs
-const Jobs: CronJobs = new CronJobs(client);
+const commands: ICommandHandler[] = [];
+const phrases: IPhraseHandler[] = [];
+const adminCommands: IAdminCommandHandler[] = [];
 
-(async () => {
-	try {
-		await Database.Connect();
-	} catch (error) {
-		logger.info(error);
+const importCommands = <T>(filesDir: string, commands: Array<T>) => {
+	const files = readdirSync(filesDir);
+	console.log(files);
+	for (const file of files) {
+		const handler = require(`${filesDir}/${file}`).default as T;
+		commands.push(handler);
 	}
-})();
+	console.log(`${commands.length} commands registered`);
+};
+const messageHandler = async (msg: Message) => {
+	try {
+		if (!msg.guild) return;
+		if (msg.author.bot) return;
+		if (!/.*!.*/.test(msg.content)) return;
 
-const triggersAndResponses: string[][] = [
-	["!loop", "no !loop please"],
-	["vendor", "Don't blame the vendor!"],
-	["linear", "We have to work exponentially, not linearly!"]
-];
+		const _case = msg.content.split("!")[1];
+		const cmd = commands.find(a => a.case == _case?.split(" ")[0]);
+		if (!cmd) return;
+
+		const args = msg.content.split(" ").slice(1).filter(a => a !== null && a.trim() != "");
+		if (cmd.requiredArgs && args.length < cmd.arguments.length)
+			throw new Error(`This Command Has Required Arguments\nCommand Usage:\n${cmd.properUsage}`);
+
+		cmd.resolver(msg, args);
+	} catch (error: any) {
+		console.log(error);
+		const embed = new MessageEmbed();
+		embed.setColor("RED");
+		embed.addFields([
+			{ name: "Error:", value: `\`\`\`${error.message}\`\`\`` || "```An Error Has Occured```" }
+		]);
+		embed.setTimestamp();
+		msg.channel.send({ embeds: [embed] });
+	}
+};
+const phraseHandler = async (msg: Message) => {
+	try {
+		if (!msg.guild) return;
+		if (msg.author.bot) return;
+
+		const filtered = phrases.filter(a => a.case(msg));
+		if (!filtered) return;
+
+		const resolvers = filtered.reduce((acc, phrase) => {
+			acc.push(phrase.resolver(msg));
+			return acc;
+		}, [] as Promise<void>[]);
+
+		await Promise.all(resolvers);
+	} catch (error) {
+		console.log(error);
+	}
+};
+const adminCommandHandler = async (msg: Message) => {
+	try {
+		if (!msg.guild) return;
+		if (msg.author.bot) return;
+		const devRole = msg?.member?.roles.cache.find(a => a.name == "BillyPBotDev");
+		if (!devRole) throw new Error("user permission denied");
+
+		const command = adminCommands.find(a => a.case(msg) === true);
+		if (!command) return;
+
+		command.resolver(msg);
+	} catch (error) {
+		console.log(error);
+	}
+};
 
 client.on("guildCreate", (guild: Guild) => {
-	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
+	const owner = guild.members.cache.find(a => a.id == guild.ownerId);
+	owner?.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
-client.on("ready", () => {
-	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
-	client.user.setActivity(Activities.farmville);
-	Jobs.RollCron.start();
-	Jobs.NightlyCycleCron.start();
-	Jobs.LotteryCron.start();
+client.on("ready", async () => {
+	logger.info(`Logged in as ${client?.user?.tag}!`);
+	config.IS_PROD && client?.user?.setAvatar(Images.billyMad);
+	client?.user?.setActivity(Activities.farmville);
 });
 
-client.on("message", async (msg: Message) => {
+client.on("messageCreate", async (msg: Message) => {
 	try {
-	if(msg.author.bot) return;
-
-	const mentions = message.getMentionedGuildMembers(msg);
-	const firstMention = mentions[0];
-	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
-		message.billyPoggersReact(msg);
-
-	switch (true) {
-		case /.*(!help).*/gmi.test(msg.content):
-			Generic.Help(msg);
-			break;
-		case /.*(!sheesh).*/gmi.test(msg.content):
-			await message.sheesh(msg);
-			break;
-		case /.*(!skistats).*/gmi.test(msg.content):
-			skistats.all(msg);
-			break;
-		case /.*!bucks.*/gmi.test(msg.content):
-			Currency.CheckBucks(msg, "!bucks", firstMention);
-			break;
-		case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-			Currency.BillyPay(msg, "!billypay", firstMention);
-			break;
-		case /.*!configure.*/gmi.test(msg.content):
-			Currency.Configure(client, msg);
-			break;
-		case /.*!allowance.*/gmi.test(msg.content):
-			Currency.Allowance(msg);
-			break;
-		case /.*!noblemen.*/gmi.test(msg.content):
-			Currency.GetNobles(msg);
-			break;
-		case /.*!boydTownRoad.*/gmi.test(msg.content):
-			boyd.townRoad(msg);
-			break;
-		case /.*!stop.*/gmi.test(msg.content):
-			boyd.exitStream(msg);
-			break;
-		case /.*!diane.*/gmi.test(msg.content):
-			dianne.fridayFunny(msg);
-			break;
-		case /.*!joe.*/gmi.test(msg.content):
-			joe.joe(msg);
-			break;
-		case /.*!fridayfunnies.*/gmi.test(msg.content):
-			dianne.fridayFunnies(msg);
-			break;
-		case /.*!whereshowwie.*/gmi.test(msg.content):
-			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-			break;
-		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-			message.adminMsg(msg, client);
-			break;
-		case /.*good bot.*/gmi.test(msg.content):
-			message.goodBot(msg);
-			break;
-		case /.*bad bot.*/gmi.test(msg.content):
-			message.badBot(msg);
-			break;
-		case /.*!spin.*/gmi.test(msg.content):
-			roulette.spin(msg, "!spin");
-			break;
-		case /.*!loan.*/gmi.test(msg.content):
-			lending.getActiveLoanInfo(msg);
-			break;
-		case /.*!bookloan.*/gmi.test(msg.content):
-			lending.bookNewLoan(msg, "!bookloan");
-			break;
-		case /.*!payloan.*/gmi.test(msg.content):
-			lending.payActiveLoan(msg, "!payloan");
-			break;
-		case /.*!creditscore.*/gmi.test(msg.content):
-			lending.getCreditScoreInfo(msg);
-			break;
-		case /.*!lotto.*/gmi.test(msg.content):
-			lottery.getLotteryInfo(msg);
-			break;
-		case /.*!buylottoticket.*/gmi.test(msg.content):
-			lottery.buyLotteryTicket(msg);
-			break;
-		case /.*!baseballrecord.*/gmi.test(msg.content):
-			baseball.getRecord(msg, "!baseballrecord", firstMention);
-			break;
-		case /.*!baseball.*/gmi.test(msg.content):
-			baseball.baseball(msg, "!baseball", firstMention);
-			break;
-		case /.*!swing.*/gmi.test(msg.content):
-			baseball.swing(msg);
-			break;
-		case /.*!forfeit.*/gmi.test(msg.content):
-			baseball.forfeit(msg);
-			break;
-		case /.*!cooperstown.*/gmi.test(msg.content):
-			baseball.cooperstown(msg);
-			break;
-		case /.*!stock.*/gmi.test(msg.content):
-			stocks.showPrice(msg, "!stock");
-			break;
-		case /.*!buystock.*/gmi.test(msg.content):
-			stocks.buy(msg, "!buystock");
-			break;
-		case /.*!sellstock.*/gmi.test(msg.content):
-			stocks.sell(msg, "!sellstock");
-			break;
-		case /.*!portfolio.*/gmi.test(msg.content):
-			stocks.portfolio(msg);
-			break;
-		case /.*!disc.*/gmi.test(msg.content):
-			disc.disc(msg, "!disc");
-			break;
-		case /.*!sheesh.*/gmi.test(msg.content):
-			message.sheesh(msg);
-			break;
-		default:
-			message.includesAndResponse(msg, triggersAndResponses);
-			kyle.kyleNoWorking(msg);
-			kyle.getKyleCommand(msg);
-	}
-} catch (error) {
-	console.log(error);
-}
-});
-
-client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
-	try {
-		if (react.message.author.bot) {
-			if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
-				react.message.channel.send(`<@${user.id}> 🖕`);
-			}
-		} else {
-			switch (true){
-				case (react.emoji.name === "BillyBuck"):
-					Currency.BuckReact(react, user.id);
-			}
-		}
+		messageHandler(msg);
+		phraseHandler(msg);
+		adminCommandHandler(msg);
 	} catch (error) {
-		logger.error(error);
+		console.log(error);
+	}
+});
+
+client.on("messageReactionAdd", async (react, user) => {
+	if (react.partial) await react.fetch();
+	if (react?.message?.author?.bot) {
+		if (react.emoji.name === "🖕" && client?.user?.username === react.message.author.username) {
+			react.message.channel.send(`<@${user.id}> 🖕`);
+		}
+	} else {
+		switch (true) {
+			case (react.emoji.name === "BillyBuck"):
+				BtBackend.Client.put("user/pay", {
+					server: react?.message?.guild?.id,
+					amount: 1,
+					payerId: user.id,
+					recipientId: react?.message?.author?.id
+				});
+		}
 	}
 });
 
@@ -204,6 +128,9 @@ client.on("unhandledRejection", error => {
 	logger.error("Unhanded promise rejection: ", error);
 });
 
-client.login(config.BOT_TOKEN).catch(e => {
-	logger.error(e);
-});
+(async () => {
+	importCommands<ICommandHandler>(join(__dirname, "./commands"), commands);
+	importCommands<IPhraseHandler>(join(__dirname, "./phrases"), phrases);
+	importCommands<IAdminCommandHandler>(join(__dirname, "./adminCommands"), adminCommands);
+	await client.login(config.BOT_TOKEN);
+})();

@@ -2,17 +2,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"type": "pwa-node",
+			"type": "node",
 			"request": "launch",
-			"name": "Launch",
+			"name": "Debug Dev",
+			"runtimeExecutable": "yarn",
 			"skipFiles": [
 				"<node_internals>/**"
 			],
-			"program": "${workspaceFolder}/build/index.js",
-			"preLaunchTask": "tsc: compile",
-			"outFiles": [
-				"${workspaceFolder}/build/**/*.js"
-			]
+			"runtimeArgs": [
+				"dev",
+				"--respawn",
+				"--transpile-only",
+				"./src/index.ts"
+			],
+			"outputCapture": "std",
 		}
 	]
 }

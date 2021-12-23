@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import config from "../helpers/config";
+import { config } from "../helpers/config";
 
 export class Rest {
 
@@ -13,11 +13,7 @@ export class Rest {
 	});
 
 	public static async Post(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>> {
-		try {
-			return await Rest.BackendClient.post(url, data, config);
-		} catch (error) {
-			throw new Error(error);
-		}
+		return await Rest.BackendClient.post(url, data, config);
 	}
 }
 
@@ -29,7 +25,7 @@ export class StockApi {
 		baseURL: StockApi.base
 	});
 
-	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string }> {
+	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string | null }> {
 		const symbol = ticker.toUpperCase().trim();
 		const { data } = await StockApi.client.get(symbol);
 
@@ -48,4 +44,16 @@ export class StockApi {
 		
 		return { price: parseFloat(price), currency };
 	}
+}
+
+export class BtBackend {
+
+	public static readonly Client = axios.create({
+		baseURL: config.BT_BOT_API_ENDPOINT,
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${config.BT_BOT_AUTH_TOKEN}`,
+			"x-api-key": config.BT_BOT_X_API_TOKEN
+		}
+	});
 }

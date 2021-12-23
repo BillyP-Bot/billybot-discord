@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from "winston";
 
-import config from "../helpers/config";
+import { config } from "../helpers/config";
 
 const { combine, timestamp, json, prettyPrint } = format;
 
