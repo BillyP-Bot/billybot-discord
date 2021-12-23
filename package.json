@@ -13,8 +13,8 @@
     "postinstall": "npm run build",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "watch": "tsc --watch",
-    "start": "node .",
-    "dev": "ts-node-dev"
+    "start": "node -r dotenv/config .",
+    "dev": "ts-node-dev -r dotenv/config"
   },
   "author": "daniel walsh",
   "devDependencies": {

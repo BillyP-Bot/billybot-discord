@@ -1,5 +1,4 @@
 /* eslint-disable indent */
-import "dotenv/config";
 import { join, extname } from "path";
 import { readdirSync } from "fs";
 import { Guild, Message, MessageEmbed } from "discord.js";
