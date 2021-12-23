@@ -1,6 +1,6 @@
 /* eslint-disable indent */
 import "dotenv/config";
-import { join } from "path";
+import { join, extname } from "path";
 import { readdirSync } from "fs";
 import { Guild, Message, MessageEmbed } from "discord.js";
 
@@ -17,8 +17,9 @@ const adminCommands: IAdminCommandHandler[] = [];
 
 const importCommands = <T>(filesDir: string, commands: Array<T>) => {
 	const files = readdirSync(filesDir);
-	console.log(files);
-	for (const file of files) {
+	const valid = files.filter(a => extname(a) === (config.IS_COMPILED ? ".js": ".ts"));
+	console.log(valid);
+	for (const file of valid) {
 		const handler = require(`${filesDir}/${file}`).default as T;
 		commands.push(handler);
 	}
