@@ -14,3 +14,9 @@ export const config = {
 
 if (config.BOT_TOKEN === undefined)
 	throw Error("BOT_TOKEN not specified");
+if (config.BT_BOT_API_ENDPOINT === undefined)
+	throw Error("BT_BOT_API_ENDPOINT not specified");
+if (config.BT_BOT_AUTH_TOKEN === undefined)
+	throw Error("BT_BOT_AUTH_TOKEN not specified");
+if (config.BT_BOT_X_API_TOKEN === undefined)
+	throw Error("BT_BOT_X_API_TOKEN not specified");

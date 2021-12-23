@@ -1,5 +1,5 @@
 import { Client, Message } from "discord.js";
-import { Baseball } from "../models/Baseball";
+// import { Baseball } from "../models/Baseball";
 
 export interface MessageHandler {
 	msg: Message,
@@ -36,10 +36,10 @@ export interface ICreditScoreResult {
 	creditLimit: number
 }
 
-export interface IAtBatOutcome {
-	game: Baseball,
-	output: any
-}
+// export interface IAtBatOutcome {
+// 	game: Baseball,
+// 	output: any
+// }
 
 export interface IBaserunningResult {
 	bases: string,
