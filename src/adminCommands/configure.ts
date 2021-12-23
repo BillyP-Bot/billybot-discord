@@ -26,7 +26,7 @@ export default {
 			});
 			const { data } = await BtBackend.Client.post("users", { users });
 			const { inserted } = data;
-			await msg.reply(`configuration done! ${inserted} users updated.`);
+			await msg.reply(`configuration done! ${inserted.count} users updated.`);
 		} catch (error) {
 			ErrorMessage(msg, error);
 		}
