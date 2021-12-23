@@ -1,5 +1,8 @@
+import { extname } from "path";
+
 export const config = {
 	SERVER_ID: <string>"689463685566955566",
+	IS_COMPILED: <boolean>(extname(__filename) === ".js"),
 	IS_PROD: <boolean>(process.env.NODE_ENV == "production" ? true : false),
 	BACKEND_TOKEN: <string>process.env.BACKEND_TOKEN || undefined,
 	BOT_TOKEN: <string>process.env.BOT_TOKEN || undefined,
