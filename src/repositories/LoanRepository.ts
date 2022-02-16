@@ -33,9 +33,8 @@ export class LoanRepository {
 
 	public static async InsertOne(member: ILoanList, user: User): Promise<Loan> {
 		try {
-			let createdDate = new Date(), firstDueDate = new Date(), mostRecentPaymentDate = new Date();
+			let createdDate = new Date(), firstDueDate = new Date();
 			firstDueDate.setDate(createdDate.getDate() + 7);
-			mostRecentPaymentDate.setHours(0, 0, 0, 0);
 
 			const newLoan = new Loan();
 			newLoan.createdAt = createdDate;
@@ -46,7 +45,7 @@ export class LoanRepository {
 			newLoan.nextInterestAccrualDate = firstDueDate;
 			newLoan.minPaymentAmt = member.minPaymentAmt;
 			newLoan.nextPaymentDueDate = firstDueDate;
-			newLoan.mostRecentPaymentDate = mostRecentPaymentDate;
+			newLoan.mostRecentPaymentDate = createdDate;
 
 			user.hasActiveLoan = true;
 			user.billyBucks += member.amount;
@@ -130,7 +129,7 @@ export class LoanRepository {
 				let needsSave = false;
 
 				// check for late payments
-				if (today > loan.nextPaymentDueDate) {
+				if (tomorrow > loan.nextPaymentDueDate) {
 					const penalty = Math.floor(loan.originalBalanceAmt * 0.05);
 					loan.penaltyAmt += penalty;
 					loan.outstandingBalanceAmt += penalty;
