@@ -70,7 +70,7 @@ export const payActiveLoan = async (msg: Message, prefix: string): Promise<void>
 
 		if (!loan) throw "No active loan!";
 		if (amount > user.billyBucks) throw `Can't pay ${amount}! You only have ${user.billyBucks} BillyBucks.`;
-		if (amount < loan.minPaymentAmt) throw `Not enough! The minimum payment amount for your active loan is ${loan.minPaymentAmt} BillyBucks.`;
+		if (amount < loan.minPaymentAmt && loan.outstandingBalanceAmt > loan.minPaymentAmt) throw `Not enough! The minimum payment amount for your active loan is ${loan.minPaymentAmt} BillyBucks.`;
 
 		let paidOff = false;
 		if (amount >= loan.outstandingBalanceAmt) {
@@ -143,7 +143,7 @@ const showLoanInfo = (loan: Loan): string => {
 	`Most Recent Payment Date: ${loan.paymentsMadeAmt == 0 ? "N/A" : formatDate(loan.mostRecentPaymentDate)}\n` + 
 	`Date Opened: ${formatDate(loan.createdAt)}\n` + 
 	`Next Interest Accrual Date: ${formatDate(loan.nextInterestAccrualDate)}\n` + 
-	`Next Payment Due Date: ${formatDate(loan.nextPaymentDueDate)}`;
+	`Next Payment Due Before: ${formatDate(loan.nextPaymentDueDate)}`;
 };
 
 const replyWithSuccessEmbed = (msg: Message, title: any, body: any): void => {
@@ -161,5 +161,5 @@ const replyWithErrorEmbed = (msg: Message, error: any): void => {
 };
 
 const formatDate = (date : Date): string => {
-	return new Date(date.getTime()).toLocaleDateString();
+	return date.toLocaleDateString();
 };

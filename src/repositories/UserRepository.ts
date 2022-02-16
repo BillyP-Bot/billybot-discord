@@ -71,7 +71,7 @@ export class UserRepository {
 			const timestamp: number = +new Date(exists.lastAllowance);
 			const now: number = +new Date();
 			if ((now - timestamp) < Nums.oneWeek) {
-				throw `you've already gotten a weekly allowance on ${exists.lastAllowance}`;
+				throw `you've already gotten a weekly allowance on ${exists.lastAllowance.toLocaleString()}`;
 			}
 
 			exists.billyBucks = exists.billyBucks + 200;
