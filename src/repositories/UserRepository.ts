@@ -1,3 +1,4 @@
+import { utcToEstString } from "../helpers/utility";
 import { User } from "../models/User";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
@@ -71,7 +72,7 @@ export class UserRepository {
 			const timestamp: number = +new Date(exists.lastAllowance);
 			const now: number = +new Date();
 			if ((now - timestamp) < Nums.oneWeek) {
-				throw `you've already gotten a weekly allowance on ${exists.lastAllowance.toLocaleString()}`;
+				throw `you've already gotten a weekly allowance on ${utcToEstString(exists.lastAllowance)}`;
 			}
 
 			exists.billyBucks = exists.billyBucks + 200;
