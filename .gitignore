@@ -41,3 +41,5 @@ build/**/*
 yarn.lock
 
 bt-bot-dev-container/data/**/*
+
+users.txt

@@ -7,6 +7,7 @@ import config from "./helpers/config";
 import logger from "./services/logger";
 
 import { Database } from "./services/db";
+import { backend } from "./services/rest";
 import CronJobs from "./methods/cronJobs";
 import Currency from "./methods/currency";
 import Generic from "./methods/generic";
@@ -49,138 +50,174 @@ client.on("guildCreate", (guild: Guild) => {
 	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
-client.on("ready", () => {
+import fs from "fs";
+// eslint-disable-next-line no-unused-vars
+const importUsers = async (serverId: string) => {
+	const { members } = await client.guilds.fetch(serverId);
+	for (const [id, { user }] of members.cache.entries()) {
+		console.log(id);
+		if(user.bot) continue;
+		const { id: user_id, username, avatar } = user;
+		fs.appendFileSync("users.txt", `${JSON.stringify({ server_id: members.guild.id, user_id, username, avatar  })},\n`);
+	}
+};
+
+client.on("ready", async () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
-	client.user.setActivity(Activities.farmville);
+	config.IS_PROD && client.user.setAvatar(Images.billyMad);
+	config.IS_PROD && client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
 	Jobs.LotteryCron.start();
 });
 
+// #region user metrics
+client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
+	if (user.bot || user.id === react.message.author.id) return;
+	backend.put("user/metrics", { emotes_used: 1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { emotes_recieved: 1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
+});
+client.on("messageReactionRemove", (react: MessageReaction, user: User) => {
+	if (user.bot || user.id === react.message.author.id) return;
+	backend.put("user/metrics", { emotes_used: -1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { emotes_recieved: -1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
+});
+client.on("message", async (msg: Message) => {
+	if (msg.author.bot) return;
+	if(msg.mentions?.users?.size >= 1) {
+		Promise.all(msg.mentions.users.map((user) => {
+			if (user.id === msg.author.id) return;
+			backend.put("user/metrics", { mentions: 1 }, { params: { user_id: user.id, server_id: msg.guild.id } });
+		}));
+	}
+	backend.put("user/metrics", { posts: 1 }, { params: { user_id: msg.author.id, server_id: msg.guild.id } });
+});
+// #endregion
+
 client.on("message", async (msg: Message) => {
 	try {
-	if(msg.author.bot) return;
+		if (msg.author.bot) return;
+		backend.put("user/metrics", { posts: 1 }, { params: { user_id: msg.author.id, server_id: msg.guild.id } });
 
-	const mentions = message.getMentionedGuildMembers(msg);
-	const firstMention = mentions[0];
-	if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
-		message.billyPoggersReact(msg);
+		const mentions = message.getMentionedGuildMembers(msg);
+		const firstMention = mentions[0];
+		if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
+			message.billyPoggersReact(msg);
 
-	switch (true) {
-		case /.*(!help).*/gmi.test(msg.content):
-			Generic.Help(msg);
-			break;
-		case /.*(!sheesh).*/gmi.test(msg.content):
-			await message.sheesh(msg);
-			break;
-		case /.*(!skistats).*/gmi.test(msg.content):
-			skistats.all(msg);
-			break;
-		case /.*!bucks.*/gmi.test(msg.content):
-			Currency.CheckBucks(msg, "!bucks", firstMention);
-			break;
-		case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-			Currency.BillyPay(msg, "!billypay", firstMention);
-			break;
-		case /.*!configure.*/gmi.test(msg.content):
-			Currency.Configure(client, msg);
-			break;
-		case /.*!allowance.*/gmi.test(msg.content):
-			Currency.Allowance(msg);
-			break;
-		case /.*!noblemen.*/gmi.test(msg.content):
-			Currency.GetNobles(msg);
-			break;
-		case /.*!boydTownRoad.*/gmi.test(msg.content):
-			boyd.townRoad(msg);
-			break;
-		case /.*!stop.*/gmi.test(msg.content):
-			boyd.exitStream(msg);
-			break;
-		case /.*!diane.*/gmi.test(msg.content):
-			dianne.fridayFunny(msg);
-			break;
-		case /.*!joe.*/gmi.test(msg.content):
-			joe.joe(msg);
-			break;
-		case /.*!fridayfunnies.*/gmi.test(msg.content):
-			dianne.fridayFunnies(msg);
-			break;
-		case /.*!whereshowwie.*/gmi.test(msg.content):
-			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
-			break;
-		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-			message.adminMsg(msg, client);
-			break;
-		case /.*good bot.*/gmi.test(msg.content):
-			message.goodBot(msg);
-			break;
-		case /.*bad bot.*/gmi.test(msg.content):
-			message.badBot(msg);
-			break;
-		case /.*!spin.*/gmi.test(msg.content):
-			roulette.spin(msg, "!spin");
-			break;
-		case /.*!loan.*/gmi.test(msg.content):
-			lending.getActiveLoanInfo(msg);
-			break;
-		case /.*!bookloan.*/gmi.test(msg.content):
-			lending.bookNewLoan(msg, "!bookloan");
-			break;
-		case /.*!payloan.*/gmi.test(msg.content):
-			lending.payActiveLoan(msg, "!payloan");
-			break;
-		case /.*!creditscore.*/gmi.test(msg.content):
-			lending.getCreditScoreInfo(msg);
-			break;
-		case /.*!lotto.*/gmi.test(msg.content):
-			lottery.getLotteryInfo(msg);
-			break;
-		case /.*!buylottoticket.*/gmi.test(msg.content):
-			lottery.buyLotteryTicket(msg);
-			break;
-		case /.*!baseballrecord.*/gmi.test(msg.content):
-			baseball.getRecord(msg, "!baseballrecord", firstMention);
-			break;
-		case /.*!baseball.*/gmi.test(msg.content):
-			baseball.baseball(msg, "!baseball", firstMention);
-			break;
-		case /.*!swing.*/gmi.test(msg.content):
-			baseball.swing(msg);
-			break;
-		case /.*!forfeit.*/gmi.test(msg.content):
-			baseball.forfeit(msg);
-			break;
-		case /.*!cooperstown.*/gmi.test(msg.content):
-			baseball.cooperstown(msg);
-			break;
-		case /.*!stock.*/gmi.test(msg.content):
-			stocks.showPrice(msg, "!stock");
-			break;
-		case /.*!buystock.*/gmi.test(msg.content):
-			stocks.buy(msg, "!buystock");
-			break;
-		case /.*!sellstock.*/gmi.test(msg.content):
-			stocks.sell(msg, "!sellstock");
-			break;
-		case /.*!portfolio.*/gmi.test(msg.content):
-			stocks.portfolio(msg);
-			break;
-		case /.*!disc.*/gmi.test(msg.content):
-			disc.disc(msg, "!disc");
-			break;
-		case /.*!sheesh.*/gmi.test(msg.content):
-			message.sheesh(msg);
-			break;
-		default:
-			message.includesAndResponse(msg, triggersAndResponses);
-			kyle.kyleNoWorking(msg);
-			kyle.getKyleCommand(msg);
+		switch (true) {
+			case /.*(!help).*/gmi.test(msg.content):
+				Generic.Help(msg);
+				break;
+			case /.*(!sheesh).*/gmi.test(msg.content):
+				await message.sheesh(msg);
+				break;
+			case /.*(!skistats).*/gmi.test(msg.content):
+				skistats.all(msg);
+				break;
+			case /.*!bucks.*/gmi.test(msg.content):
+				Currency.CheckBucks(msg, "!bucks", firstMention);
+				break;
+			case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
+				Currency.BillyPay(msg, "!billypay", firstMention);
+				break;
+			case /.*!configure.*/gmi.test(msg.content):
+				Currency.Configure(client, msg);
+				break;
+			case /.*!allowance.*/gmi.test(msg.content):
+				Currency.Allowance(msg);
+				break;
+			case /.*!noblemen.*/gmi.test(msg.content):
+				Currency.GetNobles(msg);
+				break;
+			case /.*!boydTownRoad.*/gmi.test(msg.content):
+				boyd.townRoad(msg);
+				break;
+			case /.*!stop.*/gmi.test(msg.content):
+				boyd.exitStream(msg);
+				break;
+			case /.*!diane.*/gmi.test(msg.content):
+				dianne.fridayFunny(msg);
+				break;
+			case /.*!joe.*/gmi.test(msg.content):
+				joe.joe(msg);
+				break;
+			case /.*!fridayfunnies.*/gmi.test(msg.content):
+				dianne.fridayFunnies(msg);
+				break;
+			case /.*!whereshowwie.*/gmi.test(msg.content):
+				whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
+				break;
+			case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
+				message.adminMsg(msg, client);
+				break;
+			case /.*good bot.*/gmi.test(msg.content):
+				message.goodBot(msg);
+				break;
+			case /.*bad bot.*/gmi.test(msg.content):
+				message.badBot(msg);
+				break;
+			case /.*!spin.*/gmi.test(msg.content):
+				roulette.spin(msg, "!spin");
+				break;
+			case /.*!loan.*/gmi.test(msg.content):
+				lending.getActiveLoanInfo(msg);
+				break;
+			case /.*!bookloan.*/gmi.test(msg.content):
+				lending.bookNewLoan(msg, "!bookloan");
+				break;
+			case /.*!payloan.*/gmi.test(msg.content):
+				lending.payActiveLoan(msg, "!payloan");
+				break;
+			case /.*!creditscore.*/gmi.test(msg.content):
+				lending.getCreditScoreInfo(msg);
+				break;
+			case /.*!lotto.*/gmi.test(msg.content):
+				lottery.getLotteryInfo(msg);
+				break;
+			case /.*!buylottoticket.*/gmi.test(msg.content):
+				lottery.buyLotteryTicket(msg);
+				break;
+			case /.*!baseballrecord.*/gmi.test(msg.content):
+				baseball.getRecord(msg, "!baseballrecord", firstMention);
+				break;
+			case /.*!baseball.*/gmi.test(msg.content):
+				baseball.baseball(msg, "!baseball", firstMention);
+				break;
+			case /.*!swing.*/gmi.test(msg.content):
+				baseball.swing(msg);
+				break;
+			case /.*!forfeit.*/gmi.test(msg.content):
+				baseball.forfeit(msg);
+				break;
+			case /.*!cooperstown.*/gmi.test(msg.content):
+				baseball.cooperstown(msg);
+				break;
+			case /.*!stock.*/gmi.test(msg.content):
+				stocks.showPrice(msg, "!stock");
+				break;
+			case /.*!buystock.*/gmi.test(msg.content):
+				stocks.buy(msg, "!buystock");
+				break;
+			case /.*!sellstock.*/gmi.test(msg.content):
+				stocks.sell(msg, "!sellstock");
+				break;
+			case /.*!portfolio.*/gmi.test(msg.content):
+				stocks.portfolio(msg);
+				break;
+			case /.*!disc.*/gmi.test(msg.content):
+				disc.disc(msg, "!disc");
+				break;
+			case /.*!sheesh.*/gmi.test(msg.content):
+				message.sheesh(msg);
+				break;
+			default:
+				message.includesAndResponse(msg, triggersAndResponses);
+				kyle.kyleNoWorking(msg);
+				kyle.getKyleCommand(msg);
+		}
+	} catch (error) {
+		console.log(error);
 	}
-} catch (error) {
-	console.log(error);
-}
 });
 
 client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
@@ -190,7 +227,7 @@ client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
 				react.message.channel.send(`<@${user.id}> 🖕`);
 			}
 		} else {
-			switch (true){
+			switch (true) {
 				case (react.emoji.name === "BillyBuck"):
 					Currency.BuckReact(react, user.id);
 			}

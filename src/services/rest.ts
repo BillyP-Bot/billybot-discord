@@ -2,6 +2,14 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import config from "../helpers/config";
 
+export const backend = axios.create({
+	baseURL: config.BACKEND_API,
+	headers: {
+		"Content-Type": "application/json",
+		"Authorization": `Bearer ${config.BACKEND_AUTH}`
+	}
+});
+
 export class Rest {
 
 	private static readonly BackendClient = axios.create({
