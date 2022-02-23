@@ -1,12 +1,15 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class latest1644982270054 implements MigrationInterface {
-    name = 'latest1644982270054'
+export class blackjack1645594712672 implements MigrationInterface {
+    name = 'blackjack1645594712672'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "Loan" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "originalBalanceAmt" integer NOT NULL, "outstandingBalanceAmt" integer NOT NULL, "interestAccruedAmt" integer NOT NULL, "penaltyAmt" integer NOT NULL, "interestRate" numeric NOT NULL, "nextInterestAccrualDate" TIMESTAMP NOT NULL, "paymentsMadeAmt" integer NOT NULL, "minPaymentAmt" integer NOT NULL, "nextPaymentDueDate" TIMESTAMP NOT NULL, "mostRecentPaymentDate" TIMESTAMP NOT NULL, "closedDate" TIMESTAMP, "closedInd" boolean NOT NULL, "userId" integer, CONSTRAINT "PK_7e6795da11ac125df693d5fab66" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_dd534091fe92088d4d21b095cb" ON "Loan" ("userId") `);
         await queryRunner.query(`CREATE INDEX "IDX_b4c5994aaa44fe07a648fcd128" ON "Loan" ("serverId") `);
+        await queryRunner.query(`CREATE TABLE "Blackjack" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "wager" integer NOT NULL, "deck" character varying NOT NULL, "playerHand" character varying NOT NULL, "dealerHand" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_919f88211ba7cf5a31659709dd5" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_c08b35d41f146aa951dd32a248" ON "Blackjack" ("serverId") `);
+        await queryRunner.query(`CREATE INDEX "IDX_cd2bd112fd10e0cbc797fbf26b" ON "Blackjack" ("userId") `);
         await queryRunner.query(`CREATE TABLE "Stock" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "tickerSymbol" character varying NOT NULL, "billyBucksInvested" integer NOT NULL, "boughtAtPrice" numeric NOT NULL, "userId" integer, CONSTRAINT "PK_2725537b7bbe40073a50986598d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_52e5bcab3c19729160f0e07bd9" ON "Stock" ("serverId") `);
         await queryRunner.query(`CREATE INDEX "IDX_8ef4a718444920d74913f0769f" ON "Stock" ("userId") `);
@@ -19,6 +22,7 @@ export class latest1644982270054 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX "IDX_bb6eaaed345389d70c54e48bc7" ON "Baseball" ("awayTeamId") `);
         await queryRunner.query(`CREATE INDEX "IDX_bf6125d5b36cbb32c287590ed1" ON "Baseball" ("homeTeamId") `);
         await queryRunner.query(`ALTER TABLE "Loan" ADD CONSTRAINT "FK_dd534091fe92088d4d21b095cb0" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "Blackjack" ADD CONSTRAINT "FK_cd2bd112fd10e0cbc797fbf26b3" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Stock" ADD CONSTRAINT "FK_8ef4a718444920d74913f0769f3" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Baseball" ADD CONSTRAINT "FK_bb6eaaed345389d70c54e48bc7d" FOREIGN KEY ("awayTeamId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Baseball" ADD CONSTRAINT "FK_bf6125d5b36cbb32c287590ed11" FOREIGN KEY ("homeTeamId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -28,6 +32,7 @@ export class latest1644982270054 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "Baseball" DROP CONSTRAINT "FK_bf6125d5b36cbb32c287590ed11"`);
         await queryRunner.query(`ALTER TABLE "Baseball" DROP CONSTRAINT "FK_bb6eaaed345389d70c54e48bc7d"`);
         await queryRunner.query(`ALTER TABLE "Stock" DROP CONSTRAINT "FK_8ef4a718444920d74913f0769f3"`);
+        await queryRunner.query(`ALTER TABLE "Blackjack" DROP CONSTRAINT "FK_cd2bd112fd10e0cbc797fbf26b3"`);
         await queryRunner.query(`ALTER TABLE "Loan" DROP CONSTRAINT "FK_dd534091fe92088d4d21b095cb0"`);
         await queryRunner.query(`DROP INDEX "IDX_bf6125d5b36cbb32c287590ed1"`);
         await queryRunner.query(`DROP INDEX "IDX_bb6eaaed345389d70c54e48bc7"`);
@@ -40,6 +45,9 @@ export class latest1644982270054 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "IDX_8ef4a718444920d74913f0769f"`);
         await queryRunner.query(`DROP INDEX "IDX_52e5bcab3c19729160f0e07bd9"`);
         await queryRunner.query(`DROP TABLE "Stock"`);
+        await queryRunner.query(`DROP INDEX "IDX_cd2bd112fd10e0cbc797fbf26b"`);
+        await queryRunner.query(`DROP INDEX "IDX_c08b35d41f146aa951dd32a248"`);
+        await queryRunner.query(`DROP TABLE "Blackjack"`);
         await queryRunner.query(`DROP INDEX "IDX_b4c5994aaa44fe07a648fcd128"`);
         await queryRunner.query(`DROP INDEX "IDX_dd534091fe92088d4d21b095cb"`);
         await queryRunner.query(`DROP TABLE "Loan"`);
