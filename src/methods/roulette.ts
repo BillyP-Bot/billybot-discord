@@ -61,15 +61,19 @@ const isWinningSpin = (color: string): {won: boolean, spunColor: string} => {
 };
 
 const getSpinResult = (): string => {
-	const rollNum: number = Math.floor(Math.random() * 37); 
+	// produces random int 0 thru 37 inclusive (38 total distinct outcomes)
+	const rollNum: number = Math.floor(Math.random() * 38);
 
+	// 0 thru 1 inclusive (2 distinct outcomes)
 	if (rollNum <= 1) {
 		return "green";
 	}
+	// 2 thru 19 inclusive (18 distinct outcomes)
 	else if (rollNum >= 2 && rollNum <= 19) {
 		return "black";
 	}
-	else { // rollNum >= 20 && rollNum <= 38
+	// 20 thru 37 inclusive (18 distinct outcomes)
+	else {
 		return "red";
 	}
 };
