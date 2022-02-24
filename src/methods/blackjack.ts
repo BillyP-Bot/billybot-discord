@@ -201,7 +201,7 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 		await BlackjackRepo.RemoveOne(hand);
 		await UserRepo.UpdateBucks(hand.user.userId, hand.serverId, winnings, true);
 	} else {
-		status += "Options: `!hit` or `!stand`";
+		status += "Options: `!hit`, `!stand`, or `!doubledown`";
 	}
 
 	return status;
