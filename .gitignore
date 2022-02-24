@@ -43,3 +43,4 @@ yarn.lock
 bt-bot-dev-container/data/**/*
 
 users.txt
+users.json

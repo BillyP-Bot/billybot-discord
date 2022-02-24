@@ -28,7 +28,7 @@ import * as stocks from "./methods/stocks";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
-const client: Client = new Client();
+export const client: Client = new Client();
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
@@ -50,18 +50,6 @@ client.on("guildCreate", (guild: Guild) => {
 	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
 
-import fs from "fs";
-// eslint-disable-next-line no-unused-vars
-const importUsers = async (serverId: string) => {
-	const { members } = await client.guilds.fetch(serverId);
-	for (const [id, { user }] of members.cache.entries()) {
-		console.log(id);
-		if(user.bot) continue;
-		const { id: user_id, username, avatar } = user;
-		fs.appendFileSync("users.txt", `${JSON.stringify({ server_id: members.guild.id, user_id, username, avatar  })},\n`);
-	}
-};
-
 client.on("ready", async () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
@@ -74,13 +62,13 @@ client.on("ready", async () => {
 // #region user metrics
 client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	if (user.bot || user.id === react.message.author.id) return;
-	backend.put("user/metrics", { emotes_used: 1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
-	backend.put("user/metrics", { emotes_recieved: 1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { reactions_used: 1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { reactions_received: 1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
 });
 client.on("messageReactionRemove", (react: MessageReaction, user: User) => {
 	if (user.bot || user.id === react.message.author.id) return;
-	backend.put("user/metrics", { emotes_used: -1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
-	backend.put("user/metrics", { emotes_recieved: -1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { reactions_used: -1 }, { params: { user_id: user.id, server_id: react.message.guild.id } });
+	backend.put("user/metrics", { reactions_received: -1 }, { params: { user_id: react.message.author.id, server_id: react.message.guild.id } });
 });
 client.on("message", async (msg: Message) => {
 	if (msg.author.bot) return;
