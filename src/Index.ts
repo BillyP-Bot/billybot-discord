@@ -186,6 +186,9 @@ client.on("message", async (msg: Message) => {
 		case /.*!stay.*/gmi.test(msg.content):
 			blackjack.stand(msg);
 			break;
+		case /.*!doubledown.*/gmi.test(msg.content):
+			blackjack.doubleDown(msg);
+			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
 			kyle.kyleNoWorking(msg);

@@ -87,33 +87,67 @@ export const stand = async (msg: Message): Promise<void> => {
 	}
 };
 
-const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> => {
-	let status = "", playerCountText = "", dealerCountText = "", handIsOver = false, winnings = 0;
+/*
+	!doubledown
+	when current user is already in an active hand: double the bet, deal the user one more card, and then stand
+*/
+export const doubleDown = async (msg: Message): Promise<void> => {
+	try {
+		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
+		let hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
+		if (!hand) throw "No active blackjack hand found!";
 
-	const playerCount = getCountOfCards(hand.playerHand);
-	if (playerCount.softCount !== playerCount.hardCount) {
-		if (playerCount.softCount <= 20) {
-			playerCountText = `soft ${playerCount.softCount}`;
-		} else if (playerCount.softCount === 21) {
-			playerCountText = `${playerCount.softCount}`;
-		} else {
-			playerCountText = `hard ${playerCount.hardCount}`;
-		}
-	} else {
-		playerCountText = playerCount.hardCount.toString();
+		let deck: Deck = new Deck(unStringifyCards(hand.deck));
+		let playerCards: Card[] = unStringifyCards(hand.playerHand);
+
+		playerCards.push(deck.deal());
+
+		hand.deck = stringifyCards(deck.cards);
+		hand.playerHand = stringifyCards(playerCards);
+		
+		hand.user.billyBucks -= hand.wager;
+		hand.wager = hand.wager * 2;
+		hand = await BlackjackRepo.UpdateOne(hand);
+
+		const status: string = await getHandStatus(hand, true);
+		msg.channel.send(status);
+	} catch (error) {
+		replyWithErrorEmbed(msg, error);
 	}
+};
 
-	let dealerCount = getCountOfCards(hand.dealerHand);
+const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> => {
+	let status = "", playerCountText = "", dealerCountText = "", handIsOver = false, blackjack = false, winnings = 0;
 
-	if (playerCount.softCount === 21 || playerCount.hardCount === 21) {
-		status += `Blackjack! You collect a 3:2 payout of ${Math.floor(hand.wager * 1.5)} on your bet of ${hand.wager} BillyBucks!\n\n`;
-		winnings = Math.floor(hand.wager * 2.5);
+	let playerCount: IBlackjackCount = getCountOfCards(hand.playerHand);
+	playerCountText = getHandCountText(playerCount);
+
+	let dealerCount: IBlackjackCount = getCountOfCards(hand.dealerHand);
+
+	// player has blackjack (21 with first two cards)
+	if (playerCount.softCount === 21 && hand.playerHand.length === 4) {
+		// dealer also has blackjack (push)
+		if (dealerCount.softCount === 21 && hand.dealerHand.length === 4) {
+			status += "Blackjack! Dealer also has blackjack, so the hand is a push.";
+			winnings = hand.wager;
+		} else {
+			status += `Blackjack! You collect a 3:2 payout of ${Math.floor(hand.wager * 1.5)} on your bet of ${hand.wager} BillyBucks!\n\n`;
+			winnings = Math.floor(hand.wager * 2.5);
+		}
 		handIsOver = true;
+		blackjack = true;
+	// player has hit to make 21 (not blackjack)
+	} else if (playerCount.softCount === 21 || playerCount.hardCount === 21) {
+		stand = true;
+	// player busts
 	} else if (playerCount.hardCount > 21) {
 		status += `Busted! You lose your bet of ${hand.wager} BillyBucks!\n\n`;
 		handIsOver = true;
-	} else if (stand) {
-		// when the player chooses to stand, the dealer hits until 17 or higher is reached
+	}
+
+	// player chooses to stand (or has hit to make 21)
+	if (stand && !handIsOver) {
+		// when the player opts to stand, the dealer hits until 17 or higher is reached
 		let deck: Deck = new Deck(unStringifyCards(hand.deck));
 		let dealerCards: Card[] = unStringifyCards(hand.dealerHand);
 
@@ -124,21 +158,13 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 
 		hand.dealerHand = stringifyCards(dealerCards);
 
-		if (dealerCount.softCount !== dealerCount.hardCount) {
-			if (dealerCount.softCount <= 20) {
-				dealerCountText = `soft ${dealerCount.softCount}`;
-			} else if (dealerCount.softCount === 21) {
-				dealerCountText = `${dealerCount.softCount}`;
-			} else {
-				dealerCountText = `hard ${dealerCount.hardCount}`;
-			}
-		} else {
-			dealerCountText = dealerCount.hardCount.toString();
-		}
+		dealerCountText = getHandCountText(dealerCount);
 
+		// dealer busts
 		if (dealerCount.hardCount > 21) {
 			status += `Dealer busted! You collect a 1:1 payout on your bet of ${hand.wager} BillyBucks!\n\n`;
 			winnings = hand.wager * 2;
+		// both player and dealer have opted to stand and the hands are compared
 		} else {
 			const playerFinalCount = playerCount.softCount <= 21 ? playerCount.softCount : playerCount.hardCount;
 			const dealerFinalCount = dealerCount.softCount <= 21 ? dealerCount.softCount : dealerCount.hardCount;
@@ -160,8 +186,10 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 	status += `<@${hand.user.userId}>: ${playerCountText}\n`;
 	status += `${displayCards(hand.playerHand)}\n\n`;
 
+	if (blackjack) dealerCountText = getHandCountText(dealerCount);
+
 	status += `Dealer: ${dealerCountText}\n`;
-	if (stand) {
+	if (stand || blackjack) {
 		status += `${displayCards(hand.dealerHand)}\n\n`;
 	} else {
 		status += `${displayCards(hand.dealerHand.slice(0, 2))}🎴\n\n`;
@@ -250,18 +278,29 @@ const getCountOfCards = (cardsString: string): IBlackjackCount => {
 const displayCards = (cardsString: string): string => {
 	let displayString = "";
 	for (let i = 0; i < cardsString.length; i += 2) {
-		displayString += `${cardsString[i]}${convertSuitStringToEmoji(cardsString[i + 1])}\xa0\xa0\xa0\xa0`;
+		displayString += `${cardsString[i]}${convertSuitToEmoji(cardsString[i + 1])}\xa0\xa0\xa0\xa0`;
 	}
 	return displayString;
 };
 
-const convertSuitStringToEmoji = (suit: string): string => {
+const convertSuitToEmoji = (suit: string): string => {
 	switch(suit) {
 	case "c": return "♣️";
 	case "d": return "♦️";
 	case "h": return "♥️";
 	case "s": return "♠️";
 	}
+};
+
+const getHandCountText = (count: IBlackjackCount): string => {
+	// if soft and hard counts are different, there is at least one ace in the hand
+	if (count.softCount !== count.hardCount) {
+		if (count.softCount <= 21) {
+			return `soft ${count.softCount}`;
+		}
+		return `hard ${count.hardCount}`;
+	}
+	return count.hardCount.toString();
 };
 
 class Card {
