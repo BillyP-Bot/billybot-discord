@@ -24,6 +24,7 @@ import * as lending from "./methods/lending";
 import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
 import * as stocks from "./methods/stocks";
+import * as blackjack from "./methods/blackjack";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -51,8 +52,8 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
-	client.user.setActivity(Activities.farmville);
+	config.IS_PROD && client.user.setAvatar(Images.billyMad);
+	config.IS_PROD && client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
 	Jobs.LotteryCron.start();
@@ -172,6 +173,18 @@ client.on("message", async (msg: Message) => {
 			break;
 		case /.*!sheesh.*/gmi.test(msg.content):
 			message.sheesh(msg);
+			break;
+		case /.*!blackjack.*/gmi.test(msg.content):
+			blackjack.blackjack(msg, "!blackjack");
+			break;
+		case /.*!hit.*/gmi.test(msg.content):
+			blackjack.hit(msg);
+			break;
+		case /.*!stand.*/gmi.test(msg.content):
+			blackjack.stand(msg);
+			break;
+		case /.*!stay.*/gmi.test(msg.content):
+			blackjack.stand(msg);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);

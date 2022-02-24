@@ -59,3 +59,8 @@ export interface IDisc {
 	pic: string,
 	name_slug: string
 }
+
+export interface IBlackjackCount {
+	softCount: number,
+	hardCount: number
+}
