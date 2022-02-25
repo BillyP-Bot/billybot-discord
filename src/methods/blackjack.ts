@@ -1,14 +1,11 @@
 import { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
 
 import { replyWithErrorEmbed, replyWithSuccessEmbed, sendErrorEmbed } from "./messages";
+import { Blackjack } from "../models/Blackjack";
 import { User } from "../models/User";
 import { BlackjackRepository as BlackjackRepo } from "../repositories/BlackjackRepository";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
-import { Blackjack } from "../models/Blackjack";
 import { IBlackjackCount } from "../types/Abstract";
-
-const SUITS: string = "cdhs";
-const VALUES: string = "23456789TJQKA";
 
 /*
 	!blackjack [bet]
@@ -16,6 +13,9 @@ const VALUES: string = "23456789TJQKA";
 
 	!blackjack
 	when current user is already in an active hand: show the current state of the hand
+
+	!blackjack help
+	view info on blackjack commands
 */
 export const blackjack = async (msg: Message, prefix: string): Promise<void> => {
 	try {
@@ -368,14 +368,16 @@ class Card {
 
 class Deck {
 	cards: Card[];
+	SUITS: string = "cdhs";
+	VALUES: string = "23456789TJQKA";
 
 	constructor(cards?: Card[]) {
 		if (cards) {
 			this.cards = cards;
 		} else {
 			this.cards = [];
-			for (const suit of SUITS) {
-				for (const value of VALUES) {
+			for (const suit of this.SUITS) {
+				for (const value of this.VALUES) {
 					this.cards.push(new Card(suit, value));
 				}
 			}
