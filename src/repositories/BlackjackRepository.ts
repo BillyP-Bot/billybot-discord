@@ -20,6 +20,7 @@ export class BlackjackRepository {
 			newHand.deck = deck;
 			newHand.playerHand = playerHand;
 			newHand.dealerHand = dealerHand;
+			newHand.latestMessageId = "N/A";
 
 			user.blackjackHands.push(newHand);
 

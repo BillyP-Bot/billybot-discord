@@ -1,6 +1,6 @@
-import { Message } from "discord.js";
+import { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
 
-import { replyWithErrorEmbed } from "./messages";
+import { replyWithErrorEmbed, replyWithSuccessEmbed, sendErrorEmbed } from "./messages";
 import { User } from "../models/User";
 import { BlackjackRepository as BlackjackRepo } from "../repositories/BlackjackRepository";
 import { UserRepository as UserRepo } from "../repositories/UserRepository";
@@ -23,17 +23,23 @@ export const blackjack = async (msg: Message, prefix: string): Promise<void> => 
 		if (args[0] === "") args.splice(0, 1);
 		if (args.length > 1) throw "Invalid format! Expects 0 or 1 argument(s).";
 
+		if (args[0] === "help") return replyWithSuccessEmbed(msg, "Blackjack Commands", help());
+
 		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
 		const hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
 
 		if (hand) {
 			// show the current state of the hand
 			const status: string = await getHandStatus(hand);
-			msg.channel.send(status);
+			const msgSent = await msg.channel.send(status);
+			reactWithBlackjackOptions(msgSent);
+
+			hand.latestMessageId = msgSent.id;
+			await BlackjackRepo.UpdateOne(hand);
 		} else {
 			// initiate a new hand for the specified bet amount
 			const bet = parseInt(args[0]);
-			if (isNaN(bet) || bet < 10) throw "Must bet at least 10 BillyBucks to play a hand of blackjack:\n\n`!blackjack [bet]`";
+			if (isNaN(bet) || bet < 10) throw "No active blackjack hand found!\n\nMust bet at least 10 BillyBucks to play a hand of blackjack:\n\n`!blackjack [bet]`";
 			if (bet > user.billyBucks) throw `Cannot bet ${bet} BillyBucks, you only have ${user.billyBucks}!`;
 
 			await startNewHand(msg, user, bet);
@@ -48,10 +54,10 @@ export const blackjack = async (msg: Message, prefix: string): Promise<void> => 
 	!hit
 	when current user is already in an active hand: deal the user one more card
 */
-export const hit = async (msg: Message): Promise<void> => {
+export const hit = async (userId: string, serverId: string, channel: TextChannel | DMChannel | NewsChannel): Promise<void> => {
 	try {
-		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
-		let hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
+		const user = await UserRepo.FindOne(userId, serverId);
+		let hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
 		if (!hand) throw "No active blackjack hand found!";
 
 		let deck: Deck = new Deck(unStringifyCards(hand.deck));
@@ -64,9 +70,17 @@ export const hit = async (msg: Message): Promise<void> => {
 		hand = await BlackjackRepo.UpdateOne(hand);
 
 		const status: string = await getHandStatus(hand);
-		msg.channel.send(status);
+		const msgSent = await channel.send(status);
+
+		hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
+		if (hand) {
+			reactWithBlackjackOptions(msgSent);
+
+			hand.latestMessageId = msgSent.id;
+			await BlackjackRepo.UpdateOne(hand);
+		}
 	} catch (error) {
-		replyWithErrorEmbed(msg, error);
+		sendErrorEmbed(channel, error);
 	}
 };
 
@@ -74,16 +88,16 @@ export const hit = async (msg: Message): Promise<void> => {
 	!stand / !stay
 	when current user is already in an active hand: opt to take no more cards
 */
-export const stand = async (msg: Message): Promise<void> => {
+export const stand = async (userId: string, serverId: string, channel: TextChannel | DMChannel | NewsChannel): Promise<void> => {
 	try {
-		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
-		const hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
+		const user = await UserRepo.FindOne(userId, serverId);
+		const hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
 		if (!hand) throw "No active blackjack hand found!";
 
 		const status: string = await getHandStatus(hand, true);
-		msg.channel.send(status);
+		channel.send(status);
 	} catch (error) {
-		replyWithErrorEmbed(msg, error);
+		sendErrorEmbed(channel, error);
 	}
 };
 
@@ -91,10 +105,10 @@ export const stand = async (msg: Message): Promise<void> => {
 	!doubledown
 	when current user is already in an active hand: double the bet, deal the user one more card, and then stand
 */
-export const doubleDown = async (msg: Message): Promise<void> => {
+export const doubleDown = async (userId: string, serverId: string, channel: TextChannel | DMChannel | NewsChannel): Promise<void> => {
 	try {
-		const user = await UserRepo.FindOne(msg.author.id, msg.guild.id);
-		let hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
+		const user = await UserRepo.FindOne(userId, serverId);
+		let hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
 		if (!hand) throw "No active blackjack hand found!";
 
 		let deck: Deck = new Deck(unStringifyCards(hand.deck));
@@ -104,15 +118,31 @@ export const doubleDown = async (msg: Message): Promise<void> => {
 
 		hand.deck = stringifyCards(deck.cards);
 		hand.playerHand = stringifyCards(playerCards);
+
+		if (hand.wager > hand.user.billyBucks) throw `Cannot double down! You only have ${user.billyBucks}!`;
 		
 		hand.user.billyBucks -= hand.wager;
 		hand.wager = hand.wager * 2;
 		hand = await BlackjackRepo.UpdateOne(hand);
 
 		const status: string = await getHandStatus(hand, true);
-		msg.channel.send(status);
+		channel.send(status);
 	} catch (error) {
-		replyWithErrorEmbed(msg, error);
+		sendErrorEmbed(channel, error);
+	}
+};
+
+export const onMessageReact = async (react: MessageReaction, userId: string): Promise<void> => {
+	const user = await UserRepo.FindOne(userId, react.message.guild.id);
+	const hand = await BlackjackRepo.FindActiveHandForUser(user, react.message.guild.id);
+
+	if (!hand) return;
+	if (react.message.id !== hand.latestMessageId) return;
+
+	switch(react.emoji.toString()) {
+	case "🟩": return hit(userId, react.message.guild.id, react.message.channel);
+	case "🟨": return stand(userId, react.message.guild.id, react.message.channel);
+	case "🟦": return doubleDown(userId, react.message.guild.id, react.message.channel);
 	}
 };
 
@@ -195,13 +225,13 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 		status += `${displayCards(hand.dealerHand.slice(0, 2))}🎴\n\n`;
 	}
 
-	status += `Bet: ${hand.wager}\n\n`;
+	status += `Bet: ${hand.wager} BillyBucks\n\n`;
 
 	if (handIsOver) {
 		await BlackjackRepo.RemoveOne(hand);
 		await UserRepo.UpdateBucks(hand.user.userId, hand.serverId, winnings, true);
 	} else {
-		status += "Options: `!hit`, `!stand`, or `!doubledown`";
+		status += "🟩\xa0\xa0`!hit`\n🟨\xa0\xa0`!stand`\n🟦\xa0\xa0`!doubledown`";
 	}
 
 	return status;
@@ -227,7 +257,15 @@ const startNewHand = async (msg: Message, user: User, bet: number): Promise<void
 	await UserRepo.UpdateBucks(msg.author.id, msg.guild.id, -bet, true);
 
 	const status: string = await getHandStatus(newHand);
-	msg.channel.send(status);
+	const msgSent = await msg.channel.send(status);
+
+	const hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
+	if (hand) {
+		reactWithBlackjackOptions(msgSent);
+
+		hand.latestMessageId = msgSent.id;
+		await BlackjackRepo.UpdateOne(hand);
+	}
 };
 
 const stringifyCards = (cards: Card[]): string => {
@@ -301,6 +339,21 @@ const getHandCountText = (count: IBlackjackCount): string => {
 		return `hard ${count.hardCount}`;
 	}
 	return count.hardCount.toString();
+};
+
+const reactWithBlackjackOptions = (msg: Message): void => {
+	msg.react("🟩");
+	msg.react("🟨");
+	msg.react("🟦");
+};
+
+const help = (): string => {
+	let msg = "`!blackjack [bet]` Start a new hand of blackjack betting the specified amount.\n";
+	msg += "`!blackjack` Show the current status of your active blackjack hand.\n";
+	msg += "`!hit` Take one more card.\n";
+	msg += "`!stand` Take no more cards and end the hand.\n";
+	msg += "`!doubledown` Double the bet amount, take one more card, and end the hand.";
+	return msg;
 };
 
 class Card {

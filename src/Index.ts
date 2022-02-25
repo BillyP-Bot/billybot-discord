@@ -28,7 +28,7 @@ import * as blackjack from "./methods/blackjack";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
-const client: Client = new Client();
+const client: Client = new Client({ restTimeOffset: 0 });
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
@@ -178,16 +178,13 @@ client.on("message", async (msg: Message) => {
 			blackjack.blackjack(msg, "!blackjack");
 			break;
 		case /.*!hit.*/gmi.test(msg.content):
-			blackjack.hit(msg);
+			blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
 			break;
-		case /.*!stand.*/gmi.test(msg.content):
-			blackjack.stand(msg);
-			break;
-		case /.*!stay.*/gmi.test(msg.content):
-			blackjack.stand(msg);
+		case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
+			blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
 			break;
 		case /.*!doubledown.*/gmi.test(msg.content):
-			blackjack.doubleDown(msg);
+			blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
 			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
@@ -199,12 +196,14 @@ client.on("message", async (msg: Message) => {
 }
 });
 
-client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
+client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	try {
 		if (react.message.author.bot) {
 			if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
 				react.message.channel.send(`<@${user.id}> 🖕`);
 			}
+
+			if (!user.bot) blackjack.onMessageReact(react, user.id);
 		} else {
 			switch (true){
 				case (react.emoji.name === "BillyBuck"):

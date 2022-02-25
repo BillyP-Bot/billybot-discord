@@ -25,4 +25,7 @@ export class Blackjack extends Base {
 
 	@Column()
 	dealerHand: string;
+
+	@Column()
+	latestMessageId: string
 }

@@ -1,4 +1,4 @@
-import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember } from "discord.js";
+import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember, DMChannel, NewsChannel } from "discord.js";
 import { Colors } from "../types/Constants";
 
 import { Rest } from "../services/rest";
@@ -117,4 +117,18 @@ export const replyWithErrorEmbed = (msg: Message, error: any): void => {
 	errorEmbed.setColor(Colors.red).setTitle("Error");
 	errorEmbed.setDescription(error);
 	msg.reply(errorEmbed);
+};
+
+export const sendSuccessEmbed = (channel: TextChannel | DMChannel | NewsChannel, title: any, body: any): void => {
+	const successEmbed: MessageEmbed = new MessageEmbed();
+	successEmbed.setColor(Colors.green).setTitle(title);
+	successEmbed.setDescription(body);
+	channel.send(successEmbed);
+};
+
+export const sendErrorEmbed = (channel: TextChannel | DMChannel | NewsChannel, error: any): void => {
+	const errorEmbed: MessageEmbed = new MessageEmbed();
+	errorEmbed.setColor(Colors.red).setTitle("Error");
+	errorEmbed.setDescription(error);
+	channel.send(errorEmbed);
 };

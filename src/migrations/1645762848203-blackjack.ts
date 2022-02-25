@@ -1,13 +1,13 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class blackjack1645594712672 implements MigrationInterface {
-    name = 'blackjack1645594712672'
+export class blackjack1645762848203 implements MigrationInterface {
+    name = 'blackjack1645762848203'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "Loan" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "originalBalanceAmt" integer NOT NULL, "outstandingBalanceAmt" integer NOT NULL, "interestAccruedAmt" integer NOT NULL, "penaltyAmt" integer NOT NULL, "interestRate" numeric NOT NULL, "nextInterestAccrualDate" TIMESTAMP NOT NULL, "paymentsMadeAmt" integer NOT NULL, "minPaymentAmt" integer NOT NULL, "nextPaymentDueDate" TIMESTAMP NOT NULL, "mostRecentPaymentDate" TIMESTAMP NOT NULL, "closedDate" TIMESTAMP, "closedInd" boolean NOT NULL, "userId" integer, CONSTRAINT "PK_7e6795da11ac125df693d5fab66" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_dd534091fe92088d4d21b095cb" ON "Loan" ("userId") `);
         await queryRunner.query(`CREATE INDEX "IDX_b4c5994aaa44fe07a648fcd128" ON "Loan" ("serverId") `);
-        await queryRunner.query(`CREATE TABLE "Blackjack" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "wager" integer NOT NULL, "deck" character varying NOT NULL, "playerHand" character varying NOT NULL, "dealerHand" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_919f88211ba7cf5a31659709dd5" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "Blackjack" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "wager" integer NOT NULL, "deck" character varying NOT NULL, "playerHand" character varying NOT NULL, "dealerHand" character varying NOT NULL, "latestMessageId" character varying NOT NULL, "userId" integer, CONSTRAINT "PK_919f88211ba7cf5a31659709dd5" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_c08b35d41f146aa951dd32a248" ON "Blackjack" ("serverId") `);
         await queryRunner.query(`CREATE INDEX "IDX_cd2bd112fd10e0cbc797fbf26b" ON "Blackjack" ("userId") `);
         await queryRunner.query(`CREATE TABLE "Stock" ("id" SERIAL NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "serverId" character varying NOT NULL, "tickerSymbol" character varying NOT NULL, "billyBucksInvested" integer NOT NULL, "boughtAtPrice" numeric NOT NULL, "userId" integer, CONSTRAINT "PK_2725537b7bbe40073a50986598d" PRIMARY KEY ("id"))`);
