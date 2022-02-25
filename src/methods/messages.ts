@@ -1,7 +1,6 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember, DMChannel, NewsChannel } from "discord.js";
 import { Colors } from "../types/Constants";
 
-import { Rest } from "../services/rest";
 import logger from "../services/logger";
 
 const adminMsgPrefix: string = "!adminMsg";
@@ -39,17 +38,17 @@ export const adminMsg = async (msg: Message, client: Client): Promise<void> => {
 	const adminText: string = msg.content.replace(adminMsgPrefix, "").trim();
 	const generalChannels = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "general");
 
-	await Rest.Post("logs/newlog", { log: adminText, issuer: msg.author.username });
-
 	const card: MessageEmbed = new MessageEmbed()
 		.setColor("#1bb0a2")
 		.setTitle("Admin Update")
-		.addField(`Update From ${msg.author.username}`, adminText)
-		.addField("Rolling Log", "See all changelogs [here](https://btbackend.herokuapp.com/api/logs)");
+		.addField(`Update From ${msg.author.username}`, adminText);
 
-	generalChannels.forEach(async (channel: TextChannel) => {
-		await channel.send(card);
-	});
+	await Promise.all([
+		generalChannels.reduce((acc: Promise<Message>[], channel: TextChannel) => {
+			acc.push(channel.send(card));
+			return acc;
+		}, [])
+	]);
 };
 
 export const includesAndResponse = (msg: Message, prompts: string[][]): void => {

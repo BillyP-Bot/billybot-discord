@@ -112,7 +112,7 @@ client.on("message", async (msg: Message) => {
 			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 			break;
 		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-			message.adminMsg(msg, client);
+			await message.adminMsg(msg, client);
 			break;
 		case /.*good bot.*/gmi.test(msg.content):
 			message.goodBot(msg);
