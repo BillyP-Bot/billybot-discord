@@ -24,10 +24,11 @@ import * as lending from "./methods/lending";
 import * as lottery from "./methods/lottery";
 import * as baseball from "./methods/baseball";
 import * as stocks from "./methods/stocks";
+import * as blackjack from "./methods/blackjack";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
-const client: Client = new Client();
+const client: Client = new Client({ restTimeOffset: 0 });
 // instantiate all cronjobs
 const Jobs: CronJobs = new CronJobs(client);
 
@@ -51,8 +52,8 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	client.user.setAvatar(Images.billyMad);
-	client.user.setActivity(Activities.farmville);
+	config.IS_PROD && client.user.setAvatar(Images.billyMad);
+	config.IS_PROD && client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
 	Jobs.LotteryCron.start();
@@ -173,6 +174,18 @@ client.on("message", async (msg: Message) => {
 		case /.*!sheesh.*/gmi.test(msg.content):
 			message.sheesh(msg);
 			break;
+		case /.*!blackjack.*/gmi.test(msg.content):
+			blackjack.blackjack(msg, "!blackjack");
+			break;
+		case /.*!hit.*/gmi.test(msg.content):
+			blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
+			break;
+		case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
+			blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
+			break;
+		case /.*!doubledown.*/gmi.test(msg.content):
+			blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
+			break;
 		default:
 			message.includesAndResponse(msg, triggersAndResponses);
 			kyle.kyleNoWorking(msg);
@@ -183,12 +196,14 @@ client.on("message", async (msg: Message) => {
 }
 });
 
-client.on("messageReactionAdd", (react: MessageReaction , user: User) => {
+client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	try {
 		if (react.message.author.bot) {
 			if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
 				react.message.channel.send(`<@${user.id}> 🖕`);
 			}
+
+			if (!user.bot) blackjack.onMessageReact(react, user.id);
 		} else {
 			switch (true){
 				case (react.emoji.name === "BillyBuck"):
