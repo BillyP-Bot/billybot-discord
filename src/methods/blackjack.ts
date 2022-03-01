@@ -147,7 +147,7 @@ export const onMessageReact = async (react: MessageReaction, userId: string): Pr
 };
 
 const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> => {
-	let status = "", playerCountText = "", dealerCountText = "", handIsOver = false, blackjack = false, winnings = 0;
+	let status = "", playerCountText = "", dealerCountText = "", handIsOver = false, winnings = 0;
 
 	let playerCount: IBlackjackCount = getCountOfCards(hand.playerHand);
 	playerCountText = getHandCountText(playerCount);
@@ -165,7 +165,6 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 			winnings = Math.floor(hand.wager * 1.5);
 		}
 		handIsOver = true;
-		blackjack = true;
 	// player has hit to make 21 (not blackjack)
 	} else if (playerCount.softCount === 21 || playerCount.hardCount === 21) {
 		stand = true;
@@ -213,24 +212,20 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 		handIsOver = true;
 	}
 
-	status += `<@${hand.user.userId}>: ${playerCountText}\n`;
-	status += `${displayCards(hand.playerHand)}\n\n`;
-
-	if (blackjack) dealerCountText = getHandCountText(dealerCount);
-
-	status += `Dealer: ${dealerCountText}\n`;
-	if (stand || blackjack) {
-		status += `${displayCards(hand.dealerHand)}\n\n`;
-	} else {
-		status += `${displayCards(hand.dealerHand.slice(0, 2))}🎴\n\n`;
-	}
-
-	status += `Bet: ${hand.wager} BillyBucks\n\n`;
+	status += `<@${hand.user.userId}>: ${playerCountText}\n${displayCards(hand.playerHand)}\n\nDealer:`;
 
 	if (handIsOver) {
+		dealerCountText = getHandCountText(dealerCount);
+		status += ` ${dealerCountText}\n${displayCards(hand.dealerHand)}\n\n`;
+
 		await BlackjackRepo.RemoveOne(hand);
 		await UserRepo.UpdateBucks(hand.user.userId, hand.serverId, winnings, true);
+
+		const bucks: number = await UserRepo.GetBucks(hand.user.userId, hand.serverId);
+		status += `You now have ${bucks} BillyBucks.`;
 	} else {
+		status += `\n${displayCards(hand.dealerHand.slice(0, 2))}🎴\n\n`;
+		status += `Bet: ${hand.wager} BillyBucks\n\n`;
 		status += "🟩\xa0\xa0`!hit`\n🟨\xa0\xa0`!stand`\n🟦\xa0\xa0`!doubledown`";
 	}
 
