@@ -159,7 +159,6 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 		// dealer also has blackjack (push)
 		if (dealerCount.softCount === 21 && hand.dealerHand.length === 4) {
 			status += "Blackjack! Dealer also has blackjack, so the hand is a push.\n\n";
-			winnings = hand.wager;
 		} else {
 			status += `Blackjack! You collect a 3:2 payout of ${Math.floor(hand.wager * 1.5)} on your bet of ${hand.wager} BillyBucks!\n\n`;
 			winnings = Math.floor(hand.wager * 1.5);
