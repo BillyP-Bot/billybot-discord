@@ -32,7 +32,7 @@ export const blackjack = async (msg: Message, prefix: string): Promise<void> => 
 			// show the current state of the hand
 			const status: string = await getHandStatus(hand);
 			const msgSent = await msg.channel.send(status);
-			reactWithBlackjackOptions(msgSent);
+			reactWithBlackjackOptions(msgSent, hand.playerHand.length === 4);
 
 			hand.latestMessageId = msgSent.id;
 			await BlackjackRepo.UpdateOne(hand);
@@ -113,6 +113,8 @@ export const doubleDown = async (userId: string, serverId: string, channel: Text
 
 		let deck: Deck = new Deck(unStringifyCards(hand.deck));
 		let playerCards: Card[] = unStringifyCards(hand.playerHand);
+
+		if (playerCards.length > 2) throw "Cannot double down! Doubling down is only allowed on your first two cards.";
 
 		playerCards.push(deck.deal());
 
@@ -225,7 +227,8 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 	} else {
 		status += `\n${displayCards(hand.dealerHand.slice(0, 2))}🎴\n\n`;
 		status += `Bet: ${hand.wager} BillyBucks\n\n`;
-		status += "🟩\xa0\xa0`!hit`\n🟨\xa0\xa0`!stand`\n🟦\xa0\xa0`!doubledown`";
+		status += "🟩\xa0\xa0`!hit`\n🟨\xa0\xa0`!stand`";
+		if (hand.playerHand.length === 4) status += "\n🟦\xa0\xa0`!doubledown`";
 	}
 
 	return status;
@@ -255,7 +258,7 @@ const startNewHand = async (msg: Message, user: User, bet: number): Promise<void
 
 	const hand = await BlackjackRepo.FindActiveHandForUser(user, msg.guild.id);
 	if (hand) {
-		reactWithBlackjackOptions(msgSent);
+		reactWithBlackjackOptions(msgSent, true);
 
 		hand.latestMessageId = msgSent.id;
 		await BlackjackRepo.UpdateOne(hand);
@@ -335,10 +338,10 @@ const getHandCountText = (count: IBlackjackCount): string => {
 	return count.hardCount.toString();
 };
 
-const reactWithBlackjackOptions = (msg: Message): void => {
+const reactWithBlackjackOptions = (msg: Message, canDoubleDown?: boolean): void => {
 	msg.react("🟩");
 	msg.react("🟨");
-	msg.react("🟦");
+	if (canDoubleDown) msg.react("🟦");
 };
 
 const help = (): string => {
@@ -346,7 +349,7 @@ const help = (): string => {
 	msg += "`!blackjack` Show the current status of your active blackjack hand.\n";
 	msg += "`!hit` Take one more card.\n";
 	msg += "`!stand` Take no more cards and end the hand.\n";
-	msg += "`!doubledown` Double the bet amount, take one more card, and end the hand.";
+	msg += "`!doubledown` Double the bet amount, take one more card, and end the hand (only allowed on first two cards).";
 	return msg;
 };
 
