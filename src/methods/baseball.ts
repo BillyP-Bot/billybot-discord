@@ -1,9 +1,7 @@
 import { Message, GuildMember } from "discord.js";
 
-import { Baseball } from "../models/Baseball";
-import { BaseballRepository as BaseballRepo } from "../repositories/BaseballRepository";
-import { User } from "../models/User";
-import { UserRepository as UserRepo } from "../repositories/UserRepository";
+import { Baseball, User } from "../models";
+import { BaseballRepo, UserRepo } from "../repositories";
 import { IAtBatOutcome } from "../types/Abstract";
 import { IBaserunningResult } from "../types/Abstract";
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";

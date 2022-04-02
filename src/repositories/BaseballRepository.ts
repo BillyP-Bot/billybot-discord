@@ -1,5 +1,4 @@
-import { Baseball } from "../models/Baseball";
-import { User } from "../models/User";
+import { Baseball, User } from "../models";
 
 export class BaseballRepository {
 

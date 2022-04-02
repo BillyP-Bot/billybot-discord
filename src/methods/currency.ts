@@ -1,7 +1,7 @@
 import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild, Role, MessageReaction } from "discord.js";
 
-import { UserRepository as User } from "../repositories/UserRepository";
-import { User as IUser } from "../models/User";
+import { UserRepo } from "../repositories";
+import { User } from "../models";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
@@ -26,7 +26,7 @@ export default class Currency {
 			let insertCOunt: number = 0;
 			for (let i = 0; i < notBot.length; i++) {
 				try {
-					const inserted: boolean = await User.InsertOne({ username: notBot[i].username, id: notBot[i].id, serverId: notBot[i].serverId });
+					const inserted: boolean = await UserRepo.InsertOne({ username: notBot[i].username, id: notBot[i].id, serverId: notBot[i].serverId });
 					if (inserted) insertCOunt += 1;
 				} catch (error) {
 					console.log(error);
@@ -45,7 +45,7 @@ export default class Currency {
 	public static async Allowance(msg: Message): Promise<void> {
 		try {
 			const serverId: string = msg.guild.id;
-			const update: number = await User.Allowance(msg.member.id, serverId);
+			const update: number = await UserRepo.Allowance(msg.member.id, serverId);
 
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			buckEmbed.setColor(Colors.green);
@@ -78,7 +78,7 @@ export default class Currency {
 				}
 				else {
 					const user: Discord.User = found.user;
-					const bucks: number = await User.GetBucks(user.id, msg.guild.id);
+					const bucks: number = await UserRepo.GetBucks(user.id, msg.guild.id);
 	
 					buckEmbed.setColor(Colors.green);
 					buckEmbed.setTitle(user.username);
@@ -90,7 +90,7 @@ export default class Currency {
 			}
 
 			const req: string = msg.author.id;
-			const bucks: number = await User.GetBucks(req, msg.guild.id);
+			const bucks: number = await UserRepo.GetBucks(req, msg.guild.id);
 
 			buckEmbed.setColor(Colors.green);
 			buckEmbed.setTitle(msg.author.username);
@@ -110,7 +110,7 @@ export default class Currency {
 
 	public static async GetNobles(msg: Message): Promise<void> {
 		try {
-			const nobles: IUser[] = await User.GetNobles(msg.guild.id);
+			const nobles: User[] = await UserRepo.GetNobles(msg.guild.id);
 
 			const buckEmbed: MessageEmbed = new MessageEmbed();
 			buckEmbed.setColor(Colors.green);
@@ -131,11 +131,11 @@ export default class Currency {
 			const guildId: string = react.message.guild.id;
 			const authorId: string = react.message.author.id;
 			//check configured
-			await User.GetBucks(authorId, react.message.guild.id);
-			const user$: number = await User.GetBucks(userId, react.message.guild.id);
+			await UserRepo.GetBucks(authorId, react.message.guild.id);
+			const user$: number = await UserRepo.GetBucks(userId, react.message.guild.id);
 			if (user$ > 0) {
-				await User.UpdateBucks(authorId, guildId, 1, true);
-				await User.UpdateBucks(userId, guildId, -1, true);
+				await UserRepo.UpdateBucks(authorId, guildId, 1, true);
+				await UserRepo.UpdateBucks(userId, guildId, -1, true);
 			}
 		}
 		catch (error) {
@@ -151,7 +151,7 @@ export default class Currency {
 			const username: string = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
 			const payAmount: string = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
 			const buckEmbed: MessageEmbed = new MessageEmbed();
-			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
+			const userBucks: number = await UserRepo.GetBucks(msg.author.id, msg.guild.id);
 
 			if (username || mention) {
 				if (username === msg.author.username || (mention && mention.user.username === msg.author.username)){
@@ -179,8 +179,8 @@ export default class Currency {
 							buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
 							msg.reply(buckEmbed);
 						}
-						const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
-						const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
+						const updated: boolean = await UserRepo.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
+						const updated2: boolean = await UserRepo.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
 							
 						if (updated && updated2) {
 							buckEmbed.setColor(Colors.green);

@@ -1,5 +1,4 @@
-import { User } from "../models/User";
-import { Stock } from "../models/Stock";
+import { User, Stock } from "../models";
 
 export class StockRepository {
 	public static async FindStocksForUser(serverId: string, user: User): Promise<Stock[]> {

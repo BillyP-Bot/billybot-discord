@@ -1,7 +1,7 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js";
 import { Colors } from "../types/Constants";
 
-import { UserRepository as UserRepo } from "../repositories/UserRepository";
+import { UserRepo } from "../repositories";
 
 const initialJackpot: number = 500;
 const ticketCost: number = 50;

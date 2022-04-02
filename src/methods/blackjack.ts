@@ -1,10 +1,8 @@
 import { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
 
 import { replyWithErrorEmbed, replyWithSuccessEmbed, sendErrorEmbed } from "./messages";
-import { Blackjack } from "../models/Blackjack";
-import { User } from "../models/User";
-import { BlackjackRepository as BlackjackRepo } from "../repositories/BlackjackRepository";
-import { UserRepository as UserRepo } from "../repositories/UserRepository";
+import { Blackjack, User } from "../models";
+import { BlackjackRepo, UserRepo } from "../repositories";
 import { IBlackjackCount } from "../types/Abstract";
 
 /*

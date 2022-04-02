@@ -1,5 +1,4 @@
-import { Blackjack } from "../models/Blackjack";
-import { User } from "../models/User";
+import { Blackjack, User } from "../models";
 
 export class BlackjackRepository {
 

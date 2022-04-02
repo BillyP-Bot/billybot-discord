@@ -1,9 +1,8 @@
 import { Message } from "discord.js";
 
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
-import { Stock } from "../models/Stock";
-import { StockRepository as StockRepo } from "../repositories/StockRepository";
-import { UserRepository as UserRepo } from "../repositories/UserRepository";
+import { Stock } from "../models";
+import { StockRepo, UserRepo } from "../repositories";
 import { StockApi as api } from "../services/rest";
 
 /*

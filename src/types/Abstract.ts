@@ -1,5 +1,5 @@
 import { Client, Message } from "discord.js";
-import { Baseball } from "../models/Baseball";
+import { Baseball } from "../models";
 
 export interface MessageHandler {
 	msg: Message,

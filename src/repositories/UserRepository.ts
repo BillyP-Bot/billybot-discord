@@ -1,5 +1,5 @@
 import { Format } from "../helpers";
-import { User } from "../models/User";
+import { User } from "../models";
 import { IUserList } from "../types/Abstract";
 import { Nums } from "../types/Constants";
 

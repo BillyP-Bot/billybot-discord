@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 
 import { Colors } from "../types/Constants";
-import { UserRepository as User } from "../repositories/UserRepository";
+import { UserRepo } from "../repositories";
 export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	try {
 		const buckEmbed: MessageEmbed = new MessageEmbed();
@@ -13,13 +13,13 @@ export const spin = async (msg: Message, prefix: string): Promise<void> => {
 
 		if (bet < 1) return replyWithError(msg, buckEmbed, "You must bet at least 1 BillyBuck!");
 
-		const bucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
+		const bucks: number = await UserRepo.GetBucks(msg.author.id, msg.guild.id);
 
 		if (bet > bucks) return replyWithError(msg, buckEmbed, `Can't bet ${bet} BillyBucks! You only have ${bucks}.`);
 
 		const {won, spunColor} = isWinningSpin(color);
 		const potWinnings: number = setWinnings(bet, won, spunColor);
-		const updated = await User.UpdateBucks(
+		const updated = await UserRepo.UpdateBucks(
 			msg.author.id,
 			msg.guild.id,
 			won ? potWinnings : -potWinnings,

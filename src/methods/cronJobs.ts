@@ -3,7 +3,7 @@ import { CronJob } from "cron";
 import path from "path";
 import { cwd } from "process";
 
-import { LoanRepository as LoanRepo } from "../repositories/LoanRepository";
+import { LoanRepo } from "../repositories";
 import * as lottery from "./lottery";
 
 export default class CronJobs {

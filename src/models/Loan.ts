@@ -1,7 +1,7 @@
-import { User } from "./User";
 import { Index, Entity, Column, ManyToOne } from "typeorm";
 
 import Base from "./Base";
+import { User } from "./";
 
 @Entity("Loan")
 export class Loan extends Base {
