@@ -12,26 +12,21 @@ export class Rest {
 		}
 	});
 
-	public static async Post(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>> {
+	public static async PostToBackend(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>> {
 		try {
 			return await Rest.BackendClient.post(url, data, config);
 		} catch (error) {
 			throw new Error(error);
 		}
 	}
-}
 
-export class StockApi {
-
-	private static readonly base = "https://finance.yahoo.com/quote";
-
-	private static readonly client = axios.create({
-		baseURL: StockApi.base
+	private static readonly StockClient = axios.create({
+		baseURL: "https://finance.yahoo.com/quote"
 	});
 
-	public static async GetCurrentData(ticker: string): Promise<{ price: number, currency: string }> {
+	public static async GetCurrentStockData(ticker: string): Promise<{ price: number, currency: string }> {
 		const symbol = ticker.toUpperCase().trim();
-		const { data } = await StockApi.client.get(symbol);
+		const { data } = await Rest.StockClient.get(symbol);
 
 		let price: string = data.split(`"${symbol}":{"sourceInterval"`)[1]
 			.split("regularMarketPrice")[1]

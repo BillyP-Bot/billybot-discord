@@ -1,7 +1,7 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember, DMChannel, NewsChannel } from "discord.js";
 
 import { Colors } from "../types";
-import logger from "../services/logger";
+import { Log } from "../services";
 
 const adminMsgPrefix = "!adminMsg";
 const billyPUsernames: string[] = ["BT-Bot-Dev", "Billy Prod Bot", "BillyP Bot"];
@@ -12,7 +12,7 @@ export const goodBot = (msg: Message): void => {
 	try {
 		msg.react(billyHappy);
 	} catch (error) {
-		logger.error(error);
+		Log.Error(error);
 	}
 };
 
@@ -22,7 +22,7 @@ export const badBot = (msg: Message): void => {
 	try {
 		msg.react(billyMad);
 	} catch (error) {
-		logger.error(error);
+		Log.Error(error);
 	}
 };
 
@@ -30,7 +30,7 @@ export const sheesh = (msg: Message): void => {
 	try {
 		msg.channel.send("Sheeeeeeeeeeeeeeeeesssshhhhh...");
 	} catch (error) {
-		logger.error(error);
+		Log.Error(error);
 	}
 };
 
@@ -75,7 +75,7 @@ export const makeRole = (msg: Message, roleName: string, roleColor: string): Pro
 			color: roleColor.toUpperCase(),
 		} as RoleData,
 		reason: "This Role Must Exist",
-	}).catch((e: Error) => logger.error(e));
+	}).catch((e: Error) => Log.Error(e));
 	return msg.channel.send(`> Created Role ${roleName}.`);
 };
 
@@ -100,7 +100,7 @@ export const billyPoggersReact = (msg: Message): void => {
 	try {
 		msg.react(billyPoggers);
 	} catch (error) {
-		logger.error(error);
+		Log.Error(error);
 	}
 };
 

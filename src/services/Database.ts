@@ -2,8 +2,8 @@ import path from "path";
 import { cwd } from "process";
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 
-import { Config } from "../helpers";
-import Log  from "./logger";
+import { Config}  from "../helpers";
+import { Log } from "./";
 
 export class Database {
 
@@ -41,7 +41,7 @@ export class Database {
 		try {
 			connection = getConnection();
 		} catch (e) {
-			Log.error(`no existing connection found: ${e}`, "Database");
+			Log.Error(`no existing connection found: ${e}`, "Database");
 		}
 
 		try {
@@ -50,18 +50,15 @@ export class Database {
 					await connection.connect();
 			} else
 				await createConnection(Config.IS_PROD ? Database.Orm : Database.OrmLocal);
-			Log.info(" successfully connected to database", "Database");
+			Log.Info(" successfully connected to database", "Database");
 		} catch (e) {
 			throw new Error(`error connecting to database: ${e}`);
 		}
 	}
 
 	public static async Close(): Promise<void> {
-		try {
-			const conn = getConnection();
-			await conn.close();
-		} catch (e) {
-			throw new Error(e);
-		}
+		const conn = getConnection();
+		await conn.close();
+		Log.Info("[Database] Closed connection.");
 	}
 }

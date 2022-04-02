@@ -4,7 +4,7 @@ import { UserRepo } from "../repositories";
 import { User } from "../models";
 import { Colors, Roles, IUserList } from "../types";
 
-import logger from "../services/logger";
+import { Log } from "../services";
 
 export default class Currency {
 
@@ -139,9 +139,9 @@ export default class Currency {
 		}
 		catch (error) {
 			if (error === "user not found")
-				logger.warn(error);
+				Log.Warn(error);
 			else 
-				logger.error(error);
+				Log.Error(error);
 		}
 	}
 

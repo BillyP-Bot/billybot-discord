@@ -3,7 +3,7 @@ import { Message } from "discord.js";
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 import { Stock } from "../models";
 import { StockRepo, UserRepo } from "../repositories";
-import { StockApi as api } from "../services/rest";
+import { Rest } from "../services";
 
 /*
 	!stock [tickerSymbol]
@@ -144,5 +144,5 @@ export const portfolio = async (msg: Message): Promise<void> => {
 };
 
 const getCurrentStockInfo = async (tickerSymbol: string): Promise<{ price: number, currency: string }> => {
-	return await api.GetCurrentData(tickerSymbol);
+	return await Rest.GetCurrentStockData(tickerSymbol);
 };

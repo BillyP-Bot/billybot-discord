@@ -41,6 +41,7 @@
     "ffmpeg-static": "^4.2.7",
     "get-image-colors": "^4.0.0",
     "node-fetch": "^2.6.1",
+    "p-event": "^4.2.0",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
