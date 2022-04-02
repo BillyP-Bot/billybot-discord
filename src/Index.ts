@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import "reflect-metadata";
 import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";

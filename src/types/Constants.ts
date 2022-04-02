@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { ICommand } from "./Abstract";
 
 export enum Colors {
