@@ -6,7 +6,7 @@ import { Colors, Roles, IUserList } from "../types";
 
 import { Log } from "../services";
 
-export default class Currency {
+export class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
 		try {

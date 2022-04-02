@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from "discord.js";
 
 import { Colors, CommandDescriptor } from "../types";
 
-export default class Generic {
+export class Generic {
 
 	public static Help(msg: Message): void {
 		try {

@@ -5,23 +5,25 @@ import {Log} from "./Log";
 import { Config } from "../helpers";
 import { Images, Activities } from "../types";
 
-import CronJobs from "../methods/cronJobs";
-import Currency from "../methods/currency";
-import Generic from "../methods/generic";
-import * as message from "../methods/messages";
-import * as boyd from "../methods/boyd";
-import * as dianne from "../methods/dianne";
-import * as disc from "../methods/disc";
-import * as skistats from "../methods/skiStats";
-import * as whatshowardupto from "../methods/whatshowardupto";
-import * as kyle from "../methods/kyle";
-import * as joe from "../methods/joe";
-import * as roulette from "../methods/roulette";
-import * as lending from "../methods/lending";
-import * as lottery from "../methods/lottery";
-import * as baseball from "../methods/baseball";
-import * as stocks from "../methods/stocks";
-import * as blackjack from "../methods/blackjack";
+import {
+	BaseballMethods,
+	BlackjackMethods,
+	BoydMethods,
+	CronJobs,
+	Currency,
+	DianneMethods,
+	DiscMethods,
+	Generic,
+	HowardMethods,
+	JoeMethods,
+	KyleMethods,
+	LendingMethods,
+	LotteryMethods,
+	MessagesMethods,
+	RouletteMethods, 
+	SkiStatsMethods,
+	StocksMethods
+} from "../methods";
 
 export class Bot {
 	
@@ -89,20 +91,20 @@ export class Bot {
 		try {
 			if(msg.author.bot) return;
 	
-			const mentions = message.getMentionedGuildMembers(msg);
+			const mentions = MessagesMethods.GetMentionedGuildMembers(msg);
 			const firstMention = mentions[0];
-			if (mentions.length > 0 && message.didSomeoneMentionBillyP(mentions))
-				message.billyPoggersReact(msg);
+			if (mentions.length > 0 && MessagesMethods.DidSomeoneMentionBillyP(mentions))
+				MessagesMethods.BillyPoggersReact(msg);
 	
 			switch (true) {
 				case /.*(!help).*/gmi.test(msg.content):
 					Generic.Help(msg);
 					break;
 				case /.*(!sheesh).*/gmi.test(msg.content):
-					await message.sheesh(msg);
+					await MessagesMethods.Sheesh(msg);
 					break;
 				case /.*(!skistats).*/gmi.test(msg.content):
-					skistats.all(msg);
+					SkiStatsMethods.All(msg);
 					break;
 				case /.*!bucks.*/gmi.test(msg.content):
 					Currency.CheckBucks(msg, "!bucks", firstMention);
@@ -120,102 +122,102 @@ export class Bot {
 					Currency.GetNobles(msg);
 					break;
 				case /.*!boydTownRoad.*/gmi.test(msg.content):
-					boyd.townRoad(msg);
+					BoydMethods.TownRoad(msg);
 					break;
 				case /.*!stop.*/gmi.test(msg.content):
-					boyd.exitStream(msg);
+					BoydMethods.ExitStream(msg);
 					break;
 				case /.*!diane.*/gmi.test(msg.content):
-					dianne.fridayFunny(msg);
+					DianneMethods.FridayFunny(msg);
 					break;
 				case /.*!joe.*/gmi.test(msg.content):
-					joe.joe(msg);
+					JoeMethods.Joe(msg);
 					break;
 				case /.*!fridayfunnies.*/gmi.test(msg.content):
-					dianne.fridayFunnies(msg);
+					DianneMethods.FridayFunnies(msg);
 					break;
 				case /.*!whereshowwie.*/gmi.test(msg.content):
-					whatshowardupto.howardUpdate(msg, Config.GOOGLE_API_KEY, Config.GOOGLE_CX_KEY);
+					HowardMethods.HowardUpdate(msg, Config.GOOGLE_API_KEY, Config.GOOGLE_CX_KEY);
 					break;
 				case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-					await message.adminMsg(msg, Bot.Client);
+					await MessagesMethods.AdminMsg(msg, Bot.Client);
 					break;
 				case /.*good bot.*/gmi.test(msg.content):
-					message.goodBot(msg);
+					MessagesMethods.GoodBot(msg);
 					break;
 				case /.*bad bot.*/gmi.test(msg.content):
-					message.badBot(msg);
+					MessagesMethods.BadBot(msg);
 					break;
 				case /.*!spin.*/gmi.test(msg.content):
-					roulette.spin(msg, "!spin");
+					RouletteMethods.Spin(msg, "!spin");
 					break;
 				case /.*!loan.*/gmi.test(msg.content):
-					lending.getActiveLoanInfo(msg);
+					LendingMethods.GetActiveLoanInfo(msg);
 					break;
 				case /.*!bookloan.*/gmi.test(msg.content):
-					lending.bookNewLoan(msg, "!bookloan");
+					LendingMethods.BookNewLoan(msg, "!bookloan");
 					break;
 				case /.*!payloan.*/gmi.test(msg.content):
-					lending.payActiveLoan(msg, "!payloan");
+					LendingMethods.PayActiveLoan(msg, "!payloan");
 					break;
 				case /.*!creditscore.*/gmi.test(msg.content):
-					lending.getCreditScoreInfo(msg);
+					LendingMethods.GetCreditScoreInfo(msg);
 					break;
 				case /.*!lotto.*/gmi.test(msg.content):
-					lottery.getLotteryInfo(msg);
+					LotteryMethods.GetLotteryInfo(msg);
 					break;
 				case /.*!buylottoticket.*/gmi.test(msg.content):
-					lottery.buyLotteryTicket(msg);
+					LotteryMethods.BuyLotteryTicket(msg);
 					break;
 				case /.*!baseballrecord.*/gmi.test(msg.content):
-					baseball.getRecord(msg, "!baseballrecord", firstMention);
+					BaseballMethods.GetRecord(msg, "!baseballrecord", firstMention);
 					break;
 				case /.*!baseball.*/gmi.test(msg.content):
-					baseball.baseball(msg, "!baseball", firstMention);
+					BaseballMethods.Baseball(msg, "!baseball", firstMention);
 					break;
 				case /.*!swing.*/gmi.test(msg.content):
-					baseball.swing(msg);
+					BaseballMethods.Swing(msg);
 					break;
 				case /.*!forfeit.*/gmi.test(msg.content):
-					baseball.forfeit(msg);
+					BaseballMethods.Forfeit(msg);
 					break;
 				case /.*!cooperstown.*/gmi.test(msg.content):
-					baseball.cooperstown(msg);
+					BaseballMethods.Cooperstown(msg);
 					break;
 				case /.*!stock.*/gmi.test(msg.content):
-					stocks.showPrice(msg, "!stock");
+					StocksMethods.ShowPrice(msg, "!stock");
 					break;
 				case /.*!buystock.*/gmi.test(msg.content):
-					stocks.buy(msg, "!buystock");
+					StocksMethods.Buy(msg, "!buystock");
 					break;
 				case /.*!sellstock.*/gmi.test(msg.content):
-					stocks.sell(msg, "!sellstock");
+					StocksMethods.Sell(msg, "!sellstock");
 					break;
 				case /.*!portfolio.*/gmi.test(msg.content):
-					stocks.portfolio(msg);
+					StocksMethods.Portfolio(msg);
 					break;
 				case /.*!disc.*/gmi.test(msg.content):
-					disc.disc(msg, "!disc");
+					DiscMethods.Disc(msg, "!disc");
 					break;
 				case /.*!sheesh.*/gmi.test(msg.content):
-					message.sheesh(msg);
+					MessagesMethods.Sheesh(msg);
 					break;
 				case /.*!blackjack.*/gmi.test(msg.content):
-					blackjack.blackjack(msg, "!blackjack");
+					BlackjackMethods.Blackjack(msg, "!blackjack");
 					break;
 				case /.*!hit.*/gmi.test(msg.content):
-					blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
+					BlackjackMethods.Hit(msg.author.id, msg.guild.id, msg.channel);
 					break;
 				case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
-					blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
+					BlackjackMethods.Stand(msg.author.id, msg.guild.id, msg.channel);
 					break;
 				case /.*!doubledown.*/gmi.test(msg.content):
-					blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
+					BlackjackMethods.DoubleDown(msg.author.id, msg.guild.id, msg.channel);
 					break;
 				default:
-					message.includesAndResponse(msg, Bot.TriggersAndResponses);
-					kyle.kyleNoWorking(msg);
-					kyle.getKyleCommand(msg);
+					MessagesMethods.IncludesAndResponse(msg, Bot.TriggersAndResponses);
+					KyleMethods.KyleNoWorking(msg);
+					KyleMethods.GetKyleCommand(msg);
 			}
 		} catch (error) {
 			console.log(error);
@@ -229,7 +231,7 @@ export class Bot {
 					react.message.channel.send(`<@${user.id}> 🖕`);
 				}
 	
-				if (!user.bot) blackjack.onMessageReact(react, user.id);
+				if (!user.bot) BlackjackMethods.OnMessageReact(react, user.id);
 			} else {
 				switch (true){
 					case (react.emoji.name === "BillyBuck"):

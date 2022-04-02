@@ -4,9 +4,9 @@ import path from "path";
 import { cwd } from "process";
 
 import { LoanRepo } from "../repositories";
-import * as lottery from "./lottery";
+import { LotteryMethods } from "./lottery";
 
-export default class CronJobs {
+export class CronJobs {
 
 	private static EverySecond: string = "* * * * * *";
 	private static MondayNine: string = "0 0 9 * * 1";
@@ -53,7 +53,7 @@ export default class CronJobs {
 		const channels: any = client.channels.cache.filter((TextChannel: TextChannel) => TextChannel.name === "general");
 
 		channels.forEach((channel: TextChannel) => {
-			lottery.drawLotteryWinner(channel.guild.id, channel);
+			LotteryMethods.DrawLotteryWinner(channel.guild.id, channel);
 		});
 	}
 }
