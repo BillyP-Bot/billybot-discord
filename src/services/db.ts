@@ -2,16 +2,16 @@ import path from "path";
 import { cwd } from "process";
 import { Connection, ConnectionOptions, createConnection, getConnection } from "typeorm";
 
-import Config, { Db } from "../helpers/config";
+import { Config } from "../helpers";
 import Log  from "./logger";
 
 export class Database {
 
 	private static readonly BaseOrm = {
 		name: "default",
-		type: Db.DB_TYPE,
-		synchronize: Db.DB_SYNC,
-		logging: Db.DB_LOGGING,
+		type: Config.DB_TYPE,
+		synchronize: Config.DB_SYNC,
+		logging: Config.DB_LOGGING,
 		autoReconnect: true,
 		reconnectTries: 5,
 		reconnectInterval: 2000,
@@ -22,16 +22,16 @@ export class Database {
 		...Database.BaseOrm,
 		ssl: true,
 		extra: { ssl: { rejectUnauthorized: false } },
-		url: Db.DB_URL
+		url: Config.DB_URL
 	} as ConnectionOptions;
 
 	private static readonly OrmLocal = {
 		...Database.BaseOrm,
-		host: Db.DB_HOST,
-		port: Db.DB_PORT,
-		username: Db.DB_USERNAME,
-		password: Db.DB_PASSWORD,
-		database: Db.DB_NAME,
+		host: Config.DB_HOST,
+		port: Config.DB_PORT,
+		username: Config.DB_USERNAME,
+		password: Config.DB_PASSWORD,
+		database: Config.DB_NAME,
 		ssl: false
 	} as ConnectionOptions;
 

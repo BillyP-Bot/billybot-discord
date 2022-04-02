@@ -1,6 +1,6 @@
 import { createLogger, format, transports } from "winston";
 
-import config from "../helpers/config";
+import {Config} from "../helpers";
 
 const { combine, timestamp, json, prettyPrint } = format;
 
@@ -26,7 +26,7 @@ const logger = createLogger({
 	],
 });
 
-if (!config.IS_PROD) {
+if (!Config.IS_PROD) {
 	logger.add(new transports.Console({
 		format: format.simple(),
 	}));

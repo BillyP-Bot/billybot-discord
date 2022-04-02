@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import config from "../helpers/config";
+import { Config } from "../helpers";
 
 export class Rest {
 
@@ -8,7 +8,7 @@ export class Rest {
 		baseURL: "https://btbackend.herokuapp.com/api/",
 		headers: {
 			"Content-Type": "application/json",
-			"appcode": config.BACKEND_TOKEN
+			"appcode": Config.BACKEND_TOKEN
 		}
 	});
 

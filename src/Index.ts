@@ -2,7 +2,7 @@ import "reflect-metadata";
 import "dotenv";
 import { Client, Guild, Intents, Message, MessageReaction, User } from "discord.js";
 
-import config from "./helpers/config";
+import { Config } from "./helpers";
 import logger from "./services/logger";
 
 import { Database } from "./services/db";
@@ -51,8 +51,8 @@ client.on("guildCreate", (guild: Guild) => {
 
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
-	config.IS_PROD && client.user.setAvatar(Images.billyMad);
-	config.IS_PROD && client.user.setActivity(Activities.farmville);
+	Config.IS_PROD && client.user.setAvatar(Images.billyMad);
+	Config.IS_PROD && client.user.setActivity(Activities.farmville);
 	Jobs.RollCron.start();
 	Jobs.NightlyCycleCron.start();
 	Jobs.LotteryCron.start();
@@ -108,7 +108,7 @@ client.on("message", async (msg: Message) => {
 			dianne.fridayFunnies(msg);
 			break;
 		case /.*!whereshowwie.*/gmi.test(msg.content):
-			whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
+			whatshowardupto.howardUpdate(msg, Config.GOOGLE_API_KEY, Config.GOOGLE_CX_KEY);
 			break;
 		case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
 			await message.adminMsg(msg, client);
@@ -218,6 +218,6 @@ client.on("unhandledRejection", error => {
 	logger.error("Unhanded promise rejection: ", error);
 });
 
-client.login(config.BOT_TOKEN).catch(e => {
+client.login(Config.BOT_TOKEN).catch(e => {
 	logger.error(e);
 });

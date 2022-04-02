@@ -1,5 +1,11 @@
 import { ICommand } from "./Abstract";
 
+export enum Env {
+	dev = "development",
+	stg = "staging",
+	prod = "production"
+}
+
 export enum Colors {
 	green = "#00e64d",
 	red = "#ff6666"
