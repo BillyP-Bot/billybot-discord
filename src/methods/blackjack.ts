@@ -58,8 +58,8 @@ export const hit = async (userId: string, serverId: string, channel: TextChannel
 		let hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
 		if (!hand) throw "No active blackjack hand found!";
 
-		let deck: Deck = new Deck(unStringifyCards(hand.deck));
-		let playerCards: Card[] = unStringifyCards(hand.playerHand);
+		const deck: Deck = new Deck(unStringifyCards(hand.deck));
+		const playerCards: Card[] = unStringifyCards(hand.playerHand);
 
 		playerCards.push(deck.deal());
 
@@ -109,8 +109,8 @@ export const doubleDown = async (userId: string, serverId: string, channel: Text
 		let hand = await BlackjackRepo.FindActiveHandForUser(user, serverId);
 		if (!hand) throw "No active blackjack hand found!";
 
-		let deck: Deck = new Deck(unStringifyCards(hand.deck));
-		let playerCards: Card[] = unStringifyCards(hand.playerHand);
+		const deck: Deck = new Deck(unStringifyCards(hand.deck));
+		const playerCards: Card[] = unStringifyCards(hand.playerHand);
 
 		if (playerCards.length > 2) throw "Cannot double down! Doubling down is only allowed on your first two cards.";
 
@@ -140,16 +140,16 @@ export const onMessageReact = async (react: MessageReaction, userId: string): Pr
 	if (react.message.id !== hand.latestMessageId) return;
 
 	switch(react.emoji.toString()) {
-	case "🟩": return hit(userId, react.message.guild.id, react.message.channel);
-	case "🟨": return stand(userId, react.message.guild.id, react.message.channel);
-	case "🟦": return doubleDown(userId, react.message.guild.id, react.message.channel);
+		case "🟩": return hit(userId, react.message.guild.id, react.message.channel);
+		case "🟨": return stand(userId, react.message.guild.id, react.message.channel);
+		case "🟦": return doubleDown(userId, react.message.guild.id, react.message.channel);
 	}
 };
 
 const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> => {
 	let status = "", playerCountText = "", dealerCountText = "", handIsOver = false, winnings = 0;
 
-	let playerCount: IBlackjackCount = getCountOfCards(hand.playerHand);
+	const playerCount: IBlackjackCount = getCountOfCards(hand.playerHand);
 	playerCountText = getHandCountText(playerCount);
 
 	let dealerCount: IBlackjackCount = getCountOfCards(hand.dealerHand);
@@ -176,8 +176,8 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 	// player chooses to stand (or has hit to make 21)
 	if (stand && !handIsOver) {
 		// when the player opts to stand, the dealer hits until 17 or higher is reached
-		let deck: Deck = new Deck(unStringifyCards(hand.deck));
-		let dealerCards: Card[] = unStringifyCards(hand.dealerHand);
+		const deck: Deck = new Deck(unStringifyCards(hand.deck));
+		const dealerCards: Card[] = unStringifyCards(hand.dealerHand);
 
 		while (dealerCount.softCount < 17 || (dealerCount.hardCount < 17 && dealerCount.softCount > 21)) {
 			dealerCards.push(deck.deal());
@@ -272,7 +272,7 @@ const stringifyCards = (cards: Card[]): string => {
 };
 
 const unStringifyCards = (cardsString: string): Card[] => {
-	let cards: Card[] = [];
+	const cards: Card[] = [];
 	for (let i = 0; i < cardsString.length; i += 2) {
 		cards.push(new Card(cardsString[i + 1], cardsString[i]));
 	}
@@ -280,26 +280,26 @@ const unStringifyCards = (cardsString: string): Card[] => {
 };
 
 const getCountOfCards = (cardsString: string): IBlackjackCount => {
-	let count: IBlackjackCount = { softCount: 0, hardCount: 0 };
+	const count: IBlackjackCount = { softCount: 0, hardCount: 0 };
 	let aceCount = 0;
 
 	for (let i = 0; i < cardsString.length; i += 2) {
-		let value = cardsString[i];
+		const value = cardsString[i];
 		switch (true) {
-		case (parseInt(value) >= 2 && parseInt(value) <= 9):
-			count.softCount += parseInt(value);
-			count.hardCount += parseInt(value);
-			break;
-		case ("TJQK".includes(value)):
-			count.softCount += 10;
-			count.hardCount += 10;
-			break;
-		case (value === "A"):
-			aceCount++;
-			count.hardCount++;
-			break;
-		default:
-			throw `Invalid card value: ${value}`;
+			case (parseInt(value) >= 2 && parseInt(value) <= 9):
+				count.softCount += parseInt(value);
+				count.hardCount += parseInt(value);
+				break;
+			case ("TJQK".includes(value)):
+				count.softCount += 10;
+				count.hardCount += 10;
+				break;
+			case (value === "A"):
+				aceCount++;
+				count.hardCount++;
+				break;
+			default:
+				throw `Invalid card value: ${value}`;
 		}
 	}
 
@@ -318,10 +318,10 @@ const displayCards = (cardsString: string): string => {
 
 const convertSuitToEmoji = (suit: string): string => {
 	switch(suit) {
-	case "c": return "♣️";
-	case "d": return "♦️";
-	case "h": return "♥️";
-	case "s": return "♠️";
+		case "c": return "♣️";
+		case "d": return "♦️";
+		case "h": return "♥️";
+		case "s": return "♠️";
 	}
 };
 

@@ -2,11 +2,11 @@ import fetch from "node-fetch";
 import getColors from "get-image-colors";
 import { GuildEmoji, Message, Role, MessageEmbed } from "discord.js";
 
-const discordMsgLmt: number = 1200;
-const drinkPrefix: string = "!drink ";
-const drinkSearchPrefix: string = "!searchDrinks ";
-const ingredientPrefix: string = "!ingredients ";
-const categoryPrefix: string = "!category ";
+const discordMsgLmt = 1200;
+const drinkPrefix = "!drink ";
+const drinkSearchPrefix = "!searchDrinks ";
+const ingredientPrefix = "!ingredients ";
+const categoryPrefix = "!category ";
 
 export const kyleNoWorking = (msg: Message): void => {
 	if (msg.channel.type !== "dm" && msg.member.roles.cache.find((r: Role) => r.name === "FormerPartnerIncorporated") && msg.channel.name === "work-stuff") {
@@ -39,9 +39,9 @@ export const getKyleCommand = (msg: Message): void => {
 		// fetch
 		getApi(`drink-search/?drink=${command}`)
 			.then((returnedDrinks: any) => {
-				let addedDrinks: number = 0;
-				let messageReply: string = `Here is the list of drinks with ${drinkName} in the name!\n`;
-				for (let i: number = 0;
+				let addedDrinks = 0;
+				let messageReply = `Here is the list of drinks with ${drinkName} in the name!\n`;
+				for (let i = 0;
 					(i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++) {
 					messageReply += returnedDrinks[i].drink + "\n";
 					addedDrinks += 1;
@@ -81,8 +81,8 @@ export const getKyleCommand = (msg: Message): void => {
 		getApi(`ingredient/?ingredient=${command}`)
 			.then((returnedDrinks: any) => {
 				if (returnedDrinks.length > 0) {
-					let addedDrinks: number = 0;
-					let messageReply: string = "Here's the list of drinks with the provided ingredient(s)!\n";
+					let addedDrinks = 0;
+					let messageReply = "Here's the list of drinks with the provided ingredient(s)!\n";
 					for (let i = 0;
 						(i < returnedDrinks.length) && (messageReply.length < discordMsgLmt); i++) {
 						messageReply += returnedDrinks[i].drink + "\n";

@@ -6,7 +6,7 @@ import { IAtBatOutcome } from "../types/Abstract";
 import { IBaserunningResult } from "../types/Abstract";
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 
-const innings: number = 3;
+const innings = 3;
 
 /*
 	!baseball @[username]
@@ -58,12 +58,12 @@ export const baseball = async (msg: Message, prefix: string, mention: GuildMembe
 			}
 
 			// check for wager amount
-			let wager, wagerText;
+			let wager;
 			if (args[0] && args[1]) {
 				wager = parseInt(args[1]);
 				if (isNaN(wager) || wager < 0) throw "Invalid wager amount! Must be a non-negative number.";
 			} else wager = 0;
-			wagerText = (wager > 0) ? ` for ${wager} BillyBucks` : "";
+			const wagerText = (wager > 0) ? ` for ${wager} BillyBucks` : "";
 
 			// enforce wager limits for outgoing game challenges
 			if (user.billyBucks < wager) throw `Cannot wager ${wager} BillyBucks, you only have ${user.billyBucks}!`;
@@ -216,12 +216,12 @@ export const getRecord = async (msg: Message, prefix: string, mention: GuildMemb
 const getAtBatOutcome = (game: Baseball): IAtBatOutcome => {
 	const roll = getAtBatRoll();
 	switch (true) {
-	case roll <= 6:
-		return hit(game, roll);
-	case roll <= 9:
-		return walk(game);
-	default:
-		return out(game, roll);
+		case roll <= 6:
+			return hit(game, roll);
+		case roll <= 9:
+			return walk(game);
+		default:
+			return out(game, roll);
 	}
 };
 
@@ -235,22 +235,22 @@ const getAtBatRoll = (): number => {
 const hit = (game: Baseball, roll: number): IAtBatOutcome => {
 	let result, output;
 	switch (true) {
-	case roll <= 2:
-		result = advanceBatterAndBaserunners(game.bases, 1); // single
-		output = "It's a single!";
-		break;
-	case roll <= 4:
-		result = advanceBatterAndBaserunners(game.bases, 2); // double
-		output = "It's a double!";
-		break;
-	case roll <= 5:
-		result = advanceBatterAndBaserunners(game.bases, 3); // triple
-		output = "Oooh baby, a triple!";
-		break;
-	default:
-		result = advanceBatterAndBaserunners(game.bases, 4); // home run
-		output = "Home run! It's outta here!";
-		break;
+		case roll <= 2:
+			result = advanceBatterAndBaserunners(game.bases, 1); // single
+			output = "It's a single!";
+			break;
+		case roll <= 4:
+			result = advanceBatterAndBaserunners(game.bases, 2); // double
+			output = "It's a double!";
+			break;
+		case roll <= 5:
+			result = advanceBatterAndBaserunners(game.bases, 3); // triple
+			output = "Oooh baby, a triple!";
+			break;
+		default:
+			result = advanceBatterAndBaserunners(game.bases, 4); // home run
+			output = "Home run! It's outta here!";
+			break;
 	}
 
 	if (result) {
@@ -282,49 +282,49 @@ const walk = (game: Baseball): IAtBatOutcome => {
 const out = (game: Baseball, roll: number): IAtBatOutcome => {
 	let result, output;
 	switch(true) {
-	case roll <= 10:
-		if (game.outs < 2 && atLeastOneBaserunnerIsOn(game.bases)) {
-			result = advanceBaserunnersOnly(game.bases, 1); // fly out (sac fly if less than 2 outs and at least one runner is on base)
-			output = "It's a sac fly! The batter is out, but the runners advance!";
-		} else {
-			output = "Fly out!";
-		}
-		game.outs++;
-		break;
-	case roll <= 11:
-		if (game.outs < 2 && game.bases.charAt(0) === "1") { // ground out (double play if force available)
-			output = "It's a double play!";
-			game.outs += 2;
-			// update the bases appropriately for a double play
-			if (game.bases === "111") {
-				game.bases = "011";
-			} else if (game.bases === "110") {
-				game.bases = Math.floor(Math.random() * 2) === 0 ? "010" : "001";
-			} else if (game.bases === "101") {
-				game.bases = "001";
-			} else if (game.bases === "100") {
-				game.bases = "000";
+		case roll <= 10:
+			if (game.outs < 2 && atLeastOneBaserunnerIsOn(game.bases)) {
+				result = advanceBaserunnersOnly(game.bases, 1); // fly out (sac fly if less than 2 outs and at least one runner is on base)
+				output = "It's a sac fly! The batter is out, but the runners advance!";
+			} else {
+				output = "Fly out!";
 			}
-		} else {
+			game.outs++;
+			break;
+		case roll <= 11:
+			if (game.outs < 2 && game.bases.charAt(0) === "1") { // ground out (double play if force available)
+				output = "It's a double play!";
+				game.outs += 2;
+				// update the bases appropriately for a double play
+				if (game.bases === "111") {
+					game.bases = "011";
+				} else if (game.bases === "110") {
+					game.bases = Math.floor(Math.random() * 2) === 0 ? "010" : "001";
+				} else if (game.bases === "101") {
+					game.bases = "001";
+				} else if (game.bases === "100") {
+					game.bases = "000";
+				}
+			} else {
+				output = "Ground out!";
+				game.outs ++;
+			}
+			break;
+		case roll <= 14:
 			output = "Ground out!";
-			game.outs ++;
-		}
-		break;
-	case roll <= 14:
-		output = "Ground out!";
-		game.outs++; // ground out
-		break;
-	case roll <= 16:
-		output = "Pop out!";
-		game.outs++; // pop out
-		break;
-	case roll <= 19:
-		output = "Fly out!";
-		game.outs++; // fly out
-		break;
-	default:
-		output = "Strikeout!";
-		game.outs++; // strike out
+			game.outs++; // ground out
+			break;
+		case roll <= 16:
+			output = "Pop out!";
+			game.outs++; // pop out
+			break;
+		case roll <= 19:
+			output = "Fly out!";
+			game.outs++; // fly out
+			break;
+		default:
+			output = "Strikeout!";
+			game.outs++; // strike out
 	}
 
 	if (result) {
@@ -401,8 +401,8 @@ const acceptChallengeAndStartGame = async (msg: Message, game: Baseball, awayTea
 	awayTeam.billyBucks -= wager;
 	homeTeam.billyBucks -= wager;
 
-	let wagerText = wager > 0 ? ` for ${wager} BillyBucks` : "";
-	let wagerDetailText = wager > 0 ? `Each player deposits ${wager} BillyBucks into the secure BillyBank™ Designated Baseball Escrow Account. ` : "";
+	const wagerText = wager > 0 ? ` for ${wager} BillyBucks` : "";
+	const wagerDetailText = wager > 0 ? `Each player deposits ${wager} BillyBucks into the secure BillyBank™ Designated Baseball Escrow Account. ` : "";
 
 	const updatedGame = await BaseballRepo.UpdateOne(game);
 	const updatedUsers = await UserRepo.UpdateOne(awayTeam) && await UserRepo.UpdateOne(homeTeam);
@@ -443,7 +443,7 @@ const getInningAndOutsDisplayText = (inning: string, outs: number): string => {
 		inningNumSuffix = "th";
 	}
 
-	let outsText: string = ` | ${outs} Out${outs === 1 ? "" : "s"}`;
+	const outsText = ` | ${outs} Out${outs === 1 ? "" : "s"}`;
 
 	return inningHalf + inningNum + inningNumSuffix + outsText;
 };
@@ -459,15 +459,15 @@ const getWagerDisplayText = (wager: number): string => {
 
 const getBaserunnersDisplayText = (bases: string): string => {
 	switch (bases) {
-	case "000": return "Bases Empty";
-	case "100": return "Runner on 1st";
-	case "010": return "Runner on 2nd";
-	case "001": return "Runner on 3rd";
-	case "110": return "Runners on 1st & 2nd";
-	case "101": return "Runners on 1st & 3rd";
-	case "011": return "Runners on 2nd & 3rd";
-	case "111": return "Bases Loaded";
-	default: throw `'${bases}': Invalid bases value!`;
+		case "000": return "Bases Empty";
+		case "100": return "Runner on 1st";
+		case "010": return "Runner on 2nd";
+		case "001": return "Runner on 3rd";
+		case "110": return "Runners on 1st & 2nd";
+		case "101": return "Runners on 1st & 3rd";
+		case "011": return "Runners on 2nd & 3rd";
+		case "111": return "Bases Loaded";
+		default: throw `'${bases}': Invalid bases value!`;
 	}
 };
 

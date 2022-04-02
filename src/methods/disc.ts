@@ -19,7 +19,7 @@ export const disc = async (msg: Message, prefix: string) => {
 		const disc: IDisc = discs[0];
 		if (!disc) throw `No disc found for name: '${name}'`;
 
-		let output =
+		const output =
 			(disc.name.toLowerCase() !== disc.name_slug ? `\`${disc.name_slug}\`\n\n` : "") +
 			`Brand: \`${disc.brand}\`\n` +
 			`Category: \`${disc.category}\`\n` +

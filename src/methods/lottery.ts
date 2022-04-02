@@ -3,8 +3,8 @@ import { Colors } from "../types/Constants";
 
 import { UserRepo } from "../repositories";
 
-const initialJackpot: number = 500;
-const ticketCost: number = 50;
+const initialJackpot = 500;
+const ticketCost = 50;
 
 // !lotto
 export const getLotteryInfo = async (msg: Message): Promise<void> => {

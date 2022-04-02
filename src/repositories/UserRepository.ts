@@ -105,7 +105,7 @@ export class UserRepository {
 				order: {  billyBucks: -1 },
 				take: 3
 			});
-			let normalized: any[] = [];
+			const normalized: any[] = [];
 
 			records.forEach(entry => {
 				normalized.push({ username: entry.username, billyBucks: entry.billyBucks });
@@ -147,7 +147,7 @@ export class UserRepository {
 				order: {  baseballWins: -1 },
 				take: 3
 			});
-			let normalized: any[] = [];
+			const normalized: any[] = [];
 
 			records.forEach(entry => {
 				normalized.push({ userId: entry.userId, baseballWins: entry.baseballWins });

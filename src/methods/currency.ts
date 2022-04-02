@@ -14,7 +14,7 @@ export default class Currency {
 			const devRole: Role = msg.member.roles.cache.find(a => a.name == Roles.billyDev);
 			if(!devRole) throw "user permission denied";
 			
-			let notBot: IUserList[] = [];
+			const notBot: IUserList[] = [];
 
 			const serverId: string = msg.guild.id;
 			const _guild: Guild = await client.guilds.fetch(serverId);
@@ -23,7 +23,7 @@ export default class Currency {
 			const notBots: Collection<string, GuildMember> = members.filter(a => a.user.bot == false);
 			notBots.forEach(mem => notBot.push({ username: mem.user.username, id: mem.user.id, serverId: serverId }));
 
-			let insertCOunt: number = 0;
+			let insertCOunt = 0;
 			for (let i = 0; i < notBot.length; i++) {
 				try {
 					const inserted: boolean = await UserRepo.InsertOne({ username: notBot[i].username, id: notBot[i].id, serverId: notBot[i].serverId });

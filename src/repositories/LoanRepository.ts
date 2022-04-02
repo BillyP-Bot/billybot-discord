@@ -32,7 +32,7 @@ export class LoanRepository {
 
 	public static async InsertOne(member: ILoanList, user: User): Promise<Loan> {
 		try {
-			let createdDate = new Date(), firstDueDate = new Date();
+			const createdDate = new Date(), firstDueDate = new Date();
 			firstDueDate.setDate(createdDate.getDate() + 7);
 
 			const newLoan = new Loan();
@@ -62,7 +62,7 @@ export class LoanRepository {
 		try {
 			if (amount < 1) throw "Payment amount must be a positive number!";
 
-			let now = new Date(), mostRecentPaymentDatePlus3 = new Date(), newMostRecentPaymentDate = new Date(), openDatePlus7 = new Date();
+			const now = new Date(), mostRecentPaymentDatePlus3 = new Date(), newMostRecentPaymentDate = new Date(), openDatePlus7 = new Date();
 			newMostRecentPaymentDate.setHours(0, 0, 0, 0);
 			mostRecentPaymentDatePlus3.setDate(loan.mostRecentPaymentDate.getDate() + 3);
 			mostRecentPaymentDatePlus3.setHours(0, 0, 0, 0);
@@ -88,7 +88,7 @@ export class LoanRepository {
 			} else {
 				loan.outstandingBalanceAmt -= amount;
 
-				let nextDate = new Date();
+				const nextDate = new Date();
 				nextDate.setDate(loan.nextPaymentDueDate.getDate() + 7);
 				loan.nextPaymentDueDate = nextDate;
 			}

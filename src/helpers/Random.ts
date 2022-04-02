@@ -30,7 +30,8 @@ export class Random {
 	 * MurmurHash3 mixing funciton seed generator
 	 */
 	private static Xmur3(str: string): () => number {
-		for (var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+		let h: number;
+		for (let i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
 			h = Math.imul(h ^ str.charCodeAt(i), 3432918353),
 			h = h << 13 | h >>> 19;
 		return () => {

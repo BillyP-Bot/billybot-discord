@@ -3,7 +3,7 @@ import { Colors } from "../types/Constants";
 
 import logger from "../services/logger";
 
-const adminMsgPrefix: string = "!adminMsg";
+const adminMsgPrefix = "!adminMsg";
 const billyPUsernames: string[] = ["BT-Bot-Dev", "Billy Prod Bot", "BillyP Bot"];
 
 export const goodBot = (msg: Message): void => {
@@ -55,7 +55,7 @@ export const includesAndResponse = (msg: Message, prompts: string[][]): void => 
 	const m: string = msg.content.toUpperCase().trim();
 
 	prompts.forEach(val => {
-		let p = val[0].toUpperCase().trim();
+		const p = val[0].toUpperCase().trim();
 		if ((m.includes(p)) && !msg.author.bot) {
 			msg.reply(val[1]);
 		}

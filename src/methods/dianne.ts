@@ -4,7 +4,7 @@ import fetch from "node-fetch";
 import logger from "../services/logger";
 
 // Meme API: https://github.com/R3l3ntl3ss/Meme_Api
-let cachedImages: any = [];
+const cachedImages: any = [];
 
 export const fridayFunny = (msg: Message): void => {
 	if (cachedImages.length == 0) {
@@ -17,7 +17,7 @@ export const fridayFunny = (msg: Message): void => {
 					}
 				});
 				logger.info("Populated cachedImages. Length: " + cachedImages.length);
-				let fridayFunny = [];
+				const fridayFunny = [];
 				fridayFunny.push(getRandomMeme(cachedImages));
 				logger.info(fridayFunny[0]);
 				msg.reply("I just found this great meme on my Facebook feed!\n\n", {
@@ -26,7 +26,7 @@ export const fridayFunny = (msg: Message): void => {
 			});
 	} else {
 		logger.info("cachedImages contains content: Length: " + cachedImages.length);
-		let fridayFunny: any[] = [];
+		const fridayFunny: any[] = [];
 		fridayFunny.push(getRandomMeme(cachedImages));
 		logger.info(fridayFunny[0]);
 		msg.reply("I just found this great meme on my Facebook feed!\n\n", {
@@ -37,8 +37,8 @@ export const fridayFunny = (msg: Message): void => {
 
 export const fridayFunnies = (msg: Message): void => {
 
-	let fridayFunnies: any = [];
-	let attachmentCount: number = 0;
+	const fridayFunnies: any = [];
+	let attachmentCount = 0;
 	fetch("https://www.reddit.com/r/boomershumor/top.json?sort=top&t=week&limit=12&over_18=False")
 		.then(response => response.json())
 		.then(data => {
@@ -62,7 +62,7 @@ export const getRandomIntInclusive = (min: number, max: number): number => {
 };
 
 const getRandomMeme = (memes: any): any => {
-	let randomInt = getRandomIntInclusive(0, memes.length);
-	let meme = memes.splice(randomInt, 1);
+	const randomInt = getRandomIntInclusive(0, memes.length);
+	const meme = memes.splice(randomInt, 1);
 	return meme;
 };
