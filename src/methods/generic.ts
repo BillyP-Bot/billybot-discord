@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from "discord.js";
 
-import { Colors, CommandDescriptor } from "../types/Constants";
+import { Colors, CommandDescriptor } from "../types";
 
 export default class Generic {
 

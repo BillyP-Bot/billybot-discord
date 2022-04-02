@@ -2,7 +2,7 @@ import axios from "axios";
 import { Message } from "discord.js";
 
 import { replyWithErrorEmbed, replyWithSuccessEmbed } from "./messages";
-import { IDisc } from "../types/Abstract";
+import { IDisc } from "../types";
 
 const DISC_NAME_URL = "https://discitapi.herokuapp.com/disc/name/";
 

@@ -1,6 +1,6 @@
 import { Loan, User } from "../models";
 import { UserRepo } from "../repositories";
-import { ILoanList } from "../types/Abstract";
+import { ILoanList } from "../types";
 
 export class LoanRepository {
 

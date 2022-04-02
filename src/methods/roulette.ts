@@ -1,7 +1,8 @@
 import { Message, MessageEmbed } from "discord.js";
 
-import { Colors } from "../types/Constants";
+import { Colors } from "../types";
 import { UserRepo } from "../repositories";
+
 export const spin = async (msg: Message, prefix: string): Promise<void> => {
 	try {
 		const buckEmbed: MessageEmbed = new MessageEmbed();

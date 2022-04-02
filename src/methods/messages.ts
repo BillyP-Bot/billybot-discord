@@ -1,6 +1,6 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember, DMChannel, NewsChannel } from "discord.js";
-import { Colors } from "../types/Constants";
 
+import { Colors } from "../types";
 import logger from "../services/logger";
 
 const adminMsgPrefix = "!adminMsg";

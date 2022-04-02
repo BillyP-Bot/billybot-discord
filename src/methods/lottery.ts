@@ -1,6 +1,6 @@
 import { Message, MessageEmbed, TextChannel } from "discord.js";
-import { Colors } from "../types/Constants";
 
+import { Colors } from "../types";
 import { UserRepo } from "../repositories";
 
 const initialJackpot = 500;

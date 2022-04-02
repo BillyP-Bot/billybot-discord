@@ -3,7 +3,7 @@ import { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "d
 import { replyWithErrorEmbed, replyWithSuccessEmbed, sendErrorEmbed } from "./messages";
 import { Blackjack, User } from "../models";
 import { BlackjackRepo, UserRepo } from "../repositories";
-import { IBlackjackCount } from "../types/Abstract";
+import { IBlackjackCount } from "../types";
 
 /*
 	!blackjack [bet]

@@ -2,8 +2,7 @@ import { Message, GuildMember } from "discord.js";
 
 import { Baseball, User } from "../models";
 import { BaseballRepo, UserRepo } from "../repositories";
-import { IAtBatOutcome } from "../types/Abstract";
-import { IBaserunningResult } from "../types/Abstract";
+import { IAtBatOutcome, IBaserunningResult } from "../types";
 import { replyWithSuccessEmbed, replyWithErrorEmbed } from "./messages";
 
 const innings = 3;

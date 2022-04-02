@@ -2,8 +2,7 @@ import Discord, { Message, Collection, GuildMember, MessageEmbed, Client, Guild,
 
 import { UserRepo } from "../repositories";
 import { User } from "../models";
-import { Colors, Roles } from "../types/Constants";
-import { IUserList } from "../types/Abstract";
+import { Colors, Roles, IUserList } from "../types";
 
 import logger from "../services/logger";
 

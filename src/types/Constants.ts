@@ -1,4 +1,4 @@
-import { ICommand } from "./Abstract";
+import { ICommand } from "./";
 
 export enum Env {
 	dev = "development",

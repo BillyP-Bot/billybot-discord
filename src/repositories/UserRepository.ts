@@ -1,7 +1,6 @@
 import { Format } from "../helpers";
 import { User } from "../models";
-import { IUserList } from "../types/Abstract";
-import { Nums } from "../types/Constants";
+import { IUserList, Nums } from "../types";
 
 export class UserRepository {
 

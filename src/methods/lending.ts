@@ -1,9 +1,8 @@
 import { Message, MessageEmbed } from "discord.js";
 
-import { Colors } from "../types/Constants";
+import { Colors, ICreditScoreResult } from "../types";
 import { Loan } from "../models";
 import { LoanRepo, UserRepo } from "../repositories";
-import { ICreditScoreResult } from "../types/Abstract";
 
 export const getActiveLoanInfo = async (msg: Message): Promise<void> => {
 	try {
