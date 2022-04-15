@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import fetch from "node-fetch";
 
-import logger from "../services/logger";
+import { logger } from "../services/logger";
 
 // Meme API: https://github.com/R3l3ntl3ss/Meme_Api
 let cachedImages: any = [];
