@@ -38,11 +38,19 @@ export class Log {
 		}
 	}
 
-	static Info = Log.logger.info;
+	static Info(msg: any, ...meta: any[]) {
+		Log.logger.info(msg, meta);
+	}
 
-	static Error = Log.logger.error;
+	static Error(msg: any, ...meta: any[]) {
+		Log.logger.error(msg, meta);
+	}
 
-	static Debug = Log.logger.debug;
+	static Debug(msg: any, ...meta: any[]) {
+		Log.logger.debug(msg, meta);
+	}
 
-	static Warn = Log.logger.warn;
+	static Warn(msg: any, ...meta: any[]) {
+		Log.logger.warn(msg, meta);
+	}
 }
