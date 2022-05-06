@@ -2,7 +2,7 @@
 /* eslint-disable indent */
 import "reflect-metadata";
 import "dotenv/config";
-import { Client, Guild, GuildMember, Intents, Message, MessageEmbed } from "discord.js";
+import { Client, Guild, GuildMember, Intents, Message, MessageEmbed, TextChannel } from "discord.js";
 import YouTube from "youtube-sr";
 import ytdl from "ytdl-core";
 
@@ -240,6 +240,22 @@ async function playYoutubeAudio(msg: Message) {
 	});
 }
 
+async function adminAnnouncement(msg: Message, client: Client) {
+	await assertDeveloper(msg);
+	await msg.guild.fetch();
+	const general = client.channels.cache.find((channel: TextChannel) => channel.name === "general") as TextChannel;
+	if (!general) throw "channel not found";
+	// post webhook announcement
+	const { data, ok } = await Api.client.post<ApiResponse>("announcements", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id,
+		text: msg.content,
+		channel_name: general.name
+	});
+	console.log({ data });
+	if (!ok) throw data.error ?? "internal server error";
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.author.bot) return;
@@ -276,12 +292,15 @@ client.on("message", async (msg: Message) => {
 			case /.*!p.*/gmi.test(msg.content):
 				await playYoutubeAudio(msg);
 				break;
-			case /.*bing.*/gmi.test(msg.content):
-				await msg.reply("bong");
-				break;
 			// case /.*!spin.*/gmi.test(msg.content):
 			// 	roulette.spin(msg, "!spin");
 			// 	break;
+			case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
+				await adminAnnouncement(msg, client);
+				break;
+			case /.*bing.*/gmi.test(msg.content):
+				await msg.reply("bong");
+				break;
 		}
 	} catch (error) {
 		console.log({ error });
