@@ -87,9 +87,9 @@ async function assertDeveloper(msg: Message) {
 
 async function assertMayor(msg: Message) {
 	await msg.member.fetch();
-	const devRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
-	if (!devRole) throw "only the mayor can run this command!";
-	return devRole;
+	const mayorRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
+	if (!mayorRole) throw "only the mayor can run this command!";
+	return mayorRole;
 }
 
 async function configureUsers(msg: Message) {
@@ -218,6 +218,7 @@ async function payBucks(msg: Message, prefix: string, mention: GuildMember) {
 async function makeMayor(msg: Message, mention: GuildMember) {
 	const mayorRole = await assertMayor(msg);
 	const author = await msg.guild.members.fetch(msg.author.id);
+	if(mention.user.id === author.user.id) throw "you are already the mayor!";
 	const server_id = msg.guild.id;
 	const body = [
 		{
@@ -227,12 +228,13 @@ async function makeMayor(msg: Message, mention: GuildMember) {
 		},
 		{
 			server_id,
-			user_id: author.id,
+			user_id: author.user.id,
 			is_mayor: false
 		},
 	];
 	const { data, ok } = await Api.client.put<ApiResponse>("users", body);
 	if (!ok) throw data.error ?? "internal server error";
+	// TODO might have to check access for editing roles
 	mention.roles.add(mayorRole);
 	author.roles.remove(mayorRole);
 	const embed = Embed.success(msg, `${mention.user.username} is now the mayor!`, "Mayoral Decree!");
