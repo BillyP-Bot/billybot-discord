@@ -89,6 +89,7 @@ async function assertMayor(msg: Message) {
 	await msg.member.fetch();
 	const devRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
 	if (!devRole) throw "only the mayor can run this command!";
+	return devRole;
 }
 
 async function configureUsers(msg: Message) {
@@ -215,9 +216,27 @@ async function payBucks(msg: Message, prefix: string, mention: GuildMember) {
 }
 
 async function makeMayor(msg: Message, mention: GuildMember) {
-	await assertMayor(msg);
-	console.log(mention.user);
-	msg.channel.send("TODO: make recipient user the have the mayor role");
+	const mayorRole = await assertMayor(msg);
+	const author = await msg.guild.members.fetch(msg.author.id);
+	const server_id = msg.guild.id;
+	const body = [
+		{
+			server_id,
+			user_id: mention.user.id,
+			is_mayor: true
+		},
+		{
+			server_id,
+			user_id: author.id,
+			is_mayor: false
+		},
+	];
+	const { data, ok } = await Api.client.put<ApiResponse>("users", body);
+	if (!ok) throw data.error ?? "internal server error";
+	mention.roles.add(mayorRole);
+	author.roles.remove(mayorRole);
+	const embed = Embed.success(msg, `${mention.user.username} is now the mayor!`, "Mayoral Decree!");
+	msg.channel.send(embed);
 }
 
 async function fetchFirstVideo(term: string) {
