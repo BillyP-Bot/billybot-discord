@@ -3,30 +3,13 @@
 import "reflect-metadata";
 import "dotenv/config";
 import { Client, Guild, GuildMember, Intents, Message, MessageEmbed } from "discord.js";
+import YouTube from "youtube-sr";
+import ytdl from "ytdl-core";
 
 import { config } from "./helpers/config";
 import { logger } from "./services/logger";
 import { Images, Activities } from "./types/Constants";
 import { Api } from "./services/rest";
-
-// import { Database } from "./services/db";
-// import CronJobs from "./methods/cronJobs";
-// import Currency from "./methods/currency";
-// import Generic from "./methods/generic";
-// import * as message from "./methods/messages";
-// import * as boyd from "./methods/boyd";
-// import * as dianne from "./methods/dianne";
-// import * as disc from "./methods/disc";
-// import * as skistats from "./methods/skiStats";
-// import * as whatshowardupto from "./methods/whatshowardupto";
-// import * as kyle from "./methods/kyle";
-// import * as joe from "./methods/joe";
-// import * as roulette from "./methods/roulette";
-// import * as lending from "./methods/lending";
-// import * as lottery from "./methods/lottery";
-// import * as baseball from "./methods/baseball";
-// import * as stocks from "./methods/stocks";
-// import * as blackjack from "./methods/blackjack";
 
 const intents: Intents = new Intents();
 intents.add(Intents.ALL);
@@ -43,14 +26,13 @@ client.on("ready", () => {
 });
 
 enum Roles {
-	developer = "BillyPBotDev"
+	developer = "BillyPBotDev",
+	mayor = "Mayor of Boy Town"
 }
-
 enum Colors {
 	red = "#ff6666",
 	green = "#00e64d"
 }
-
 interface IUser {
 	_id: string
 	billy_bucks: number
@@ -71,7 +53,6 @@ interface IUser {
 	created_at: Date
 	updated_at: Date
 }
-
 type ApiError = {
 	status?: number
 	ok?: boolean
@@ -98,13 +79,20 @@ class Embed {
 	}
 }
 
-function assertDeveloper(msg: Message) {
+async function assertDeveloper(msg: Message) {
+	await msg.member.fetch();
 	const devRole = msg.member.roles.cache.find(a => a.name == Roles.developer);
 	if (!devRole) throw "unauthorized";
 }
 
+async function assertMayor(msg: Message) {
+	await msg.member.fetch();
+	const devRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
+	if (!devRole) throw "only the mayor can run this command!";
+}
+
 async function configureUsers(msg: Message) {
-	assertDeveloper(msg);
+	await assertDeveloper(msg);
 	await msg.guild.fetch();
 	const users = msg.guild.members.cache.reduce((acc, { user }) => {
 		if (user.bot) return acc;
@@ -117,9 +105,10 @@ async function configureUsers(msg: Message) {
 		});
 		return acc;
 	}, [] as Partial<IUser>[]);
+
 	const { data, ok } = await Api.client.post<ApiError & IUser[]>("users", users);
 	if (!ok) throw data.error ?? "internal server error";
-	msg.channel.send(`${data.length} user(s) inserted`);
+	msg.channel.send(`${data.length} user(s) configured`);
 }
 
 async function allowance(msg: Message) {
@@ -142,18 +131,35 @@ async function bucks(msg: Message) {
 }
 
 async function noblemen(msg: Message) {
-	const { data, ok } = await Api.client.get<ApiError & IUser[]>(`users/server/${msg.guild.id}`);
+	const { data, ok } = await Api.client.get<ApiError & IUser[]>(`bucks/noblemen/${msg.guild.id}`);
 	if (!ok) throw data.error ?? "internal server error";
 	const users = data;
 	const embed = new MessageEmbed();
 	embed.setColor(Colors.green);
-	embed.setDescription("Here Are The 3 Richest Members");
-	users.slice(0, 3).map((user, i) => embed.addField(`${i + 1}. ${user.username}`, `$${user.billy_bucks}`));
+	embed.setDescription(`Here Are The ${users.length} Richest Members`);
+	users.map((user, i) => embed.addField(`${i + 1}. ${user.username}`, `$${user.billy_bucks}`));
+	msg.channel.send(embed);
+}
+
+async function serfs(msg: Message) {
+	const { data, ok } = await Api.client.get<ApiError & IUser[]>(`bucks/serfs/${msg.guild.id}`);
+	if (!ok) throw data.error ?? "internal server error";
+	const users = data;
+	const embed = new MessageEmbed();
+	embed.setColor(Colors.green);
+	embed.setDescription(`Here Are The ${users.length} Poorest Members`);
+	users.map((user, i) => embed.addField(`${i + 1}. ${user.username}`, `$${user.billy_bucks}`));
 	msg.channel.send(embed);
 }
 
 async function lotteryInfo(msg: Message) {
-	const { data, ok } = await Api.client.get<ApiError & { ticket_cost: number, jackpot: number, entrants: IUser[] }>(`lottery/${msg.guild.id}`);
+	const { data, ok } = await Api.client.get<ApiError & {
+		ticket_cost: number,
+		jackpot: number,
+		entrants: IUser[],
+		base_lottery_jackpot: number,
+		entrants_count: number
+	}>(`lottery/${msg.guild.id}`);
 	if (!ok) throw data.error ?? "internal server error";
 	if (data.entrants.length <= 0) {
 		const embed = Embed.success(msg, "No entrants yet!", "Weekly Lottery");
@@ -162,8 +168,10 @@ async function lotteryInfo(msg: Message) {
 	}
 
 	let body = `A winner will be picked on Friday at noon! Buy a ticket today for ${data.ticket_cost} BillyBucks!\n\n`;
-	body += `Jackpot: ${data.jackpot}\n`;
-	body += `Entrants: ${data.entrants.length}\n\n`;
+	body += `Ticket Cost: ${data.ticket_cost}\n`;
+	body += `Base Lottery Jackpot: ${data.base_lottery_jackpot}\n`;
+	body += `Current Jackpot: ${data.jackpot}\n`;
+	body += `Entrants: ${data.entrants_count}\n\n`;
 	data.entrants.map(({ username }) => body += username + "\n");
 	const embed = Embed.success(msg, body, "Weekly Lottery");
 	msg.channel.send(embed);
@@ -206,6 +214,32 @@ async function payBucks(msg: Message, prefix: string, mention: GuildMember) {
 	msg.channel.send(embed);
 }
 
+async function makeMayor(msg: Message, mention: GuildMember) {
+	await assertMayor(msg);
+	console.log(mention.user);
+	msg.channel.send("TODO: make recipient user the have the mayor role");
+}
+
+async function fetchFirstVideo(term: string) {
+	const isUrl = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(term);
+	if (!isUrl) return YouTube.searchOne(term);
+	return YouTube.getVideo(term);
+}
+
+async function playYoutubeAudio(msg: Message) {
+	const searchTerm = msg.content.split("!p")[1];
+	const video = await fetchFirstVideo(searchTerm);
+	if (!video) throw "no results found";
+	const url = `https://www.youtube.com/watch?v=${video.id}`;
+	const channel = msg.member.voice.channel;
+	const connection = await channel.join();
+	const stream = connection.play(ytdl(url, { filter: "audioonly" }));
+	stream.setVolume(0.2);
+	stream.on("finish", () => {
+		connection.disconnect();
+	});
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.author.bot) return;
@@ -224,6 +258,9 @@ client.on("message", async (msg: Message) => {
 			case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
 				await payBucks(msg, "!billypay", firstMention);
 				break;
+			case /.*!makeMayor .*/gmi.test(msg.content):
+				await makeMayor(msg, firstMention);
+				break;
 			case /.*!configure.*/gmi.test(msg.content):
 				await configureUsers(msg);
 				break;
@@ -232,6 +269,15 @@ client.on("message", async (msg: Message) => {
 				break;
 			case /.*!noblemen.*/gmi.test(msg.content):
 				await noblemen(msg);
+				break;
+			case /.*!serfs.*/gmi.test(msg.content):
+				await serfs(msg);
+				break;
+			case /.*!p.*/gmi.test(msg.content):
+				await playYoutubeAudio(msg);
+				break;
+			case /.*bing.*/gmi.test(msg.content):
+				await msg.reply("bong");
 				break;
 			// case /.*!spin.*/gmi.test(msg.content):
 			// 	roulette.spin(msg, "!spin");
