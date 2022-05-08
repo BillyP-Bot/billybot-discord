@@ -16,7 +16,11 @@ export const config = {
 
 if (config.BOT_TOKEN === undefined)
 	throw Error("BOT_TOKEN not specified");
-else if (config.GOOGLE_API_KEY === undefined)
+if (config.GOOGLE_API_KEY === undefined)
 	throw Error("GOOGLE_API_KEY not specified");
-else if (config.GOOGLE_CX_KEY === undefined)
+if (config.GOOGLE_CX_KEY === undefined)
 	throw Error("GOOGLE_CX_KEY not specified");
+if (config.BILLY_BACKEND === undefined)
+	throw Error("BILLY_BACKEND not specified");
+if (config.BILLY_BACKEND_TOKEN === undefined)
+	throw Error("BILLY_BACKEND_TOKEN not specified");
