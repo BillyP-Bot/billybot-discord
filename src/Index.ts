@@ -315,7 +315,7 @@ async function spinRoulette(msg: Message, prefix: string) {
 }
 
 async function buckReact(react: MessageReaction, sender_id: string) {
-	Api.client.post<ApiResponse>("bucks/pay", {
+	return Api.client.post<ApiResponse>("bucks/pay", {
 		server_id: react.message.guild.id,
 		amount: 1,
 		recipient_id: react.message.author.id,
@@ -336,7 +336,7 @@ async function updatePostEngagement(msg: Message) {
 			}
 		}
 	];
-	Api.client.put<ApiResponse>("metrics/engagement", body);
+	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
 async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
@@ -361,7 +361,7 @@ async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 			}
 		}
 	];
-	Api.client.put<ApiResponse>("metrics/engagement", body);
+	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
 client.on("message", async (msg: Message) => {
