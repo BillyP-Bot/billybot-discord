@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
-import "reflect-metadata";
 import "dotenv/config";
 import { Client, Guild, GuildMember, Intents, Message, MessageEmbed, TextChannel } from "discord.js";
 import YouTube from "youtube-sr";
@@ -235,8 +234,8 @@ async function makeMayor(msg: Message, mention: GuildMember) {
 	const { data, ok } = await Api.client.put<ApiResponse>("users", body);
 	if (!ok) throw data.error ?? "internal server error";
 	// TODO might have to check access for editing roles
-	mention.roles.add(mayorRole);
-	author.roles.remove(mayorRole);
+	// mention.roles.add(mayorRole);
+	// author.roles.remove(mayorRole);
 	const embed = Embed.success(msg, `${mention.user.username} is now the mayor!`, "Mayoral Decree!");
 	msg.channel.send(embed);
 }
