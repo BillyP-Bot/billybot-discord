@@ -217,7 +217,7 @@ async function payBucks(msg: Message, prefix: string, mention: GuildMember) {
 async function makeMayor(msg: Message, mention: GuildMember) {
 	const mayorRole = await assertMayor(msg);
 	const author = await msg.guild.members.fetch(msg.author.id);
-	if(mention.user.id === author.user.id) throw "you are already the mayor!";
+	if (mention.user.id === author.user.id) throw "you are already the mayor!";
 	const server_id = msg.guild.id;
 	const body = [
 		{
@@ -276,8 +276,44 @@ async function adminAnnouncement(msg: Message, client: Client) {
 	if (!ok) throw data.error ?? "internal server error";
 }
 
+async function spinRoulette(msg: Message, prefix: string) {
+	const args = msg.content.slice(prefix.length).trim().split(" ");
+	const bet = parseInt(args[0]);
+	const color = args[1];
+	const { data, ok } = await Api.client.post<ApiResponse & {
+		user: IUser,
+		outcome: {
+			won: boolean
+			payout: number
+			winning_color: string
+		}
+	}>("gamble/roulette/spin", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id,
+		color,
+		amount: bet
+	});
+	if (!ok) throw data.error ?? "internal server error";
+	const { user, outcome } = data;
+	if (!outcome.won) {
+		const embed = Embed.error(
+			msg,
+			`It's ${outcome.winning_color}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n You now have ${user.billy_bucks} BillyBucks.`,
+			"You Lost!"
+		);
+		return msg.channel.send(embed);
+	}
+	const embed = Embed.success(
+		msg,
+		`It's ${outcome.winning_color}! You win ${outcome.payout} BillyBucks! Lady LUUUCCCCKKK!\n You now have ${user.billy_bucks} BillyBucks.`,
+		"You Won!"
+	);
+	return msg.channel.send(embed);
+}
+
 client.on("message", async (msg: Message) => {
 	try {
+		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
 		const mentions = msg.mentions.members.array();
 		const firstMention = mentions[0];
@@ -312,10 +348,10 @@ client.on("message", async (msg: Message) => {
 			case /.*!p.*/gmi.test(msg.content):
 				await playYoutubeAudio(msg);
 				break;
-			// case /.*!spin.*/gmi.test(msg.content):
-			// 	roulette.spin(msg, "!spin");
-			// 	break;
-			case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
+			case /.*!spin.*/gmi.test(msg.content):
+				await spinRoulette(msg, "!spin");
+				break;
+			case msg.channel.name === "admin-announcements":
 				await adminAnnouncement(msg, client);
 				break;
 			case /.*bing.*/gmi.test(msg.content):
