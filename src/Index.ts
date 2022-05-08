@@ -339,6 +339,22 @@ async function updatePostEngagement(msg: Message) {
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
+async function updateMentionsMetric(msg: Message, mentions: GuildMember[]) {
+	const server_id = msg.guild.id;
+	if (mentions.length <= 0) return;
+	const operations = mentions.reduce((acc, { user }) => {
+		if (user.bot) return acc;
+		if (user.id === msg.author.id) return acc;
+		acc.push({
+			server_id,
+			user_id: user.id,
+			metrics: { engagement: { mentions: 1 } }
+		});
+		return acc;
+	}, []);
+	return Api.client.put<ApiResponse>("metrics/engagement", operations);
+}
+
 async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 	const server_id = react.message.guild.id;
 	const body = [
@@ -368,8 +384,9 @@ client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
-		updatePostEngagement(msg);
 		const mentions = msg.mentions.members.array();
+		updatePostEngagement(msg);
+		updateMentionsMetric(msg, mentions);
 		const firstMention = mentions[0];
 		switch (true) {
 			case /.*!bucks.*/gmi.test(msg.content):
