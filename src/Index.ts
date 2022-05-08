@@ -323,10 +323,52 @@ async function buckReact(react: MessageReaction, sender_id: string) {
 	});
 }
 
+async function updatePostEngagement(msg: Message) {
+	const server_id = msg.guild.id;
+	const body = [
+		{
+			server_id,
+			user_id: msg.author.id,
+			metrics: {
+				engagement: {
+					posts: 1
+				}
+			}
+		}
+	];
+	Api.client.put<ApiResponse>("metrics/engagement", body);
+}
+
+async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
+	const server_id = react.message.guild.id;
+	const body = [
+		{
+			server_id,
+			user_id: sender_id,
+			metrics: {
+				engagement: {
+					reactions_used: 1
+				}
+			}
+		},
+		{
+			server_id,
+			user_id: react.message.author.id,
+			metrics: {
+				engagement: {
+					reactions_received: 1,
+				}
+			}
+		}
+	];
+	Api.client.put<ApiResponse>("metrics/engagement", body);
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
+		updatePostEngagement(msg);
 		const mentions = msg.mentions.members.array();
 		const firstMention = mentions[0];
 		switch (true) {
@@ -367,6 +409,7 @@ client.on("message", async (msg: Message) => {
 
 client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	if (react.message.author.id === user.id) return;
+	updateEmoteMetrics(react, user.id);
 	if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
 		return react.message.channel.send(`<@${user.id}> 🖕`);
 	}
