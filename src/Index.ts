@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable indent */
 import "dotenv/config";
-import { Client, Guild, GuildMember, Intents, Message, MessageEmbed, TextChannel } from "discord.js";
+import { Client, Guild, GuildMember, Intents, Message, MessageEmbed, MessageReaction, TextChannel, User } from "discord.js";
 import YouTube from "youtube-sr";
 import ytdl from "ytdl-core";
 
@@ -17,16 +17,19 @@ const client: Client = new Client({ restTimeOffset: 0 });
 client.on("guildCreate", (guild: Guild) => {
 	guild.owner.send(`Thanks for adding me to ${guild.name}!\nCommands are very simple, just type !help in your server!`);
 });
-
 client.on("ready", () => {
 	logger.info(`Logged in as ${client.user.tag}!`);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	config.IS_PROD && client.user.setActivity(Activities.farmville);
+	client.channels.fetch("738194989917536317");
 });
 
 enum Roles {
 	developer = "BillyPBotDev",
 	mayor = "Mayor of Boy Town"
+}
+enum Emotes {
+	billy_buck = "BillyBuck"
 }
 enum Colors {
 	red = "#ff6666",
@@ -311,6 +314,15 @@ async function spinRoulette(msg: Message, prefix: string) {
 	return msg.channel.send(embed);
 }
 
+async function buckReact(react: MessageReaction, sender_id: string) {
+	Api.client.post<ApiResponse>("bucks/pay", {
+		server_id: react.message.guild.id,
+		amount: 1,
+		recipient_id: react.message.author.id,
+		sender_id
+	});
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
@@ -319,50 +331,50 @@ client.on("message", async (msg: Message) => {
 		const firstMention = mentions[0];
 		switch (true) {
 			case /.*!bucks.*/gmi.test(msg.content):
-				await bucks(msg);
-				break;
+				return await bucks(msg);
 			case /.*!lotto.*/gmi.test(msg.content):
-				await lotteryInfo(msg);
-				break;
+				return await lotteryInfo(msg);
 			case /.*!buylottoticket.*/gmi.test(msg.content):
-				await buyLotteryTicket(msg);
-				break;
+				return await buyLotteryTicket(msg);
 			case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-				await payBucks(msg, "!billypay", firstMention);
-				break;
+				return await payBucks(msg, "!billypay", firstMention);
 			case /.*!makeMayor .*/gmi.test(msg.content):
-				await makeMayor(msg, firstMention);
-				break;
+				return await makeMayor(msg, firstMention);
 			case /.*!configure.*/gmi.test(msg.content):
-				await configureUsers(msg);
-				break;
+				return await configureUsers(msg);
 			case /.*!allowance.*/gmi.test(msg.content):
-				await allowance(msg);
-				break;
+				return await allowance(msg);
 			case /.*!noblemen.*/gmi.test(msg.content):
-				await noblemen(msg);
-				break;
+				return await noblemen(msg);
 			case /.*!serfs.*/gmi.test(msg.content):
-				await serfs(msg);
-				break;
+				return await serfs(msg);
 			case /.*!p.*/gmi.test(msg.content):
-				await playYoutubeAudio(msg);
-				break;
+				return await playYoutubeAudio(msg);
 			case /.*!spin.*/gmi.test(msg.content):
-				await spinRoulette(msg, "!spin");
-				break;
+				return await spinRoulette(msg, "!spin");
 			case msg.channel.name === "admin-announcements":
-				await adminAnnouncement(msg, client);
-				break;
+				return await adminAnnouncement(msg, client);
 			case /.*bing.*/gmi.test(msg.content):
-				await msg.reply("bong");
-				break;
+				return msg.reply("bong");
+			default:
+				return;
 		}
 	} catch (error) {
 		console.log({ error });
 		msg.channel.send(Embed.error(msg, error));
 	}
 });
+
+client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
+	if (react.message.author.id === user.id) return;
+	if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
+		return react.message.channel.send(`<@${user.id}> 🖕`);
+	}
+	if (react.emoji.name === Emotes.billy_buck) {
+		return buckReact(react, user.id);
+	}
+});
+
 
 // client.on("message", async (msg: Message) => {
 // 	try {
@@ -497,25 +509,6 @@ client.on("message", async (msg: Message) => {
 // 	} catch (error) {
 // 		console.log(error);
 // 		msg.channel.send(Embed.error(msg, error));
-// 	}
-// });
-
-// client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
-// 	try {
-// 		if (react.message.author.bot) {
-// 			if (react.emoji.name === "🖕" && client.user.username === react.message.author.username) {
-// 				react.message.channel.send(`<@${user.id}> 🖕`);
-// 			}
-
-// 			if (!user.bot) blackjack.onMessageReact(react, user.id);
-// 		} else {
-// 			switch (true) {
-// 				case (react.emoji.name === "BillyBuck"):
-// 					Currency.BuckReact(react, user.id);
-// 			}
-// 		}
-// 	} catch (error) {
-// 		logger.error(error);
 // 	}
 // });
 
