@@ -5,15 +5,15 @@ import { User as IUser } from "../models/User";
 import { Colors, Roles } from "../types/Constants";
 import { IUserList } from "../types/Abstract";
 
-import logger from "../services/logger";
+import { logger } from "../services/logger";
 
 export default class Currency {
 
 	public static async Configure(client: Client, msg: Message): Promise<void> {
 		try {
 			const devRole: Role = msg.member.roles.cache.find(a => a.name == Roles.billyDev);
-			if(!devRole) throw "user permission denied";
-			
+			if (!devRole) throw "user permission denied";
+
 			let notBot: IUserList[] = [];
 
 			const serverId: string = msg.guild.id;
@@ -73,17 +73,17 @@ export default class Currency {
 					buckEmbed.setColor(Colors.red);
 					buckEmbed.setTitle("Error");
 					buckEmbed.setDescription(`Could not find ${param[0]} in this server.`);
-						
+
 					msg.reply(buckEmbed);
 				}
 				else {
 					const user: Discord.User = found.user;
 					const bucks: number = await User.GetBucks(user.id, msg.guild.id);
-	
+
 					buckEmbed.setColor(Colors.green);
 					buckEmbed.setTitle(user.username);
 					buckEmbed.setDescription(`${user.username} has ${bucks} BillyBucks!`);
-	
+
 					msg.reply(buckEmbed);
 				}
 				return;
@@ -102,7 +102,7 @@ export default class Currency {
 			errorEmbed.setColor(Colors.red).setTitle("Error");
 			if (error.message === "user not found")
 				errorEmbed.setDescription("User has not been configured for this server. Please ask an admin to set them up with a Billy Bank account.");
-			else 
+			else
 				errorEmbed.setDescription(error.message);
 			msg.reply(errorEmbed);
 		}
@@ -141,12 +141,12 @@ export default class Currency {
 		catch (error) {
 			if (error === "user not found")
 				logger.warn(error);
-			else 
+			else
 				logger.error(error);
 		}
 	}
 
-	public static async BillyPay(msg: Message, prefix: string, mention: GuildMember){
+	public static async BillyPay(msg: Message, prefix: string, mention: GuildMember) {
 		try {
 			const username: string = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
 			const payAmount: string = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
@@ -154,7 +154,7 @@ export default class Currency {
 			const userBucks: number = await User.GetBucks(msg.author.id, msg.guild.id);
 
 			if (username || mention) {
-				if (username === msg.author.username || (mention && mention.user.username === msg.author.username)){
+				if (username === msg.author.username || (mention && mention.user.username === msg.author.username)) {
 					buckEmbed.setColor(Colors.red);
 					buckEmbed.setTitle("Error");
 					buckEmbed.setDescription(`You cannot pay yourself, ${username}!`);
@@ -168,25 +168,25 @@ export default class Currency {
 					buckEmbed.setColor(Colors.red);
 					buckEmbed.setTitle("Error");
 					buckEmbed.setDescription(`Could not find ${username} in this server.`);
-						
+
 					msg.reply(buckEmbed);
 				}
 				else {
 					if (payAmount) {
 						const user: Discord.User = found.user;
-						if (+payAmount > userBucks && +payAmount > 0){
+						if (+payAmount > userBucks && +payAmount > 0) {
 							buckEmbed.setColor(Colors.red).setTitle("Error");
 							buckEmbed.setDescription(`You do not have ${payAmount} BillyBucks!`);
 							msg.reply(buckEmbed);
 						}
 						const updated: boolean = await User.UpdateBucks(user.id, msg.guild.id, +payAmount, true);
 						const updated2: boolean = await User.UpdateBucks(msg.author.id, msg.guild.id, -payAmount, true);
-							
+
 						if (updated && updated2) {
 							buckEmbed.setColor(Colors.green);
 							buckEmbed.setTitle(user.username);
 							buckEmbed.setDescription(`You paid ${user.username} ${payAmount} BillyBucks!`);
-		
+
 							msg.reply(buckEmbed);
 						}
 						return;

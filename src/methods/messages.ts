@@ -1,7 +1,7 @@
 import { MessageEmbed, Message, Client, Role, RoleData, TextChannel, GuildEmoji, GuildMember, DMChannel, NewsChannel } from "discord.js";
 import { Colors } from "../types/Constants";
 
-import logger from "../services/logger";
+import { logger } from "../services/logger";
 
 const adminMsgPrefix: string = "!adminMsg";
 const billyPUsernames: string[] = ["BT-Bot-Dev", "Billy Prod Bot", "BillyP Bot"];

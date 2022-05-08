@@ -20,5 +20,9 @@
 	"eslint.validate": [
 		"javascript",
 		"typescript",
+	],
+	"cSpell.words": [
+		"audioonly",
+		"ytdl"
 	]
 }

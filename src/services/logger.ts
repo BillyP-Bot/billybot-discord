@@ -1,10 +1,10 @@
 import { createLogger, format, transports } from "winston";
 
-import config from "../helpers/config";
+import { config } from "../helpers/config";
 
 const { combine, timestamp, json, prettyPrint } = format;
 
-const logger = createLogger({
+export const logger = createLogger({
 	level: "info",
 	format: combine(
 		json(),
@@ -31,5 +31,3 @@ if (!config.IS_PROD) {
 		format: format.simple(),
 	}));
 }
-
-export default logger;

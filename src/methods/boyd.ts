@@ -1,7 +1,7 @@
 import { Message, StreamDispatcher, VoiceChannel, VoiceConnection } from "discord.js";
 import ytdl from "ytdl-core";
 
-import logger from "../services/logger";
+import { logger } from "../services/logger";
 
 export let boydTownRoad: StreamDispatcher = null;
 

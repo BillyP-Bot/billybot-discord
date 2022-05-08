@@ -1,7 +1,7 @@
 import { Message } from "discord.js";
 import fetch from "node-fetch";
 
-import logger from "../services/logger";
+import { logger } from "../services/logger";
 
 export const howardUpdate = (msg: Message, googleAPIKey: string, googleCXKey: string) => {
 	fetch("https://www.googleapis.com/customsearch/v1?key=" + googleAPIKey + "&cx=" + googleCXKey + "&q=howard+bruck+linkedin&num=1")

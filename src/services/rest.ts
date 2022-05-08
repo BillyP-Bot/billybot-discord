@@ -1,25 +1,7 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
+import { create } from "apisauce";
 
-import config from "../helpers/config";
-
-export class Rest {
-
-	private static readonly BackendClient = axios.create({
-		baseURL: "https://btbackend.herokuapp.com/api/",
-		headers: {
-			"Content-Type": "application/json",
-			"appcode": config.BACKEND_TOKEN
-		}
-	});
-
-	public static async Post(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<any>> {
-		try {
-			return await Rest.BackendClient.post(url, data, config);
-		} catch (error) {
-			throw new Error(error);
-		}
-	}
-}
+import { config } from "../helpers/config";
 
 export class StockApi {
 
@@ -45,7 +27,23 @@ export class StockApi {
 		if (currencyMatch) {
 			currency = currencyMatch[1];
 		}
-		
+
 		return { price: parseFloat(price), currency };
 	}
 }
+
+export class Api {
+
+	public static readonly client = create({
+		baseURL: config.BILLY_BACKEND,
+		headers: {
+			"Authorization": `Bearer ${config.BILLY_BACKEND_TOKEN}`,
+			"x-api-timestamp": null
+		}
+	})
+}
+
+Api.client.axiosInstance.interceptors.request.use((config) => {
+	config.headers["x-api-timestamp"] = new Date().getTime();
+	return config;
+});
