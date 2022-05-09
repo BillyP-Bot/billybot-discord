@@ -329,11 +329,7 @@ async function updatePostEngagement(msg: Message) {
 		{
 			server_id,
 			user_id: msg.author.id,
-			metrics: {
-				engagement: {
-					posts: 1
-				}
-			}
+			engagement: { posts: 1 }
 		}
 	];
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
@@ -348,7 +344,7 @@ async function updateMentionsMetric(msg: Message, mentions: GuildMember[]) {
 		acc.push({
 			server_id,
 			user_id: user.id,
-			metrics: { engagement: { mentions: 1 } }
+			engagement: { mentions: 1 }
 		});
 		return acc;
 	}, []);
@@ -361,20 +357,12 @@ async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 		{
 			server_id,
 			user_id: sender_id,
-			metrics: {
-				engagement: {
-					reactions_used: 1
-				}
-			}
+			engagement: { reactions_used: 1 }
 		},
 		{
 			server_id,
 			user_id: react.message.author.id,
-			metrics: {
-				engagement: {
-					reactions_received: 1,
-				}
-			}
+			engagement: { reactions_received: 1 }
 		}
 	];
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
