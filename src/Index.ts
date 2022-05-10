@@ -94,6 +94,19 @@ async function assertMayor(msg: Message) {
 	return mayorRole;
 }
 
+function getFirstMentionOrSelf(msg: Message, skip?: number) {
+	const mentions = msg.mentions.members.array();
+	if (mentions.length >= 1) return mentions[0].user.id;
+	// no mentions
+	const _skip = skip ? skip : msg.content.split(" ")[0].length;
+	const params = msg.content.slice(_skip).trim().split(" ");
+	// no valid plain text mentions
+	if (params[0] === "") return msg.author.id;
+	const found = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim());
+	if (!found) throw `could not find ${params[0]} in this server`;
+	return found.user.id;
+}
+
 async function configureUsers(msg: Message) {
 	await assertDeveloper(msg);
 	await msg.guild.fetch();
@@ -125,18 +138,9 @@ async function allowance(msg: Message) {
 	msg.channel.send(embed);
 }
 
-async function bucks(msg: Message, prefix: string, mention: GuildMember) {
-	const params = msg.content.slice(prefix.length).trim();
-	if (params.length <= 0 && !mention) {
-		const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${msg.author.id}&server_id=${msg.guild.id}`);
-		if (!ok) throw data.error ?? "internal server error";
-		const user = data;
-		const embed = Embed.success(msg, `You have ${user.billy_bucks} BillyBucks!`, user.username);
-		return msg.channel.send(embed);
-	}
-	const found = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === params.split(" ")[0].toUpperCase().trim());
-	if (!found) throw `could not find ${params.split(" ")[0]} in this server`;
-	const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${found.user.id}&server_id=${msg.guild.id}`);
+async function bucks(msg: Message, prefix: string) {
+	const id = getFirstMentionOrSelf(msg);
+	const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${id}&server_id=${msg.guild.id}`);
 	if (!ok) throw data.error ?? "internal server error";
 	const user = data;
 	const embed = Embed.success(msg, `${user.username} has ${user.billy_bucks} BillyBucks!`, user.username);
@@ -203,39 +207,33 @@ async function buyLotteryTicket(msg: Message) {
 	msg.channel.send(embed);
 }
 
-async function payBucks(msg: Message, prefix: string, mention: GuildMember) {
-	const username = msg.content.substring(prefix.length, msg.content.lastIndexOf(" ")).trim();
+async function payBucks(msg: Message) {
 	const amount = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
-
 	if (typeof parseInt(amount) !== "number") throw "amount must be a number";
-	if (!username || !mention) return;
-	if (username === msg.author.username || (mention && mention.user.username === msg.author.username)) {
-		throw `You cannot pay yourself, ${username}!`;
-	}
-	const found = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase() === username.toUpperCase().trim());
-	if (!found) throw `Could not find ${username} in this server.`;
-
+	const recipientId = getFirstMentionOrSelf(msg);
+	if (recipientId === msg.author.id) throw `You cannot pay yourself, ${msg.author.username}!`;
 	const { data, ok } = await Api.client.post<ApiResponse>("bucks/pay", {
 		server_id: msg.guild.id,
 		amount: parseInt(amount),
-		recipient_id: found.id,
+		recipient_id: recipientId,
 		sender_id: msg.author.id
 	});
 	if (!ok) throw data.error ?? "internal server error";
-	const recipient = data[found.id] as IUser;
-	const embed = Embed.success(msg, `You paid ${recipient.username} ${amount} BillyBucks!`, recipient.username);
+	const recipient = data[recipientId] as IUser;
+	const embed = Embed.success(msg, `You paid ${recipient.username} ${amount} BillyBuck(s)!`, recipient.username);
 	msg.channel.send(embed);
 }
 
-async function makeMayor(msg: Message, mention: GuildMember) {
+async function makeMayor(msg: Message) {
 	const mayorRole = await assertMayor(msg);
 	const author = await msg.guild.members.fetch(msg.author.id);
-	if (mention.user.id === author.user.id) throw "you are already the mayor!";
+	const targetUserId = getFirstMentionOrSelf(msg);
+	if (targetUserId === author.user.id) throw "you are already the mayor!";
 	const server_id = msg.guild.id;
 	const body = [
 		{
 			server_id,
-			user_id: mention.user.id,
+			user_id: targetUserId,
 			is_mayor: true
 		},
 		{
@@ -249,7 +247,7 @@ async function makeMayor(msg: Message, mention: GuildMember) {
 	// TODO might have to check access for editing roles
 	// mention.roles.add(mayorRole);
 	// author.roles.remove(mayorRole);
-	const embed = Embed.success(msg, `${mention.user.username} is now the mayor!`, "Mayoral Decree!");
+	const embed = Embed.success(msg, `<@${targetUserId}> is now the mayor!`, "Mayoral Decree!");
 	msg.channel.send(embed);
 }
 
@@ -333,34 +331,6 @@ async function buckReact(react: MessageReaction, sender_id: string) {
 	});
 }
 
-async function updatePostEngagement(msg: Message) {
-	const server_id = msg.guild.id;
-	const body = [
-		{
-			server_id,
-			user_id: msg.author.id,
-			engagement: { posts: 1 }
-		}
-	];
-	return Api.client.put<ApiResponse>("metrics/engagement", body);
-}
-
-async function updateMentionsMetric(msg: Message, mentions: GuildMember[]) {
-	const server_id = msg.guild.id;
-	if (mentions.length <= 0) return;
-	const operations = mentions.reduce((acc, { user }) => {
-		if (user.bot) return acc;
-		if (user.id === msg.author.id) return acc;
-		acc.push({
-			server_id,
-			user_id: user.id,
-			engagement: { mentions: 1 }
-		});
-		return acc;
-	}, []);
-	return Api.client.put<ApiResponse>("metrics/engagement", operations);
-}
-
 async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 	const server_id = react.message.guild.id;
 	const body = [
@@ -378,25 +348,46 @@ async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
+async function updateEngagementMetrics(msg: Message) {
+	const server_id = msg.guild.id;
+	const mentions = msg.mentions.members.array();
+	const operations = mentions.length >= 1 && mentions.reduce((acc, { user }) => {
+		if (user.bot) return acc;
+		if (user.id === msg.author.id) return acc;
+		acc.push({
+			server_id,
+			user_id: user.id,
+			engagement: { mentions: 1 }
+		});
+		return acc;
+	}, []);
+	const body = [
+		{
+			server_id,
+			user_id: msg.author.id,
+			engagement: { posts: 1 }
+		},
+		...(operations ? operations : [])
+	];
+	return Api.client.put<ApiResponse>("metrics/engagement", body);
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
-		const mentions = msg.mentions.members.array();
-		updatePostEngagement(msg);
-		updateMentionsMetric(msg, mentions);
-		const firstMention = mentions[0];
+		updateEngagementMetrics(msg);
 		switch (true) {
 			case /.*!bucks.*/gmi.test(msg.content):
-				return await bucks(msg, "!bucks", firstMention);
+				return await bucks(msg, "!bucks");
 			case /.*!lotto.*/gmi.test(msg.content):
 				return await lotteryInfo(msg);
 			case /.*!buylottoticket.*/gmi.test(msg.content):
 				return await buyLotteryTicket(msg);
-			case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-				return await payBucks(msg, "!billypay", firstMention);
-			case /.*!makeMayor .*/gmi.test(msg.content):
-				return await makeMayor(msg, firstMention);
+			case /.*!pay .* [0-9]{1,}/gmi.test(msg.content):
+				return await payBucks(msg);
+			case /.*!concede .*/gmi.test(msg.content):
+				return await makeMayor(msg);
 			case /.*!configure.*/gmi.test(msg.content):
 				return await configureUsers(msg);
 			case /.*!allowance.*/gmi.test(msg.content):
