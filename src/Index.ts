@@ -125,11 +125,21 @@ async function allowance(msg: Message) {
 	msg.channel.send(embed);
 }
 
-async function bucks(msg: Message) {
-	const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${msg.author.id}&server_id=${msg.guild.id}`);
+async function bucks(msg: Message, prefix: string, mention: GuildMember) {
+	const params = msg.content.slice(prefix.length).trim();
+	if (params.length <= 0 && !mention) {
+		const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${msg.author.id}&server_id=${msg.guild.id}`);
+		if (!ok) throw data.error ?? "internal server error";
+		const user = data;
+		const embed = Embed.success(msg, `You have ${user.billy_bucks} BillyBucks!`, user.username);
+		return msg.channel.send(embed);
+	}
+	const found = mention ? mention : msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === params.split(" ")[0].toUpperCase().trim());
+	if (!found) throw `could not find ${params.split(" ")[0]} in this server`;
+	const { data, ok } = await Api.client.get<ApiError & IUser>(`users?user_id=${found.user.id}&server_id=${msg.guild.id}`);
 	if (!ok) throw data.error ?? "internal server error";
 	const user = data;
-	const embed = Embed.success(msg, `You have ${user.billy_bucks} BillyBucks!`, user.username);
+	const embed = Embed.success(msg, `${user.username} has ${user.billy_bucks} BillyBucks!`, user.username);
 	msg.channel.send(embed);
 }
 
@@ -378,7 +388,7 @@ client.on("message", async (msg: Message) => {
 		const firstMention = mentions[0];
 		switch (true) {
 			case /.*!bucks.*/gmi.test(msg.content):
-				return await bucks(msg);
+				return await bucks(msg, "!bucks", firstMention);
 			case /.*!lotto.*/gmi.test(msg.content):
 				return await lotteryInfo(msg);
 			case /.*!buylottoticket.*/gmi.test(msg.content):
@@ -395,7 +405,7 @@ client.on("message", async (msg: Message) => {
 				return await noblemen(msg);
 			case /.*!serfs.*/gmi.test(msg.content):
 				return await serfs(msg);
-			case /.*!p.*/gmi.test(msg.content):
+			case /.*!p .*/gmi.test(msg.content):
 				return await playYoutubeAudio(msg);
 			case /.*!spin.*/gmi.test(msg.content):
 				return await spinRoulette(msg, "!spin");
