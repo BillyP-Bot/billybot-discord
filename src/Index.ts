@@ -376,7 +376,6 @@ client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
-		updateEngagementMetrics(msg);
 		switch (true) {
 			case /.*!bucks.*/gmi.test(msg.content):
 				return await bucks(msg, "!bucks");
@@ -405,7 +404,7 @@ client.on("message", async (msg: Message) => {
 			case /.*bing.*/gmi.test(msg.content):
 				return msg.reply("bong");
 			default:
-				return;
+				return updateEngagementMetrics(msg);
 		}
 	} catch (error) {
 		console.log({ error });
