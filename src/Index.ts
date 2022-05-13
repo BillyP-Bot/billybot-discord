@@ -198,7 +198,7 @@ async function lotteryInfo(msg: Message) {
 		entrants: IUser[],
 		base_lottery_jackpot: number,
 		entrants_count: number
-	}>(`lottery/${msg.guild.id}`);
+	}>(`lottery/server/${msg.guild.id}`);
 	if (!ok) throw data.error ?? "internal server error";
 	if (data.entrants.length <= 0) {
 		const embed = Embed.success(msg, "No entrants yet!", "Weekly Lottery");
