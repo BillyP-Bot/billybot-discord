@@ -55,6 +55,28 @@ interface IUser {
 	created_at: Date
 	updated_at: Date
 }
+export enum CardSuit {
+	clubs = "clubs",
+	hearts = "hearts",
+	spades = "spades",
+	diamonds = "diamonds",
+}
+
+export interface ICard {
+	suit: CardSuit
+	value: number
+}
+export interface IBlackJack {
+	_id: string
+	server_id: string
+	wager: number
+	user: IUser
+	deck: ICard[]
+	player_hand: ICard[]
+	dealer_hand: ICard[]
+	is_complete: boolean
+}
+
 type ApiError = {
 	status?: number
 	ok?: boolean
@@ -372,6 +394,48 @@ async function updateEngagementMetrics(msg: Message) {
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
+async function blackJack(msg: Message) {
+	const wager = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
+	if (typeof parseInt(wager) !== "number") throw "amount must be a number";
+	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id,
+		wager: parseInt(wager)
+	});
+	if (!ok) throw data.error ?? "internal server error";
+	console.log({ data });
+	// msg.channel.send(`${}`)
+}
+async function blackJackHit(msg: Message, doubleDown = false) {
+	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack/hit", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id,
+		double_down: doubleDown
+	});
+	if (!ok) throw data.error ?? "internal server error";
+	console.log({ data });
+	// msg.channel.send(`${}`)
+}
+async function blackJackStand(msg: Message) {
+	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack/stand", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id
+	});
+	if (!ok) throw data.error ?? "internal server error";
+	console.log({ data });
+	// msg.channel.send(`${}`)
+}
+
+async function hit(msg: Message) {
+	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack", {
+		server_id: msg.guild.id,
+		user_id: msg.author.id
+	});
+	if (!ok) throw data.error ?? "internal server error";
+	console.log({ data });
+	// msg.channel.send(`${}`)
+}
+
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
@@ -403,6 +467,17 @@ client.on("message", async (msg: Message) => {
 				return await adminAnnouncement(msg, client);
 			case /.*bing.*/gmi.test(msg.content):
 				return msg.reply("bong");
+			// case /.*!blackjack [0-9].*/gmi.test(msg.content):
+			// 	return await blackJack(msg);
+			// case /.*!hit.*/gmi.test(msg.content):
+			// 	blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
+			// 	break;
+			// case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
+			// 	blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
+			// 	break;
+			// case /.*!doubledown.*/gmi.test(msg.content):
+			// 	blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
+			// 	break;
 			default:
 				return updateEngagementMetrics(msg);
 		}
@@ -423,7 +498,6 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	}
 });
 
-
 // client.on("message", async (msg: Message) => {
 // 	try {
 // 		if (msg.author.bot) return;
@@ -441,21 +515,6 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 // 			// case /.*(!skistats).*/gmi.test(msg.content):
 // 			// 	skistats.all(msg);
 // 			// 	break;
-// 			case /.*!bucks.*/gmi.test(msg.content):
-// 				await bucks(msg);
-// 				break;
-// 			// case /.*!billypay .* [0-9]{1,}/gmi.test(msg.content):
-// 			// 	Currency.BillyPay(msg, "!billypay", firstMention);
-// 			// 	break;
-// 			case /.*!configure.*/gmi.test(msg.content):
-// 				await configureUsers(msg);
-// 				break;
-// 			case /.*!allowance.*/gmi.test(msg.content):
-// 				await allowance(msg);
-// 				break;
-// 			case /.*!noblemen.*/gmi.test(msg.content):
-// 				await noblemen(msg);
-// 				break;
 // 			// case /.*!boydTownRoad.*/gmi.test(msg.content):
 // 			// 	boyd.townRoad(msg);
 // 			// 	break;
@@ -474,17 +533,11 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 // 			// case /.*!whereshowwie.*/gmi.test(msg.content):
 // 			// 	whatshowardupto.howardUpdate(msg, config.GOOGLE_API_KEY, config.GOOGLE_CX_KEY);
 // 			// 	break;
-// 			// case msg.channel.type !== "dm" && msg.channel.name === "admin-announcements":
-// 			// 	await message.adminMsg(msg, client);
-// 			// 	break;
 // 			// case /.*good bot.*/gmi.test(msg.content):
 // 			// 	message.goodBot(msg);
 // 			// 	break;
 // 			// case /.*bad bot.*/gmi.test(msg.content):
 // 			// 	message.badBot(msg);
-// 			// 	break;
-// 			// case /.*!spin.*/gmi.test(msg.content):
-// 			// 	roulette.spin(msg, "!spin");
 // 			// 	break;
 // 			// case /.*!loan.*/gmi.test(msg.content):
 // 			// 	lending.getActiveLoanInfo(msg);
@@ -500,9 +553,6 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 // 			// 	break;
 // 			case /.*!lotto.*/gmi.test(msg.content):
 // 				await lotteryInfo(msg);
-// 				break;
-// 			case /.*!buylottoticket.*/gmi.test(msg.content):
-// 				await buyLotteryTicket(msg);
 // 				break;
 // 			// case /.*!baseballrecord.*/gmi.test(msg.content):
 // 			// 	baseball.getRecord(msg, "!baseballrecord", firstMention);

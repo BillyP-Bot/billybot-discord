@@ -122,7 +122,7 @@ export const doubleDown = async (userId: string, serverId: string, channel: Text
 		hand.playerHand = stringifyCards(playerCards);
 
 		if (hand.wager > hand.user.billyBucks) throw `Cannot double down! You only have ${user.billyBucks}!`;
-		
+
 		hand.user.billyBucks -= hand.wager;
 		hand.wager = hand.wager * 2;
 		hand = await BlackjackRepo.UpdateOne(hand);
@@ -141,7 +141,7 @@ export const onMessageReact = async (react: MessageReaction, userId: string): Pr
 	if (!hand) return;
 	if (react.message.id !== hand.latestMessageId) return;
 
-	switch(react.emoji.toString()) {
+	switch (react.emoji.toString()) {
 	case "🟩": return hit(userId, react.message.guild.id, react.message.channel);
 	case "🟨": return stand(userId, react.message.guild.id, react.message.channel);
 	case "🟦": return doubleDown(userId, react.message.guild.id, react.message.channel);
@@ -166,10 +166,10 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 			winnings = Math.floor(hand.wager * 1.5);
 		}
 		handIsOver = true;
-	// player has hit to make 21 (not blackjack)
+		// player has hit to make 21 (not blackjack)
 	} else if (playerCount.softCount === 21 || playerCount.hardCount === 21) {
 		stand = true;
-	// player busts
+		// player busts
 	} else if (playerCount.hardCount > 21) {
 		status += `Busted! You lose your bet of ${hand.wager} BillyBucks!\n\n`;
 		handIsOver = true;
@@ -194,7 +194,7 @@ const getHandStatus = async (hand: Blackjack, stand?: boolean): Promise<string> 
 		if (dealerCount.hardCount > 21) {
 			status += `Dealer busted! You collect a 1:1 payout on your bet of ${hand.wager} BillyBucks!\n\n`;
 			winnings = hand.wager * 2;
-		// both player and dealer have opted to stand and the hands are compared
+			// both player and dealer have opted to stand and the hands are compared
 		} else {
 			const playerFinalCount = playerCount.softCount <= 21 ? playerCount.softCount : playerCount.hardCount;
 			const dealerFinalCount = dealerCount.softCount <= 21 ? dealerCount.softCount : dealerCount.hardCount;
@@ -319,7 +319,7 @@ const displayCards = (cardsString: string): string => {
 };
 
 const convertSuitToEmoji = (suit: string): string => {
-	switch(suit) {
+	switch (suit) {
 	case "c": return "♣️";
 	case "d": return "♦️";
 	case "h": return "♥️";
