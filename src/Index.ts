@@ -24,6 +24,44 @@ client.on("ready", () => {
 	client.channels.fetch("738194989917536317");
 });
 
+export const commands = [
+	{ prefix: "!help", description: "Shows a list of my commands." },
+	{ prefix: "!concede", description: "The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`" },
+	{ prefix: "!noblemen", description: "Get the 3 richest users in the server." },
+	{ prefix: "!serfs", description: "Get the 3 poorest users in the server." },
+	// { prefix: "!boydTownRoad", description: "I join voice chat and play an awesome song!" },
+	// { prefix: "!stop", description: "Stops the song I play for !boydTownRoad." },
+	// { prefix: "!skistats", description: "Fetch the current leaderboard from skifree.js!" },
+	// { prefix: "!diane", description: "A hilarious meme straight from Diane's Facebook." },
+	// { prefix: "!fridayfunnies", description: "A big 'ole meme dump right into your feed." },
+	{ prefix: "!bucks", description: "Get your current balance of BillyBucks, (Optional `!bucks [username/@user]`) " },
+	{ prefix: "!allowance", description: "Collect your weekly BillyBuck allowance! Only available once a week." },
+	// { prefix: "!whereshowwie", description: "Get updates on Howard's job status." },
+	{ prefix: "!configure", description: "Command for admins to prep the server." },
+	{ prefix: "!spin", description: "Let's play Roulette! Usage: `!spin [betAmount] [red/black/green]`" },
+	// { prefix: "!creditscore", description: "Show your current credit score, interest rate, and credit limit that BillyBank will offer you!" },
+	// { prefix: "!bookloan", description: "Book a loan with BillyBank today! Usage: '!bookloan [amount]'" },
+	// { prefix: "!payloan", description: "Pay off part or all of the outstanding balance on your active loan. Usage: '!payloan [amount]'" },
+	// { prefix: "!loan", description: "Show info about your active loan." },
+	{ prefix: "!pay", description: "Pay BillyBucks directly to another user! Usage: `!pay [username/@user] [amount]`" },
+	{ prefix: "!lotto", description: "View the current jackpot and list of entrants in this week's lottery!" },
+	{ prefix: "!ticket", description: "Buy a ticket for a chance to win this week's lottery!" },
+	// { prefix: "!baseball", description: "Challenge another user to a game for an optional wager amount, or accept a challenge that has already been extended to you: '!baseball @[username] [wager]'" },
+	// { prefix: "!swing", description: "Advance the current baseball game when you are at bat!" },
+	// { prefix: "!forfeit", description: "Withdraw outgoing pending baseball challenge or forfeit active game/wager." },
+	// { prefix: "!baseballrecord", description: "Show your baseball win/loss record, or for the specified user: '!baseballrecord @[username]'" },
+	// { prefix: "!cooperstown", description: "Show the top 3 users with the most baseball wins." },
+	// { prefix: "!stock", description: "Show the current price of the stock for the specified ticker symbol: '!stock [tickerSymbol]'" },
+	// { prefix: "!buystock", description: "Buy stock in the specified ticker symbol for the given amount of BillyBucks: '!buystock [tickerSymbol] [amount]'" },
+	// { prefix: "!sellstock", description: "Sell all stock you own for the specified ticker symbol: '!sellstock [tickerSymbol]'" },
+	// { prefix: "!portfolio", description: "View info on your active investments." },
+	// { prefix: "!disc", description: "Show info about a disc golf disc! Usage: '!disc [name]'" },
+	// { prefix: "good bot", description: "Give me a pat on the head :)" },
+	// { prefix: "bad bot", description: "Tell me if I'm doing a bad job." },
+	// { prefix: "!sheesh", description: "Sheeeeeeeeeeeeeesssshhhhh..." }
+];
+
+
 enum Roles {
 	developer = "BillyPBotDev",
 	mayor = "Mayor of Boy Town"
@@ -55,18 +93,17 @@ interface IUser {
 	created_at: Date
 	updated_at: Date
 }
-export enum CardSuit {
+enum CardSuit {
 	clubs = "clubs",
 	hearts = "hearts",
 	spades = "spades",
 	diamonds = "diamonds",
 }
-
-export interface ICard {
+interface ICard {
 	suit: CardSuit
 	value: number
 }
-export interface IBlackJack {
+interface IBlackJack {
 	_id: string
 	server_id: string
 	wager: number
@@ -114,6 +151,14 @@ async function assertMayor(msg: Message) {
 	const mayorRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
 	if (!mayorRole) throw "only the mayor can run this command!";
 	return mayorRole;
+}
+
+async function help(msg: Message) {
+	const embed = new MessageEmbed();
+	embed.setColor(Colors.green).setTitle("Commands");
+	embed.setDescription("Here is a list of my commands!");
+	commands.map(({ prefix, description}) => embed.addField(prefix, description));
+	msg.channel.send(embed);
 }
 
 function getFirstMentionOrSelf(msg: Message, skip?: number) {
@@ -224,7 +269,7 @@ async function buyLotteryTicket(msg: Message) {
 	if (!ok) throw data.error ?? "internal server error";
 	const user = data[msg.author.id] as IUser;
 	let body = `You bought a lottery ticket for ${data.ticket_cost} BillyBucks!\n\n`;
-	body += `You now have ${user.billy_bucks} BillyBUcks, a winner will be picked on Friday at noon!`;
+	body += `You now have ${user.billy_bucks} BillyBucks, a winner will be picked on Friday at noon!`;
 	const embed = Embed.success(msg, body, "Lottery Ticket Purchased");
 	msg.channel.send(embed);
 }
@@ -426,26 +471,18 @@ async function blackJackStand(msg: Message) {
 	// msg.channel.send(`${}`)
 }
 
-async function hit(msg: Message) {
-	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack", {
-		server_id: msg.guild.id,
-		user_id: msg.author.id
-	});
-	if (!ok) throw data.error ?? "internal server error";
-	console.log({ data });
-	// msg.channel.send(`${}`)
-}
-
 client.on("message", async (msg: Message) => {
 	try {
 		if (msg.channel.type === "dm") return;
 		if (msg.author.bot) return;
 		switch (true) {
+			case /.*(!help).*/gmi.test(msg.content):
+				return await help(msg);
 			case /.*!bucks.*/gmi.test(msg.content):
 				return await bucks(msg, "!bucks");
 			case /.*!lotto.*/gmi.test(msg.content):
 				return await lotteryInfo(msg);
-			case /.*!buylottoticket.*/gmi.test(msg.content):
+			case /.*!ticket.*/gmi.test(msg.content):
 				return await buyLotteryTicket(msg);
 			case /.*!pay .* [0-9]{1,}/gmi.test(msg.content):
 				return await payBucks(msg);
