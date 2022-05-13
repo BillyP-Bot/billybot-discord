@@ -27,6 +27,7 @@ client.on("ready", () => {
 export const commands = [
 	{ prefix: "!help", description: "Shows a list of my commands." },
 	{ prefix: "!concede", description: "The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`" },
+	{ prefix: "!taxes", description: "The Current mayor collects taxes from all middle-class members! Resets every Friday." },
 	{ prefix: "!noblemen", description: "Get the 3 richest users in the server." },
 	{ prefix: "!serfs", description: "Get the 3 poorest users in the server." },
 	// { prefix: "!boydTownRoad", description: "I join voice chat and play an awesome song!" },
@@ -61,7 +62,6 @@ export const commands = [
 	// { prefix: "!sheesh", description: "Sheeeeeeeeeeeeeesssshhhhh..." }
 ];
 
-
 enum Roles {
 	developer = "BillyPBotDev",
 	mayor = "Mayor of Boy Town"
@@ -73,6 +73,29 @@ enum Colors {
 	red = "#ff6666",
 	green = "#00e64d"
 }
+interface IEngagementMetrics {
+	posts: number
+	reactions_used: number
+	reactions_received: number
+	average_reactions_per_post: number
+	mentions: number
+}
+interface IGamblingMetrics {
+	roulette: {
+		spins: number
+		red_spins: number
+		black_spins: number
+		green_spins: number
+		wins: number
+		losses: number
+		overall_winnings: number
+		overall_losings: number
+	}
+}
+interface IUserMetrics {
+	engagement: IEngagementMetrics
+	gambling: IGamblingMetrics
+}
 interface IUser {
 	_id: string
 	billy_bucks: number
@@ -81,15 +104,12 @@ interface IUser {
 	username: string
 	discriminator: string
 	avatar_hash?: string
-	last_allowance: Date
+	allowance_available: boolean
 	has_lottery_ticket: boolean
-	metrics: {
-		posts: number
-		reactions_used: number
-		reactions_received: number
-		average_reactions_per_post: number
-		mentions: number
-	}
+	is_admin: boolean
+	is_mayor: boolean
+	metrics: IUserMetrics
+	birthday?: Date | string
 	created_at: Date
 	updated_at: Date
 }
@@ -318,6 +338,27 @@ async function makeMayor(msg: Message) {
 	msg.channel.send(embed);
 }
 
+async function collectTaxes(msg: Message) {
+	await assertMayor(msg);
+	const server_id = msg.guild.id;
+	const body = {
+		server_id,
+		user_id: msg.author.id
+	};
+	const { data, ok } = await Api.client.post<ApiResponse & {
+		payout: number,
+		tax_rate: number,
+		charged_users: number,
+		user: IUser
+	}>("bucks/taxes", body);
+	if (!ok) throw data.error ?? "internal server error";
+	let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
+	text += `Collection Payout: +${data.payout}\n`;
+	text += `Mayor ${data.user.username} now has ${data.user.billy_bucks} BillyBucks!`;
+	const embed = Embed.success(msg, text, "Tax Time!");
+	msg.channel.send(embed);
+}
+
 async function fetchFirstVideo(term: string) {
 	const isUrl = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(term);
 	if (!isUrl) return YouTube.searchOne(term);
@@ -488,6 +529,8 @@ client.on("message", async (msg: Message) => {
 				return await payBucks(msg);
 			case /.*!concede .*/gmi.test(msg.content):
 				return await makeMayor(msg);
+			case /.*!taxes.*/gmi.test(msg.content):
+				return await collectTaxes(msg);
 			case /.*!configure.*/gmi.test(msg.content):
 				return await configureUsers(msg);
 			case /.*!allowance.*/gmi.test(msg.content):
