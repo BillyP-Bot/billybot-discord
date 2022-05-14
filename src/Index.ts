@@ -133,6 +133,44 @@ interface IBlackJack {
 	dealer_hand: ICard[]
 	is_complete: boolean
 }
+type BlackJackGameResponse = {
+	_id: string
+	server_id: string
+	user: string
+	wager: number
+	payout: number
+	turn: number
+	won: boolean
+	player_count: string
+	dealer_count: string
+	deck: ICard[],
+	player_hand: ICard[]
+	dealer_hand: ICard[]
+	is_complete: boolean
+	billy_bucks: number
+	status: string
+}
+const suitLookup: Record<CardSuit, string> = {
+	[CardSuit.clubs]: "♣️",
+	[CardSuit.hearts]: "♥️",
+	[CardSuit.spades]: "♠️",
+	[CardSuit.diamonds]: "♦️"
+};
+const valueLookup: Record<number, string> = {
+	1: "A",
+	2: "2",
+	3: "3",
+	4: "4",
+	5: "5",
+	6: "6",
+	7: "7",
+	8: "8",
+	9: "9",
+	10: "10",
+	11: "J",
+	12: "Q",
+	13: "K"
+};
 
 type ApiError = {
 	status?: number
@@ -177,7 +215,7 @@ async function help(msg: Message) {
 	const embed = new MessageEmbed();
 	embed.setColor(Colors.green).setTitle("Commands");
 	embed.setDescription("Here is a list of my commands!");
-	commands.map(({ prefix, description}) => embed.addField(prefix, description));
+	commands.map(({ prefix, description }) => embed.addField(prefix, description));
 	msg.channel.send(embed);
 }
 
@@ -480,36 +518,56 @@ async function updateEngagementMetrics(msg: Message) {
 	return Api.client.put<ApiResponse>("metrics/engagement", body);
 }
 
+const buildReadableHand = (hand: ICard[]) => {
+	return hand.map(({ suit, value }) => `${valueLookup[value]}${suitLookup[suit]}`);
+};
+
+const buildBlackjackResponse = (data: BlackJackGameResponse, userId: string) => {
+	const { player_hand, dealer_hand } = data;
+	let response = `<@${userId}>: ${data.player_count}\n`;
+	const readablePlayer = buildReadableHand(player_hand);
+	const readableDealer = buildReadableHand(dealer_hand);
+	response += `${readablePlayer.join("  ")}\n\n`;
+	response += `Dealer: ${data.is_complete ? data.dealer_count : ""}\n`;
+	response += `${readableDealer.join("  ")} ${data.is_complete ? "" : "🎴"}\n\n`;
+	response += `Bet: ${data.wager}\n\n`;
+	response += `${data.status}`;
+	if (data.is_complete) {
+		response += `\n\nYou now have ${data.billy_bucks} BillyBucks!`;
+	}
+	return response;
+};
+
 async function blackJack(msg: Message) {
 	const wager = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
 	if (typeof parseInt(wager) !== "number") throw "amount must be a number";
-	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack", {
+	const { data, ok } = await Api.client.post<ApiResponse & BlackJackGameResponse>("gamble/blackjack", {
 		server_id: msg.guild.id,
 		user_id: msg.author.id,
 		wager: parseInt(wager)
 	});
 	if (!ok) throw data.error ?? "internal server error";
-	console.log({ data });
-	// msg.channel.send(`${}`)
+	const response = buildBlackjackResponse(data, msg.author.id);
+	msg.channel.send(response);
 }
 async function blackJackHit(msg: Message, doubleDown = false) {
-	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack/hit", {
+	const { data, ok } = await Api.client.post<ApiResponse & BlackJackGameResponse>("gamble/blackjack/hit", {
 		server_id: msg.guild.id,
 		user_id: msg.author.id,
 		double_down: doubleDown
 	});
 	if (!ok) throw data.error ?? "internal server error";
-	console.log({ data });
-	// msg.channel.send(`${}`)
+	const response = buildBlackjackResponse(data, msg.author.id);
+	msg.channel.send(response);
 }
 async function blackJackStand(msg: Message) {
-	const { data, ok } = await Api.client.post<ApiResponse & IBlackJack>("gamble/blackjack/stand", {
+	const { data, ok } = await Api.client.post<ApiResponse & BlackJackGameResponse>("gamble/blackjack/stand", {
 		server_id: msg.guild.id,
 		user_id: msg.author.id
 	});
 	if (!ok) throw data.error ?? "internal server error";
-	console.log({ data });
-	// msg.channel.send(`${}`)
+	const response = buildBlackjackResponse(data, msg.author.id);
+	msg.channel.send(response);
 }
 
 client.on("message", async (msg: Message) => {
@@ -547,17 +605,14 @@ client.on("message", async (msg: Message) => {
 				return await adminAnnouncement(msg, client);
 			case /.*bing.*/gmi.test(msg.content):
 				return msg.reply("bong");
-			// case /.*!blackjack [0-9].*/gmi.test(msg.content):
-			// 	return await blackJack(msg);
-			// case /.*!hit.*/gmi.test(msg.content):
-			// 	blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
-			// 	break;
-			// case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
-			// 	blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
-			// 	break;
-			// case /.*!doubledown.*/gmi.test(msg.content):
-			// 	blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
-			// 	break;
+			case /.*!blackjack [0-9].*/gmi.test(msg.content):
+				return await blackJack(msg);
+			case /.*!hit.*/gmi.test(msg.content):
+				return await blackJackHit(msg);
+			case /.*!stand.*/gmi.test(msg.content):
+				return await blackJackStand(msg);
+			case /.*!doubledown.*/gmi.test(msg.content):
+				return await blackJackHit(msg, true);
 			default:
 				return updateEngagementMetrics(msg);
 		}
@@ -666,18 +721,6 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 // 			// 	break;
 // 			// case /.*!sheesh.*/gmi.test(msg.content):
 // 			// 	message.sheesh(msg);
-// 			// 	break;
-// 			// case /.*!blackjack.*/gmi.test(msg.content):
-// 			// 	blackjack.blackjack(msg, "!blackjack");
-// 			// 	break;
-// 			// case /.*!hit.*/gmi.test(msg.content):
-// 			// 	blackjack.hit(msg.author.id, msg.guild.id, msg.channel);
-// 			// 	break;
-// 			// case (/.*!stand.*/gmi.test(msg.content) || /.*!stay.*/gmi.test(msg.content)):
-// 			// 	blackjack.stand(msg.author.id, msg.guild.id, msg.channel);
-// 			// 	break;
-// 			// case /.*!doubledown.*/gmi.test(msg.content):
-// 			// 	blackjack.doubleDown(msg.author.id, msg.guild.id, msg.channel);
 // 			// 	break;
 // 			// default:
 // 			// 	message.includesAndResponse(msg, triggersAndResponses);
