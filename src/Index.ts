@@ -54,6 +54,7 @@ async function help(msg: Message) {
 async function messageHandler(msg: Message) {
 	try {
 		if (msg.channel.type === "dm") return;
+		if (msg.channel.id === "975795297257136189" && config.IS_PROD) return;
 		if (msg.author.bot) return;
 		switch (true) {
 		case /.*bing.*/gmi.test(msg.content):
