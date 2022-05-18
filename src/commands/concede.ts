@@ -8,7 +8,7 @@ export const concedeCommand: ICommand = {
 	command: "!concede",
 	description: "The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`",
 	handler: async (msg: Message) => {
-		await assertMayor(msg);
+		const mayorRole = await assertMayor(msg);
 		const author = await msg.guild.members.fetch(msg.author.id);
 		const targetUserId = getFirstMentionOrSelf(msg);
 		if (targetUserId === author.user.id) throw "you are already the mayor!";
@@ -26,9 +26,9 @@ export const concedeCommand: ICommand = {
 			},
 		];
 		await Api.put("users", body);
-		// TODO might have to check access for editing roles
-		// mention.roles.add(mayorRole);
-		// author.roles.remove(mayorRole);
+		const mention = await msg.guild.members.fetch(targetUserId);
+		mention.roles.add(mayorRole);
+		author.roles.remove(mayorRole);
 		const embed = Embed.success(msg, `<@${targetUserId}> is now the mayor!`, "Mayoral Decree!");
 		msg.channel.send(embed);
 		return;
