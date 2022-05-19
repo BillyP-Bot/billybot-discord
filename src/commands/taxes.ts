@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import type { ICommand, IUser } from "../types";
-import { Api, assertMayor, Embed } from "../helpers";
+import { Api, assertMayor, Embed, getServerDisplayName } from "../helpers";
 
 export const taxesCommand: ICommand = {
 	prefix: /.*!taxes.*/gmi,
@@ -20,9 +20,10 @@ export const taxesCommand: ICommand = {
 			charged_users: number,
 			user: IUser
 		}>("bucks/taxes", body);
+		const { name } = getServerDisplayName(msg);
 		let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
 		text += `Collection Payout: +${data.payout}\n`;
-		text += `Mayor ${data.user.username} now has ${data.user.billy_bucks} BillyBucks!`;
+		text += `Mayor ${ name } now has ${data.user.billy_bucks} BillyBucks!`;
 		const embed = Embed.success(msg, text, "Tax Time!");
 		msg.channel.send(embed);
 		return;

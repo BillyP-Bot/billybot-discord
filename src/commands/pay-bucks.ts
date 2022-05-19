@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import type { ICommand, IUser } from "../types";
-import { Api, Embed, getFirstMentionOrSelf } from "../helpers";
+import { Api, Embed, getServerDisplayName } from "../helpers";
 
 export const payBucksCommand: ICommand = {
 	prefix: /.*!pay .* [0-9]{1,}/gmi,
@@ -10,7 +10,7 @@ export const payBucksCommand: ICommand = {
 	handler: async (msg: Message) => {
 		const amount = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
 		if (typeof parseInt(amount) !== "number") throw "amount must be a number";
-		const recipientId = getFirstMentionOrSelf(msg);
+		const { id: recipientId, name } = getServerDisplayName(msg);
 		if (recipientId === msg.author.id) throw `You cannot pay yourself, ${msg.author.username}!`;
 		const data = await Api.post("bucks/pay", {
 			server_id: msg.guild.id,
@@ -18,8 +18,8 @@ export const payBucksCommand: ICommand = {
 			recipient_id: recipientId,
 			sender_id: msg.author.id
 		});
-		const recipient = data[recipientId] as IUser;
-		const embed = Embed.success(msg, `You paid ${recipient.username} ${amount} BillyBuck(s)!`, recipient.username);
+		const sender = data[msg.author.id] as IUser;
+		const embed = Embed.success(msg, `You paid ${name} ${amount} BillyBuck(s)! \n You now have ${sender.billy_bucks} BillyBucks!`, `+${amount}`);
 		msg.channel.send(embed);
 		return;
 	}

@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import type { IUser, ICommand } from "../types";
-import { Api, Embed } from "../helpers";
+import { Api, Embed, getServerDisplayName } from "../helpers";
 
 export const allowanceCommand: ICommand = {
 	prefix: /.*!allowance.*/gmi,
@@ -12,8 +12,9 @@ export const allowanceCommand: ICommand = {
 			server_id: msg.guild.id,
 			user_id: msg.author.id
 		});
+		const { name } = getServerDisplayName(msg);
 		const user = data[msg.author.id] as IUser;
-		const embed = Embed.success(msg, `Here's your allowance, ${user.username}! You now have ${user.billy_bucks} BillyBucks!`, "+ 200");
+		const embed = Embed.success(msg, `Here's your allowance, ${name}! You now have ${user.billy_bucks} BillyBucks!`, "+ 200");
 		msg.channel.send(embed);
 		return;
 	}

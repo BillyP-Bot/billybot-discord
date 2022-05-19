@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import { CardSuit, Roles } from "../types/enums";
-import type { BlackJackGameResponse, ICard } from "../types";
+import type { BlackJackGameResponse, ICard, IUser } from "../types";
 import { Api } from "./api";
 
 export const suitLookup: Record<CardSuit, string> = {
@@ -62,6 +62,24 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	const found = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim());
 	if (!found) throw `could not find ${params[0]} in this server`;
 	return found.user.id;
+}
+
+export function getServerDisplayName(msg: Message) {
+	const userId = getFirstMentionOrSelf(msg);
+	const found = msg.guild.members.cache.find(a => a.user.id === userId);
+	return {
+		name: found.displayName,
+		id: found.id
+	};
+}
+
+export function mapToDisplayName(msg: Message, users : IUser[]){
+	const lookup = users.reduce((acc,user) => {
+		const { displayName, id } =	msg.guild.members.cache.find(a => a.user.id === user.user_id);
+		acc[id] = displayName;
+		return acc;
+	}, { } as { [key: string] : string })
+	return lookup;
 }
 
 export async function assertMayor(msg: Message) {
