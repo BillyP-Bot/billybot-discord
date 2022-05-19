@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import type { ICommand, IUser } from "../types";
-import { Api, Embed } from "../helpers";
+import { Api, Embed, mapToDisplayName } from "../helpers";
 
 export const lottoCommand: ICommand = {
 	prefix: /.*!lotto.*/gmi,
@@ -20,12 +20,13 @@ export const lottoCommand: ICommand = {
 			msg.channel.send(embed);
 			return;
 		}
+		const lookup = mapToDisplayName(msg, data.entrants);
 		let body = `A winner will be picked on Friday at noon! Buy a ticket today for ${data.ticket_cost} BillyBucks!\n\n`;
 		body += `Ticket Cost: ${data.ticket_cost}\n`;
 		body += `Base Lottery Jackpot: ${data.base_lottery_jackpot}\n`;
 		body += `Current Jackpot: ${data.jackpot}\n`;
 		body += `Entrants: ${data.entrants_count}\n\n`;
-		data.entrants.map(({ username }) => body += username + "\n");
+		data.entrants.map(({ user_id }) => body += lookup[user_id] + "\n");
 		const embed = Embed.success(msg, body, "Weekly Lottery");
 		msg.channel.send(embed);
 		return;
