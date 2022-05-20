@@ -3,19 +3,19 @@
   "description": "billypbot",
   "version": "1.0.0",
   "engines": {
-    "node": "14.x",
-    "npm": "*"
+    "yarn": "*"
   },
   "main": "build/Index.js",
   "scripts": {
     "build": "tsc",
-    "postinstall": "npm run build",
+    "postinstall": "yarn build",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "watch": "tsc --watch",
     "start": "node .",
     "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts"
   },
   "author": "daniel walsh",
+  "license": "MIT",
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/cron": "^1.7.2",
@@ -23,11 +23,15 @@
     "@types/get-image-colors": "^2.0.0",
     "@types/node": "^14.14.14",
     "@types/node-fetch": "^2.5.8",
+    "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^4.10.0",
     "btbot-types": "^1.1.0",
     "eslint": "^7.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "nodemon": "^2.0.7",
+    "prettier": "^2.6.2",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.1.3"
   },

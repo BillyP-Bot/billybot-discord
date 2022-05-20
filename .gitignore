@@ -37,7 +37,4 @@ Thumbs.db
 # Ignore built ts files
 build/**/*
 
-# ignore yarn.lock
-yarn.lock
-
 bt-bot-dev-container/data/**/*

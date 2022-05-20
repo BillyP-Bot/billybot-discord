@@ -2,6 +2,8 @@
 	"recommendations": [
 		"eamodio.gitlens",
 		"pkief.material-icon-theme",
-		"coenraads.bracket-pair-colorizer-2"
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode"
 	]
 }
