@@ -1,6 +1,7 @@
 import type { Message } from "discord.js";
 
-import type { IUser, ICommand } from "../types";
+import type { IUser } from "btbot-types";
+import type { ICommand } from "../types";
 import { Api, Embed, getServerDisplayName } from "../helpers";
 
 export const allowanceCommand: ICommand = {

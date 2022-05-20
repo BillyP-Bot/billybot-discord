@@ -24,6 +24,7 @@
     "@types/node": "^14.14.14",
     "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/parser": "^4.10.0",
+    "btbot-types": "^1.1.0",
     "eslint": "^7.16.0",
     "husky": "^7.0.4",
     "nodemon": "^2.0.7",

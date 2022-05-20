@@ -1,7 +1,9 @@
 import type { Message } from "discord.js";
 
-import { CardSuit, Roles } from "../types/enums";
-import type { BlackJackGameResponse, ICard, IUser } from "../types";
+import type { ICard, IUser } from "btbot-types";
+import { CardSuit } from "btbot-types";
+import { Roles } from "../types/enums";
+import type { BlackJackGameResponse, } from "../types";
 import { Api } from "./api";
 
 export const suitLookup: Record<CardSuit, string> = {
@@ -78,7 +80,7 @@ export function mapToDisplayName(msg: Message, users : IUser[]){
 		const { displayName, id } =	msg.guild.members.cache.find(a => a.user.id === user.user_id);
 		acc[id] = displayName;
 		return acc;
-	}, { } as { [key: string] : string })
+	}, { } as { [key: string] : string });
 	return lookup;
 }
 

@@ -1,6 +1,7 @@
 import { Message, MessageEmbed } from "discord.js";
 
-import type { ICommand, IUser } from "../types";
+import type { IUser } from "btbot-types";
+import type { ICommand } from "../types";
 import { Api, mapToDisplayName } from "../helpers";
 import { Colors } from "../types/enums";
 
