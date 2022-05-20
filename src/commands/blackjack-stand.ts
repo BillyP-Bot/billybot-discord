@@ -4,7 +4,7 @@ import type { BlackJackGameResponse, ICommand } from "../types";
 import { Api, buildBlackjackResponse } from "../helpers";
 
 export const blackjackStandCommand: ICommand = {
-	prefix: /.*!stand.*/gmi,
+	prefix: /.*!stand.*/gim,
 	command: "!stand",
 	description: "Stand in your current game of Blackjack",
 	handler: async (msg: Message) => {

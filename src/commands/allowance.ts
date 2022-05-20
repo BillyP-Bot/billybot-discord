@@ -5,7 +5,7 @@ import type { ICommand } from "../types";
 import { Api, Embed, getServerDisplayName } from "../helpers";
 
 export const allowanceCommand: ICommand = {
-	prefix: /.*!allowance.*/gmi,
+	prefix: /.*!allowance.*/gim,
 	command: "!allowance",
 	description: "Collect your weekly BillyBuck allowance! Only available once a week.",
 	handler: async (msg: Message) => {
@@ -15,7 +15,11 @@ export const allowanceCommand: ICommand = {
 		});
 		const { name } = getServerDisplayName(msg);
 		const user = data[msg.author.id] as IUser;
-		const embed = Embed.success(msg, `Here's your allowance, ${name}! You now have ${user.billy_bucks} BillyBucks!`, "+ 200");
+		const embed = Embed.success(
+			msg,
+			`Here's your allowance, ${name}! You now have ${user.billy_bucks} BillyBucks!`,
+			"+ 200"
+		);
 		msg.channel.send(embed);
 		return;
 	}

@@ -5,7 +5,7 @@ import type { ICommand } from "../types";
 import { Api, assertDeveloper } from "../helpers";
 
 export const configureCommand: ICommand = {
-	prefix: /.*!configure.*/gmi,
+	prefix: /.*!configure.*/gim,
 	command: "!configure",
 	description: "Command for admins to prep the server.",
 	handler: async (msg: Message) => {

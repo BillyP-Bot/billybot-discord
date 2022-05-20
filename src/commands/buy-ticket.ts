@@ -5,7 +5,7 @@ import type { ICommand } from "../types";
 import { Api, Embed } from "../helpers";
 
 export const buyTicketCommand: ICommand = {
-	prefix: /.*!ticket.*/gmi,
+	prefix: /.*!ticket.*/gim,
 	command: "!ticket",
 	description: "Buy a ticket for a chance to win this week's lottery!",
 	handler: async (msg: Message) => {

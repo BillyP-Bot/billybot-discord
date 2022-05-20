@@ -5,7 +5,7 @@ import type { ICommand } from "../types";
 import { Api, Embed } from "../helpers";
 
 export const spinCommand: ICommand = {
-	prefix: /.*!spin.*/gmi,
+	prefix: /.*!spin.*/gim,
 	command: "!spin",
 	description: "Let's play Roulette! Usage: `!spin [betAmount] [red/black/green]`",
 	handler: async (msg: Message) => {
@@ -13,12 +13,12 @@ export const spinCommand: ICommand = {
 		const bet = parseInt(args[0]);
 		const color = args[1];
 		const data = await Api.post<{
-			user: IUser,
+			user: IUser;
 			outcome: {
-				won: boolean
-				payout: number
-				winning_color: string
-			}
+				won: boolean;
+				payout: number;
+				winning_color: string;
+			};
 		}>("gamble/roulette/spin", {
 			server_id: msg.guild.id,
 			user_id: msg.author.id,

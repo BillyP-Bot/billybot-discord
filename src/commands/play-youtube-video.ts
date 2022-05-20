@@ -5,13 +5,16 @@ import type { Message } from "discord.js";
 import type { ICommand } from "../types";
 
 async function fetchFirstVideo(term: string) {
-	const isUrl = /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(term);
+	const isUrl =
+		/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(
+			term
+		);
 	if (!isUrl) return YouTube.searchOne(term);
 	return YouTube.getVideo(term);
 }
 
 export const playYoutubeCommand: ICommand = {
-	prefix: /.*!p .*/gmi,
+	prefix: /.*!p .*/gim,
 	command: "!p",
 	description: "Play a youtube video in current voice channel. Usage: `!p [url/text]`",
 	handler: async (msg: Message) => {

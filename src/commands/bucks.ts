@@ -5,7 +5,7 @@ import type { ICommand } from "../types";
 import { Api, Embed, getServerDisplayName } from "../helpers";
 
 export const bucksCommand: ICommand = {
-	prefix: /.*!bucks.*/gmi,
+	prefix: /.*!bucks.*/gim,
 	command: "!bucks",
 	description: "Get your current balance of BillyBucks, (Optional `!bucks [username/@user]`) ",
 	handler: async (msg: Message) => {

@@ -57,46 +57,46 @@ async function messageHandler(msg: Message) {
 		if (msg.channel.id === "975795297257136189" && config.IS_PROD) return;
 		if (msg.author.bot) return;
 		switch (true) {
-		case /.*bing.*/gmi.test(msg.content):
-			return await bingCommand.handler(msg);
-		case /.*!bucks.*/gmi.test(msg.content):
-			return await bucksCommand.handler(msg);
-		case /.*!lotto.*/gmi.test(msg.content):
-			return await lottoCommand.handler(msg);
-		case /.*!ticket.*/gmi.test(msg.content):
-			return await buyTicketCommand.handler(msg);
-		case /.*!pay .* [0-9]{1,}/gmi.test(msg.content):
-			return await payBucksCommand.handler(msg);
-		case /.*!allowance.*/gmi.test(msg.content):
-			return await allowanceCommand.handler(msg);
-		case /.*!noblemen.*/gmi.test(msg.content):
-			return await noblemenCommand.handler(msg);
-		case /.*!serfs.*/gmi.test(msg.content):
-			return await serfsCommand.handler(msg);
-		case /.*!spin.*/gmi.test(msg.content):
-			return await spinCommand.handler(msg);
-		case /.*!blackjack [0-9].*/gmi.test(msg.content):
-			return await blackjackCommand.handler(msg);
-		case /.*!hit.*/gmi.test(msg.content):
-			return await blackjackHitCommand.handler(msg);
-		case /.*!stand.*/gmi.test(msg.content):
-			return await blackjackStandCommand.handler(msg);
-		case /.*!doubledown.*/gmi.test(msg.content):
-			return await blackjackDoubleDownCommand.handler(msg);
-		case /.*!taxes.*/gmi.test(msg.content):
-			return await taxesCommand.handler(msg);
-		case /.*!configure.*/gmi.test(msg.content):
-			return await configureCommand.handler(msg);
-		case /.*!concede .*/gmi.test(msg.content):
-			return await concedeCommand.handler(msg);
-		case /.*!p .*/gmi.test(msg.content):
-			return await playYoutubeCommand.handler(msg);
-		case /.*(!help).*/gmi.test(msg.content):
-			return await help(msg);
-		case msg.channel.name === "admin-announcements":
-			return await announcementsCommand.handler(msg);
-		default:
-			return updateEngagementMetrics(msg);
+			case /.*bing.*/gim.test(msg.content):
+				return await bingCommand.handler(msg);
+			case /.*!bucks.*/gim.test(msg.content):
+				return await bucksCommand.handler(msg);
+			case /.*!lotto.*/gim.test(msg.content):
+				return await lottoCommand.handler(msg);
+			case /.*!ticket.*/gim.test(msg.content):
+				return await buyTicketCommand.handler(msg);
+			case /.*!pay .* [0-9]{1,}/gim.test(msg.content):
+				return await payBucksCommand.handler(msg);
+			case /.*!allowance.*/gim.test(msg.content):
+				return await allowanceCommand.handler(msg);
+			case /.*!noblemen.*/gim.test(msg.content):
+				return await noblemenCommand.handler(msg);
+			case /.*!serfs.*/gim.test(msg.content):
+				return await serfsCommand.handler(msg);
+			case /.*!spin.*/gim.test(msg.content):
+				return await spinCommand.handler(msg);
+			case /.*!blackjack [0-9].*/gim.test(msg.content):
+				return await blackjackCommand.handler(msg);
+			case /.*!hit.*/gim.test(msg.content):
+				return await blackjackHitCommand.handler(msg);
+			case /.*!stand.*/gim.test(msg.content):
+				return await blackjackStandCommand.handler(msg);
+			case /.*!doubledown.*/gim.test(msg.content):
+				return await blackjackDoubleDownCommand.handler(msg);
+			case /.*!taxes.*/gim.test(msg.content):
+				return await taxesCommand.handler(msg);
+			case /.*!configure.*/gim.test(msg.content):
+				return await configureCommand.handler(msg);
+			case /.*!concede .*/gim.test(msg.content):
+				return await concedeCommand.handler(msg);
+			case /.*!p .*/gim.test(msg.content):
+				return await playYoutubeCommand.handler(msg);
+			case /.*(!help).*/gim.test(msg.content):
+				return await help(msg);
+			case msg.channel.name === "admin-announcements":
+				return await announcementsCommand.handler(msg);
+			default:
+				return updateEngagementMetrics(msg);
 		}
 	} catch (error) {
 		console.log({ error });

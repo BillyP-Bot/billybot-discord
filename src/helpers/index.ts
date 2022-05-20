@@ -3,7 +3,7 @@ import type { Message } from "discord.js";
 import type { ICard, IUser } from "btbot-types";
 import { CardSuit } from "btbot-types";
 import { Roles } from "../types/enums";
-import type { BlackJackGameResponse, } from "../types";
+import type { BlackJackGameResponse } from "../types";
 import { Api } from "./api";
 
 export const suitLookup: Record<CardSuit, string> = {
@@ -32,16 +32,18 @@ export const valueLookup: Record<number, string> = {
 export async function updateEngagementMetrics(msg: Message) {
 	const server_id = msg.guild.id;
 	const mentions = msg.mentions.members.array();
-	const operations = mentions.length >= 1 && mentions.reduce((acc, { user }) => {
-		if (user.bot) return acc;
-		if (user.id === msg.author.id) return acc;
-		acc.push({
-			server_id,
-			user_id: user.id,
-			engagement: { mentions: 1 }
-		});
-		return acc;
-	}, []);
+	const operations =
+		mentions.length >= 1 &&
+		mentions.reduce((acc, { user }) => {
+			if (user.bot) return acc;
+			if (user.id === msg.author.id) return acc;
+			acc.push({
+				server_id,
+				user_id: user.id,
+				engagement: { mentions: 1 }
+			});
+			return acc;
+		}, []);
 	const body = [
 		{
 			server_id,
@@ -61,39 +63,41 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	const params = msg.content.slice(_skip).trim().split(" ");
 	// no valid plain text mentions
 	if (params[0] === "") return msg.author.id;
-	const found = msg.guild.members.cache.find(a => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim());
+	const found = msg.guild.members.cache.find(
+		(a) => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim()
+	);
 	if (!found) throw `could not find ${params[0]} in this server`;
 	return found.user.id;
 }
 
 export function getServerDisplayName(msg: Message) {
 	const userId = getFirstMentionOrSelf(msg);
-	const found = msg.guild.members.cache.find(a => a.user.id === userId);
+	const found = msg.guild.members.cache.find((a) => a.user.id === userId);
 	return {
 		name: found.displayName,
 		id: found.id
 	};
 }
 
-export function mapToDisplayName(msg: Message, users : IUser[]){
-	const lookup = users.reduce((acc,user) => {
-		const { displayName, id } =	msg.guild.members.cache.find(a => a.user.id === user.user_id);
+export function mapToDisplayName(msg: Message, users: IUser[]) {
+	const lookup = users.reduce((acc, user) => {
+		const { displayName, id } = msg.guild.members.cache.find((a) => a.user.id === user.user_id);
 		acc[id] = displayName;
 		return acc;
-	}, { } as { [key: string] : string });
+	}, {} as { [key: string]: string });
 	return lookup;
 }
 
 export async function assertMayor(msg: Message) {
 	await msg.member.fetch();
-	const mayorRole = msg.member.roles.cache.find(a => a.name == Roles.mayor);
+	const mayorRole = msg.member.roles.cache.find((a) => a.name == Roles.mayor);
 	if (!mayorRole) throw "only the mayor can run this command!";
 	return mayorRole;
 }
 
 export async function assertDeveloper(msg: Message) {
 	await msg.member.fetch();
-	const devRole = msg.member.roles.cache.find(a => a.name == Roles.developer);
+	const devRole = msg.member.roles.cache.find((a) => a.name == Roles.developer);
 	if (!devRole) throw "unauthorized";
 }
 

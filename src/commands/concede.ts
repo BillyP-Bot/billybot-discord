@@ -4,9 +4,10 @@ import type { ICommand } from "../types";
 import { Api, assertMayor, Embed, getFirstMentionOrSelf } from "../helpers";
 
 export const concedeCommand: ICommand = {
-	prefix: /.*!concede .*/gmi,
+	prefix: /.*!concede .*/gim,
 	command: "!concede",
-	description: "The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`",
+	description:
+		"The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`",
 	handler: async (msg: Message) => {
 		const mayorRole = await assertMayor(msg);
 		const author = await msg.guild.members.fetch(msg.author.id);
@@ -23,7 +24,7 @@ export const concedeCommand: ICommand = {
 				server_id,
 				user_id: author.user.id,
 				is_mayor: false
-			},
+			}
 		];
 		await Api.put("users", body);
 		const mention = await msg.guild.members.fetch(targetUserId);

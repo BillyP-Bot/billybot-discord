@@ -4,14 +4,13 @@ import { config } from "./config";
 import type { ApiResponse, UserLookup } from "../types";
 
 export class Api {
-
 	public static readonly client = create({
 		baseURL: config.BILLY_BACKEND,
 		headers: {
-			"Authorization": `Bearer ${config.BILLY_BACKEND_TOKEN}`,
+			Authorization: `Bearer ${config.BILLY_BACKEND_TOKEN}`,
 			"x-api-timestamp": null
 		}
-	})
+	});
 
 	public static async get<T>(url: string) {
 		const { data, ok } = await Api.client.get<ApiResponse & T>(url);

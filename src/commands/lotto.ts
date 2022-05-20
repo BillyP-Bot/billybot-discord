@@ -5,16 +5,16 @@ import type { ICommand } from "../types";
 import { Api, Embed, mapToDisplayName } from "../helpers";
 
 export const lottoCommand: ICommand = {
-	prefix: /.*!lotto.*/gmi,
+	prefix: /.*!lotto.*/gim,
 	command: "!lotto",
 	description: "View the current jackpot and list of entrants in this week's lottery!",
 	handler: async (msg: Message) => {
 		const data = await Api.get<{
-			ticket_cost: number,
-			jackpot: number,
-			entrants: IUser[],
-			base_lottery_jackpot: number,
-			entrants_count: number
+			ticket_cost: number;
+			jackpot: number;
+			entrants: IUser[];
+			base_lottery_jackpot: number;
+			entrants_count: number;
 		}>(`lottery/server/${msg.guild.id}`);
 		if (data.entrants.length <= 0) {
 			const embed = Embed.success(msg, "No entrants yet!", "Weekly Lottery");
@@ -27,7 +27,7 @@ export const lottoCommand: ICommand = {
 		body += `Base Lottery Jackpot: ${data.base_lottery_jackpot}\n`;
 		body += `Current Jackpot: ${data.jackpot}\n`;
 		body += `Entrants: ${data.entrants_count}\n\n`;
-		data.entrants.map(({ user_id }) => body += lookup[user_id] + "\n");
+		data.entrants.map(({ user_id }) => (body += lookup[user_id] + "\n"));
 		const embed = Embed.success(msg, body, "Weekly Lottery");
 		msg.channel.send(embed);
 		return;

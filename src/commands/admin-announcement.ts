@@ -10,7 +10,9 @@ export const announcementsCommand: ICommand = {
 	handler: async (msg: Message) => {
 		await assertDeveloper(msg);
 		await msg.guild.fetch();
-		const general = msg.guild.channels.cache.find((channel: TextChannel) => channel.name === "general") as TextChannel;
+		const general = msg.guild.channels.cache.find(
+			(channel: TextChannel) => channel.name === "general"
+		) as TextChannel;
 		if (!general) throw "channel not found";
 		// post webhook announcement
 		await Api.post("announcements", {
