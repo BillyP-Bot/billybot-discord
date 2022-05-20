@@ -1,17 +1,15 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "postinstall",
-			"problemMatcher": [
-				"$tsc"
-			],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
-			"label": "tsc: compile"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "postinstall",
+      "problemMatcher": ["$tsc"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "tsc: compile"
+    }
+  ]
 }

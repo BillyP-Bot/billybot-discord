@@ -1,25 +1,21 @@
 {
-	"compilerOptions": {
-		"experimentalDecorators": true,
-		"module": "commonjs",
-		"esModuleInterop": true,
-		"target": "es6",
-		"noImplicitAny": true,
-		"moduleResolution": "node",
-		"sourceMap": true,
-		"outDir": "build",
-		"baseUrl": ".",
-		"declaration": false,
-		"declarationMap": false,
-		"emitDecoratorMetadata": true,
-		"skipLibCheck": true,
-		"paths": {
-			"*": [
-				"node_modules/*"
-			]
-		}
-	},
-	"include": [
-		"src/**/*"
-	]
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es6",
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "outDir": "build",
+    "baseUrl": ".",
+    "declaration": false,
+    "declarationMap": false,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "paths": {
+      "*": ["node_modules/*"]
+    }
+  },
+  "include": ["src/**/*"]
 }

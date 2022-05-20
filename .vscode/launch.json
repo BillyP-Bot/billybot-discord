@@ -1,24 +1,20 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"type": "pwa-node",
-			"request": "launch",
-			"name": "Launch",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
-			"program": "${workspaceFolder}/build/index.js",
-			"preLaunchTask": "tsc: compile",
-			"outFiles": [
-				"${workspaceFolder}/build/**/*.js"
-			]
-		},
-		{
-			"type": "node-terminal",
-			"request": "launch",
-			"name": "Debug",
-			"command": "yarn dev"
-		}
-	]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/build/index.js",
+      "preLaunchTask": "tsc: compile",
+      "outFiles": ["${workspaceFolder}/build/**/*.js"]
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Debug",
+      "command": "yarn dev"
+    }
+  ]
 }
