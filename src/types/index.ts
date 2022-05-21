@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import type { Message } from "discord.js";
-
 import type { ICard, IUser } from "btbot-types";
 
 export type ApiError = {
