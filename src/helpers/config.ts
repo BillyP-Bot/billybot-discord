@@ -8,7 +8,8 @@ export const config = {
 	GOOGLE_CX_KEY: process.env.GOOGLE_CX_KEY || undefined,
 	YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY || undefined,
 	BILLY_BACKEND: process.env.BILLY_BACKEND,
-	BILLY_BACKEND_TOKEN: process.env.BILLY_BACKEND_TOKEN
+	BILLY_BACKEND_TOKEN: process.env.BILLY_BACKEND_TOKEN,
+	DASHBOARD_URL: "https://billybot.vercel.app/server"
 };
 
 if (config.BOT_TOKEN === undefined) throw Error("BOT_TOKEN not specified");
