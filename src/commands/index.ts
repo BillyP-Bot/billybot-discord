@@ -16,6 +16,7 @@ import { taxesCommand } from "./taxes";
 import { configureCommand } from "./configure";
 import { concedeCommand } from "./concede";
 import { featuresCommand } from "./feature-request";
+import { foolCommand } from "./fool";
 import { playYoutubeCommand } from "./play-youtube-video";
 
 export { announcementsCommand } from "./admin-announcement";
@@ -37,6 +38,7 @@ export const handlers: ICommand[] = [
 	configureCommand,
 	concedeCommand,
 	featuresCommand,
+	foolCommand,
 	playYoutubeCommand
 ];
 
@@ -57,4 +59,5 @@ export { taxesCommand };
 export { configureCommand };
 export { concedeCommand };
 export { featuresCommand };
+export { foolCommand };
 export { playYoutubeCommand };

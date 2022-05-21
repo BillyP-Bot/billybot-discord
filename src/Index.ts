@@ -22,6 +22,7 @@ import {
 	configureCommand,
 	concedeCommand,
 	featuresCommand,
+	foolCommand,
 	playYoutubeCommand,
 	announcementsCommand,
 	handlers
@@ -94,6 +95,8 @@ async function messageHandler(msg: Message) {
 				return await concedeCommand.handler(msg);
 			case /.*!feature .*/gim.test(msg.content):
 				return await featuresCommand.handler(msg);
+			case /.*!fool .*/gim.test(msg.content):
+				return await foolCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg);
 			case /.*(!help).*/gim.test(msg.content):
