@@ -6,11 +6,11 @@ import type { ICommand } from "../types";
 import { Api, Embed } from "../helpers";
 
 export const featuresCommand: ICommand = {
-	prefix: /.*!requestFeature.*/gmi,
-	command: "!requestFeature",
-	description: "Use your BillyBucks to submit a new idea for the BillyBot to the developers! Usage: `!requestFeature [title] *newLine* [details]`",
+	prefix: /.*!feature.*/gmi,
+	command: "!feature",
+	description: "Use your BillyBucks to submit a new idea for the BillyBot to the developers! Usage: `!feature [title] *newLine* [details]`",
 	handler: async (msg: Message) => {
-		const trimmedContent = msg.content.slice("!requestFeature".length).trim();
+		const trimmedContent = msg.content.slice("!feature".length).trim();
 		const title = trimmedContent.slice(0, trimmedContent.indexOf('\n'));
 		const body = trimmedContent.slice(trimmedContent.indexOf('\n'));
 		const feature = await Api.post("features", {
@@ -19,7 +19,7 @@ export const featuresCommand: ICommand = {
 			title: title.trim(),
 			body: body.trim()
 		});
-		const embed = Embed.success(msg, `\`${feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/server/${msg.guild.id})! `, "Feature Posted");
+		const embed = Embed.success(msg, `\`${feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! `, "Feature Posted");
 		msg.channel.send(embed);
 		return;
 	}
