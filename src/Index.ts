@@ -58,6 +58,8 @@ async function messageHandler(msg: Message) {
 		if (msg.channel.id === "975795297257136189" && config.IS_PROD) return;
 		if (msg.author.bot) return;
 		switch (true) {
+			case msg.channel.name === "admin-announcements":
+				return await announcementsCommand.handler(msg);
 			case /.*bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
 			case /.*!bucks.*/gim.test(msg.content):
@@ -96,8 +98,6 @@ async function messageHandler(msg: Message) {
 				return await playYoutubeCommand.handler(msg);
 			case /.*(!help).*/gim.test(msg.content):
 				return await help(msg);
-			case msg.channel.name === "admin-announcements":
-				return await announcementsCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
