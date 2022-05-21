@@ -17,6 +17,8 @@ import { configureCommand } from "./configure";
 import { concedeCommand } from "./concede";
 import { featuresCommand } from "./feature-request";
 import { playYoutubeCommand } from "./play-youtube-video";
+import { stockCommand } from "./stock";
+import { buyStockCommand } from "./stock-buy";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -37,7 +39,9 @@ export const handlers: ICommand[] = [
 	configureCommand,
 	concedeCommand,
 	featuresCommand,
-	playYoutubeCommand
+	playYoutubeCommand,
+	stockCommand,
+	buyStockCommand
 ];
 
 export { bingCommand };
@@ -58,3 +62,5 @@ export { configureCommand };
 export { concedeCommand };
 export { featuresCommand };
 export { playYoutubeCommand };
+export { stockCommand };
+export { buyStockCommand };

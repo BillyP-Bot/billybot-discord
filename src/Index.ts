@@ -24,6 +24,8 @@ import {
 	featuresCommand,
 	playYoutubeCommand,
 	announcementsCommand,
+	stockCommand,
+	buyStockCommand,
 	handlers
 } from "./commands";
 import { buckReact, updateEmoteMetrics } from "./reactions";
@@ -98,6 +100,10 @@ async function messageHandler(msg: Message) {
 				return await playYoutubeCommand.handler(msg);
 			case /.*(!help).*/gim.test(msg.content):
 				return await help(msg);
+			case /.*(!stock).*/gim.test(msg.content):
+				return await stockCommand.handler(msg);
+			case /.*(!buystock).*/gim.test(msg.content):
+				return await buyStockCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
