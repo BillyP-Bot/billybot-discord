@@ -25,7 +25,7 @@
     "@types/node-fetch": "^2.5.8",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^4.10.0",
-    "btbot-types": "^1.1.1",
+    "btbot-types": "^1.1.2",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",

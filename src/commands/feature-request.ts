@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
+import type { IFeature } from "btbot-types";
 
 import { config } from "../helpers/config";
-
 import type { ICommand } from "../types";
 import { Api, Embed } from "../helpers";
 
@@ -11,9 +11,10 @@ export const featuresCommand: ICommand = {
 	description: "Use your BillyBucks to submit a new idea for the BillyBot to the developers! Usage: `!feature [title] *newLine* [details]`",
 	handler: async (msg: Message) => {
 		const trimmedContent = msg.content.slice("!feature".length).trim();
-		const title = trimmedContent.slice(0, trimmedContent.indexOf('\n'));
-		const body = trimmedContent.slice(trimmedContent.indexOf('\n'));
-		const feature = await Api.post("features", {
+		const nlPos = trimmedContent.indexOf('\n');
+		const title = nlPos === -1 ? trimmedContent : trimmedContent.slice(0, nlPos);
+		const body = nlPos === -1 ? ""  : trimmedContent.slice(trimmedContent.indexOf('\n'));
+		const feature = await Api.post<IFeature>("features", {
 			server_id: msg.guild.id,
 			user_id: msg.author.id,
 			title: title.trim(),
