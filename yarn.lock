@@ -595,10 +595,10 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-btbot-types@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/btbot-types/-/btbot-types-1.1.0.tgz#5908d634524997d2e78063c8542e278c65505640"
-  integrity sha512-HR2YymCEjEmxW8qBxB3vOos2ZneAOWr/kmzlX/OGOXpik+kH5fbwBKS98/0xvJZqjsBp/sZ5SiNiH8i2TpZ5zA==
+btbot-types@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/btbot-types/-/btbot-types-1.1.2.tgz#c33899d0f48e0d7b7a27c4ea9fc708b85c35d0cd"
+  integrity sha512-MtlNrqTbqIgGoYYiTTQ+Wp0Ngd6Mt/HN83MGega/JMrzy++vj+BJg3POgKCkWmWEb1OXiOmTLeH9JEUlzXNSRA==
 
 buffer-from@^1.0.0:
   version "1.1.2"
