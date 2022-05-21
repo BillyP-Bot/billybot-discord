@@ -91,7 +91,7 @@ async function messageHandler(msg: Message) {
 			case /.*!concede .*/gim.test(msg.content):
 				return await concedeCommand.handler(msg);
 			case /.*!feature .*/gim.test(msg.content):
-					return await featuresCommand.handler(msg);
+				return await featuresCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg);
 			case /.*(!help).*/gim.test(msg.content):
