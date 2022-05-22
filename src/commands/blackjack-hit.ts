@@ -1,6 +1,6 @@
-import type { Message } from "discord.js";
+import type { Message, MessageReaction } from "discord.js";
 
-import type { BlackJackGameResponse, ICommand } from "../types";
+import type { BlackJackGameResponse, DiscordChannel, ICommand } from "../types";
 import { Api, buildBlackjackResponse } from "../helpers";
 
 export const blackjackHitCommand: ICommand = {
@@ -8,13 +8,21 @@ export const blackjackHitCommand: ICommand = {
 	command: "!hit",
 	description: "Hit in your current game of Blackjack",
 	handler: async (msg: Message) => {
-		const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/hit", {
-			server_id: msg.guild.id,
-			user_id: msg.author.id,
-			double_down: false
-		});
-		const response = buildBlackjackResponse(data, msg.author.id);
-		msg.channel.send(response);
-		return;
+		return await hit(msg.guild.id, msg.author.id, msg.channel);
+	},
+	reactHandler: async (react: MessageReaction, sender_id: string) => {
+		return await hit(react.message.guild.id, sender_id, react.message.channel);
 	}
+};
+
+const hit = async (server_id: string, user_id: string, channel: DiscordChannel) => {
+	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/hit", {
+		server_id,
+		user_id,
+		double_down: false
+	});
+	const response = buildBlackjackResponse(data, user_id);
+	const message = await channel.send(response);
+	if (!data.is_complete) await Promise.all([message.react("🟩"), message.react("🟨")]);
+	return;
 };

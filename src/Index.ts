@@ -2,8 +2,8 @@ import type { Message, MessageReaction, User } from "discord.js";
 import { Client, Intents, MessageEmbed } from "discord.js";
 
 import { config } from "./helpers/config";
-import { Embed, updateEngagementMetrics } from "./helpers";
-import { Images, Activities } from "./types/enums";
+import { Embed, isBlackjackReact, updateEngagementMetrics } from "./helpers";
+import { Images, Activities, Channels } from "./types/enums";
 import {
 	bingCommand,
 	bucksCommand,
@@ -27,7 +27,7 @@ import {
 	announcementsCommand,
 	handlers
 } from "./commands";
-import { buckReact, updateEmoteMetrics } from "./reactions";
+import { buckReact, blackjackReact, updateEmoteMetrics } from "./reactions";
 import { Colors, Emotes } from "./types/enums";
 
 const intents = new Intents();
@@ -56,7 +56,8 @@ async function help(msg: Message) {
 async function messageHandler(msg: Message) {
 	try {
 		if (msg.channel.type === "dm") return;
-		if (msg.channel.id === "975795297257136189" && config.IS_PROD) return;
+		if (msg.channel.id === Channels.botTesting && config.IS_PROD) return;
+		if (msg.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (msg.author.bot) return;
 		switch (true) {
 			case msg.channel.name === "admin-announcements":
@@ -120,6 +121,9 @@ client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
 	}
 	if (react.emoji.name === Emotes.billy_buck) {
 		return buckReact(react, user.id);
+	}
+	if (isBlackjackReact(react)) {
+		return blackjackReact(react, user.id);
 	}
 });
 

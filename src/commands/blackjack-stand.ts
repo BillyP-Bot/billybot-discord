@@ -1,6 +1,6 @@
-import type { Message } from "discord.js";
+import type { Message, MessageReaction } from "discord.js";
 
-import type { BlackJackGameResponse, ICommand } from "../types";
+import type { BlackJackGameResponse, DiscordChannel, ICommand } from "../types";
 import { Api, buildBlackjackResponse } from "../helpers";
 
 export const blackjackStandCommand: ICommand = {
@@ -8,12 +8,19 @@ export const blackjackStandCommand: ICommand = {
 	command: "!stand",
 	description: "Stand in your current game of Blackjack",
 	handler: async (msg: Message) => {
-		const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/stand", {
-			server_id: msg.guild.id,
-			user_id: msg.author.id
-		});
-		const response = buildBlackjackResponse(data, msg.author.id);
-		msg.channel.send(response);
-		return;
+		return await stand(msg.guild.id, msg.author.id, msg.channel);
+	},
+	reactHandler: async (react: MessageReaction, sender_id: string) => {
+		return await stand(react.message.guild.id, sender_id, react.message.channel);
 	}
+};
+
+const stand = async (server_id: string, user_id: string, channel: DiscordChannel) => {
+	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/stand", {
+		server_id,
+		user_id
+	});
+	const response = buildBlackjackResponse(data, user_id);
+	channel.send(response);
+	return;
 };
