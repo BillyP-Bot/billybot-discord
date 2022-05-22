@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 export enum Roles {
 	developer = "BillyPBotDev",
-	mayor = "Mayor of Boy Town"
+	mayor = "Mayor of Boy Town",
+	fool = "Town Fool"
 }
 
 export enum Emotes {

@@ -16,6 +16,7 @@ import { taxesCommand } from "./taxes";
 import { configureCommand } from "./configure";
 import { concedeCommand } from "./concede";
 import { featuresCommand } from "./feature-request";
+import { foolCommand } from "./fool";
 import { playYoutubeCommand } from "./play-youtube-video";
 import { stockCommand } from "./stock";
 import { buyStockCommand } from "./stock-buy";
@@ -42,6 +43,7 @@ export const handlers: ICommand[] = [
 	concedeCommand,
 	featuresCommand,
 	playYoutubeCommand,
+	foolCommand,
 	stockCommand,
 	buyStockCommand,
 	sellStockCommand,
@@ -66,6 +68,7 @@ export { configureCommand };
 export { concedeCommand };
 export { featuresCommand };
 export { playYoutubeCommand };
+export { foolCommand };
 export { stockCommand };
 export { buyStockCommand };
 export { sellStockCommand };
