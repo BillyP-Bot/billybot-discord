@@ -26,6 +26,8 @@ import {
 	announcementsCommand,
 	stockCommand,
 	buyStockCommand,
+	sellStockCommand,
+	portfolioCommand,
 	handlers
 } from "./commands";
 import { buckReact, updateEmoteMetrics } from "./reactions";
@@ -104,6 +106,10 @@ async function messageHandler(msg: Message) {
 				return await stockCommand.handler(msg);
 			case /.*(!buystock).*/gim.test(msg.content):
 				return await buyStockCommand.handler(msg);
+			case /.*(!sellstock).*/gim.test(msg.content):
+				return await sellStockCommand.handler(msg);
+			case /.*(!portfolio).*/gim.test(msg.content):
+				return await portfolioCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}

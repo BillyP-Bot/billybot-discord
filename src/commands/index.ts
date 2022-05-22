@@ -19,6 +19,8 @@ import { featuresCommand } from "./feature-request";
 import { playYoutubeCommand } from "./play-youtube-video";
 import { stockCommand } from "./stock";
 import { buyStockCommand } from "./stock-buy";
+import { sellStockCommand } from "./stock-sell";
+import { portfolioCommand } from "./stock-portfolio";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -41,7 +43,9 @@ export const handlers: ICommand[] = [
 	featuresCommand,
 	playYoutubeCommand,
 	stockCommand,
-	buyStockCommand
+	buyStockCommand,
+	sellStockCommand,
+	portfolioCommand
 ];
 
 export { bingCommand };
@@ -64,3 +68,5 @@ export { featuresCommand };
 export { playYoutubeCommand };
 export { stockCommand };
 export { buyStockCommand };
+export { sellStockCommand };
+export { portfolioCommand };
