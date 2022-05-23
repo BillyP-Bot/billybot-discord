@@ -7,6 +7,7 @@
   },
   "main": "build/Index.js",
   "scripts": {
+    "prepare": "husky install",
     "build": "tsc",
     "postinstall": "yarn build",
     "lint": "eslint --fix --ext .ts,.tsx .",
@@ -38,7 +39,7 @@
     "@discordjs/opus": "github:discordjs/opus",
     "apisauce": "^2.1.5",
     "axios": "^0.21.1",
-    "btbot-types": "^1.1.3",
+    "btbot-types": "^1.2.0",
     "cron": "^1.8.2",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",

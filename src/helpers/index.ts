@@ -1,7 +1,7 @@
-import type { Message } from "discord.js";
+import type { Message, MessageReaction } from "discord.js";
 
 import type { ICard, IUser } from "btbot-types";
-import { CardSuit } from "btbot-types";
+import { BlackjackReacts, CardSuit } from "btbot-types";
 import { Roles } from "../types/enums";
 import type { BlackJackGameResponse } from "../types";
 import { Api } from "./api";
@@ -126,6 +126,15 @@ export function buildBlackjackResponse(data: BlackJackGameResponse, userId: stri
 		response += `\n\nYou now have ${data.billy_bucks} BillyBucks!`;
 	}
 	return response;
+}
+
+export function isBlackjackReact(react: MessageReaction) {
+	const blackjackReacts = [
+		BlackjackReacts.hit,
+		BlackjackReacts.stand,
+		BlackjackReacts.doubleDown
+	] as string[];
+	return blackjackReacts.includes(react.emoji.toString());
 }
 
 export { Api } from "./api";
