@@ -70,8 +70,8 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	return found.user.id;
 }
 
-export function getServerDisplayName(msg: Message) {
-	const userId = getFirstMentionOrSelf(msg);
+export function getServerDisplayName(msg: Message, id?: string) {
+	const userId = id || getFirstMentionOrSelf(msg);
 	const found = msg.guild.members.cache.find((a) => a.user.id === userId);
 	return {
 		name: found.displayName,
@@ -95,11 +95,11 @@ export async function assertMayor(msg: Message) {
 	return mayorRole;
 }
 
-export async function readFool(msg: Message ) {
+export async function readFool(msg: Message) {
 	await msg.guild.members.fetch();
 	const foolRole = msg.guild.roles.cache.find((a) => a.name == Roles.fool);
 	const currentFool = msg.guild.members.cache.find((a) => a.roles.cache.has(foolRole.id));
-	return {foolRole, currentFool}
+	return { foolRole, currentFool };
 }
 
 export async function assertDeveloper(msg: Message) {

@@ -6,11 +6,10 @@ import { Api, assertMayor, readFool, Embed, getFirstMentionOrSelf } from "../hel
 export const foolCommand: ICommand = {
 	prefix: /.*!fool .*/gim,
 	command: "!fool",
-	description:
-		"The Current mayor makes another user the fool! Usage: `!fool [username/@user]`",
+	description: "The Current mayor makes another user the fool! Usage: `!fool [username/@user]`",
 	handler: async (msg: Message) => {
 		await assertMayor(msg);
-		const { foolRole, currentFool} = await readFool(msg);
+		const { foolRole, currentFool } = await readFool(msg);
 		const targetUserId = getFirstMentionOrSelf(msg);
 		if (targetUserId === currentFool.user.id) throw `<@${targetUserId}> is already the fool!`;
 		const server_id = msg.guild.id;

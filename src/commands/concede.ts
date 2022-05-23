@@ -10,7 +10,7 @@ export const concedeCommand: ICommand = {
 		"The Current mayor makes another user the mayor! Usage: `!concede [username/@user]`",
 	handler: async (msg: Message) => {
 		const mayorRole = await assertMayor(msg);
-		const { foolRole, currentFool} = await readFool(msg);
+		const { foolRole, currentFool } = await readFool(msg);
 		const author = await msg.guild.members.fetch(msg.author.id);
 		const targetUserId = getFirstMentionOrSelf(msg);
 		if (targetUserId === author.user.id) throw "you are already the mayor!";
@@ -39,7 +39,11 @@ export const concedeCommand: ICommand = {
 		author.roles.remove(mayorRole);
 		author.roles.add(foolRole);
 		currentFool.roles.remove(foolRole);
-		const embed = Embed.success(msg, `<@${targetUserId}> is now the mayor!\n@<${author.id}> is the new fool!`, "Mayoral Decree!");
+		const embed = Embed.success(
+			msg,
+			`<@${targetUserId}> is now the mayor!\n@<${author.id}> is the new fool!`,
+			"Mayoral Decree!"
+		);
 		msg.channel.send(embed);
 		return;
 	}
