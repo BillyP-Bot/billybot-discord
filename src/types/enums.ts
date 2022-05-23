@@ -22,3 +22,7 @@ export enum Images {
 export enum Activities {
 	farmville = "Farmville"
 }
+
+export enum Channels {
+	botTesting = "975795297257136189"
+}

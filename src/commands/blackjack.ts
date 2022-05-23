@@ -16,7 +16,9 @@ export const blackjackCommand: ICommand = {
 			wager: parseInt(wager)
 		});
 		const response = buildBlackjackResponse(data, msg.author.id);
-		msg.channel.send(response);
+		const message = await msg.channel.send(response);
+		if (!data.is_complete)
+			await Promise.all([message.react("🟩"), message.react("🟨"), message.react("🟦")]);
 		return;
 	}
 };

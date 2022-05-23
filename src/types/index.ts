@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import type { Message } from "discord.js";
+import type { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
 import type { ICard, IUser } from "btbot-types";
 
 export type ApiError = {
@@ -34,4 +34,7 @@ export interface ICommand {
 	command?: string;
 	description: string;
 	handler: (msg: Message) => Promise<any>;
+	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
+
+export type DiscordChannel = TextChannel | DMChannel | NewsChannel;

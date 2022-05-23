@@ -1,7 +1,7 @@
-import type { Message } from "discord.js";
+import type { Message, MessageReaction } from "discord.js";
 
 import type { ICard, IUser } from "btbot-types";
-import { CardSuit } from "btbot-types";
+import { BlackjackReacts, CardSuit } from "btbot-types";
 import { Roles } from "../types/enums";
 import type { BlackJackGameResponse } from "../types";
 import { Api } from "./api";
@@ -70,8 +70,8 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	return found.user.id;
 }
 
-export function getServerDisplayName(msg: Message) {
-	const userId = getFirstMentionOrSelf(msg);
+export function getServerDisplayName(msg: Message, id?: string) {
+	const userId = id || getFirstMentionOrSelf(msg);
 	const found = msg.guild.members.cache.find((a) => a.user.id === userId);
 	return {
 		name: found.displayName,
@@ -95,11 +95,11 @@ export async function assertMayor(msg: Message) {
 	return mayorRole;
 }
 
-export async function readFool(msg: Message ) {
+export async function readFool(msg: Message) {
 	await msg.guild.members.fetch();
 	const foolRole = msg.guild.roles.cache.find((a) => a.name == Roles.fool);
 	const currentFool = msg.guild.members.cache.find((a) => a.roles.cache.has(foolRole.id));
-	return {foolRole, currentFool}
+	return { foolRole, currentFool };
 }
 
 export async function assertDeveloper(msg: Message) {
@@ -126,6 +126,15 @@ export function buildBlackjackResponse(data: BlackJackGameResponse, userId: stri
 		response += `\n\nYou now have ${data.billy_bucks} BillyBucks!`;
 	}
 	return response;
+}
+
+export function isBlackjackReact(react: MessageReaction) {
+	const blackjackReacts = [
+		BlackjackReacts.hit,
+		BlackjackReacts.stand,
+		BlackjackReacts.doubleDown
+	] as string[];
+	return blackjackReacts.includes(react.emoji.toString());
 }
 
 export { Api } from "./api";
