@@ -70,8 +70,8 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	return found.user.id;
 }
 
-export function getServerDisplayName(msg: Message) {
-	const userId = getFirstMentionOrSelf(msg);
+export function getServerDisplayName(msg: Message, id?: string) {
+	const userId = id || getFirstMentionOrSelf(msg);
 	const found = msg.guild.members.cache.find((a) => a.user.id === userId);
 	return {
 		name: found.displayName,

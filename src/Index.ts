@@ -25,6 +25,7 @@ import {
 	foolCommand,
 	playYoutubeCommand,
 	announcementsCommand,
+	birthdayCommand,
 	handlers
 } from "./commands";
 import { buckReact, blackjackReact, updateEmoteMetrics } from "./reactions";
@@ -100,6 +101,8 @@ async function messageHandler(msg: Message) {
 				return await foolCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg);
+			case /.*!birthday.*/gim.test(msg.content):
+				return await birthdayCommand.handler(msg);
 			case /.*(!help).*/gim.test(msg.content):
 				return await help(msg);
 			default:
