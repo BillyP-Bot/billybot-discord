@@ -19,6 +19,7 @@ import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
 import { playYoutubeCommand } from "./play-youtube-video";
 import { birthdayCommand } from "./birthday";
+import { sheeshCommand } from "./sheesh";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -41,7 +42,8 @@ export const handlers: ICommand[] = [
 	featuresCommand,
 	foolCommand,
 	playYoutubeCommand,
-	birthdayCommand
+	birthdayCommand,
+	sheeshCommand
 ];
 
 export { bingCommand };
@@ -64,3 +66,4 @@ export { featuresCommand };
 export { foolCommand };
 export { playYoutubeCommand };
 export { birthdayCommand };
+export { sheeshCommand };
