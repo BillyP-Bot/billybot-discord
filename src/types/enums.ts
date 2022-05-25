@@ -6,7 +6,7 @@ export enum Roles {
 }
 
 export enum Emotes {
-	billy_buck = "BillyBuck"
+	billy_buck = "billybuck"
 }
 
 export enum Colors {
@@ -24,5 +24,7 @@ export enum Activities {
 }
 
 export enum Channels {
+	adminAnnouncements = "811639445514092564",
+	bot = "738194989917536317",
 	botTesting = "975795297257136189"
 }

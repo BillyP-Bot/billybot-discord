@@ -129,12 +129,9 @@ export function buildBlackjackResponse(data: BlackJackGameResponse, userId: stri
 }
 
 export function isBlackjackReact(react: MessageReaction) {
-	const blackjackReacts = [
-		BlackjackReacts.hit,
-		BlackjackReacts.stand,
-		BlackjackReacts.doubleDown
-	] as string[];
-	return blackjackReacts.includes(react.emoji.toString());
+	return (
+		[BlackjackReacts.hit, BlackjackReacts.stand, BlackjackReacts.doubleDown] as string[]
+	).includes(react.emoji.toString());
 }
 
 export const getTrendEmoji = (delta: number) => {
@@ -148,13 +145,9 @@ export const getTrendEmoji = (delta: number) => {
 	}
 };
 
-export const plusSignIfNotNegative = (amount: number) => {
-	return amount >= 0 ? "+" : "";
-};
+export const plusSignIfNotNegative = (amount: number) => (amount >= 0 ? "+" : "");
 
-export const pluralIfNotOne = (amount: number) => {
-	return amount === 1 ? "" : "s";
-};
+export const pluralIfNotOne = (amount: number) => (amount === 1 ? "" : "s");
 
 export { Api } from "./api";
 export { Embed } from "./embed";
