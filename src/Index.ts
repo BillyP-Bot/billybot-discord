@@ -25,12 +25,12 @@ import {
 	foolCommand,
 	playYoutubeCommand,
 	announcementsCommand,
+	birthdayCommand,
+	sheeshCommand,
 	stockCommand,
 	buyStockCommand,
 	sellStockCommand,
 	portfolioCommand,
-	birthdayCommand,
-	sheeshCommand,
 	handlers
 } from "./commands";
 import { buckReact, blackjackReact, updateEmoteMetrics } from "./reactions";

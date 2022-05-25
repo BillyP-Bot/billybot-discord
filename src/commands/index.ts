@@ -18,12 +18,12 @@ import { concedeCommand } from "./concede";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
 import { playYoutubeCommand } from "./play-youtube-video";
+import { birthdayCommand } from "./birthday";
+import { sheeshCommand } from "./sheesh";
 import { stockCommand } from "./stock";
 import { buyStockCommand } from "./stock-buy";
 import { sellStockCommand } from "./stock-sell";
 import { portfolioCommand } from "./stock-portfolio";
-import { birthdayCommand } from "./birthday";
-import { sheeshCommand } from "./sheesh";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -44,15 +44,14 @@ export const handlers: ICommand[] = [
 	configureCommand,
 	concedeCommand,
 	featuresCommand,
-	playYoutubeCommand,
 	foolCommand,
+	playYoutubeCommand,
+	birthdayCommand,
+	sheeshCommand,
 	stockCommand,
 	buyStockCommand,
 	sellStockCommand,
-	portfolioCommand,
-	playYoutubeCommand,
-	birthdayCommand,
-	sheeshCommand
+	portfolioCommand
 ];
 
 export { bingCommand };
@@ -72,11 +71,11 @@ export { taxesCommand };
 export { configureCommand };
 export { concedeCommand };
 export { featuresCommand };
-export { playYoutubeCommand };
 export { foolCommand };
+export { playYoutubeCommand };
+export { birthdayCommand };
+export { sheeshCommand };
 export { stockCommand };
 export { buyStockCommand };
 export { sellStockCommand };
 export { portfolioCommand };
-export { birthdayCommand };
-export { sheeshCommand };
