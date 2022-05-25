@@ -69,57 +69,57 @@ async function messageHandler(msg: Message) {
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
 				return await announcementsCommand.handler(msg);
-			case /.*!help.*/gim.test(msg.content):
+			case /.*(!help).*/gim.test(msg.content):
 				return await help(msg);
-			case bingCommand.prefix.test(msg.content):
+			case /.*bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
-			case bucksCommand.prefix.test(msg.content):
+			case /.*!bucks.*/gim.test(msg.content):
 				return await bucksCommand.handler(msg);
-			case lottoCommand.prefix.test(msg.content):
+			case /.*!lotto.*/gim.test(msg.content):
 				return await lottoCommand.handler(msg);
-			case buyTicketCommand.prefix.test(msg.content):
+			case /.*!ticket.*/gim.test(msg.content):
 				return await buyTicketCommand.handler(msg);
-			case payBucksCommand.prefix.test(msg.content):
+			case /.*!pay .* [0-9]{1,}/gim.test(msg.content):
 				return await payBucksCommand.handler(msg);
-			case allowanceCommand.prefix.test(msg.content):
+			case /.*!allowance.*/gim.test(msg.content):
 				return await allowanceCommand.handler(msg);
-			case noblemenCommand.prefix.test(msg.content):
+			case /.*!noblemen.*/gim.test(msg.content):
 				return await noblemenCommand.handler(msg);
-			case serfsCommand.prefix.test(msg.content):
+			case /.*!serfs.*/gim.test(msg.content):
 				return await serfsCommand.handler(msg);
-			case spinCommand.prefix.test(msg.content):
+			case /.*!spin.*/gim.test(msg.content):
 				return await spinCommand.handler(msg);
-			case blackjackCommand.prefix.test(msg.content):
+			case /.*!blackjack [0-9].*/gim.test(msg.content):
 				return await blackjackCommand.handler(msg);
-			case blackjackHitCommand.prefix.test(msg.content):
+			case /.*!hit.*/gim.test(msg.content):
 				return await blackjackHitCommand.handler(msg);
-			case blackjackStandCommand.prefix.test(msg.content):
+			case /.*!stand.*/gim.test(msg.content):
 				return await blackjackStandCommand.handler(msg);
-			case blackjackDoubleDownCommand.prefix.test(msg.content):
+			case /.*!doubledown.*/gim.test(msg.content):
 				return await blackjackDoubleDownCommand.handler(msg);
-			case taxesCommand.prefix.test(msg.content):
+			case /.*!taxes.*/gim.test(msg.content):
 				return await taxesCommand.handler(msg);
-			case configureCommand.prefix.test(msg.content):
+			case /.*!configure.*/gim.test(msg.content):
 				return await configureCommand.handler(msg);
-			case concedeCommand.prefix.test(msg.content):
+			case /.*!concede .*/gim.test(msg.content):
 				return await concedeCommand.handler(msg);
-			case featuresCommand.prefix.test(msg.content):
+			case /.*!feature .*/gim.test(msg.content):
 				return await featuresCommand.handler(msg);
-			case foolCommand.prefix.test(msg.content):
+			case /.*!fool .*/gim.test(msg.content):
 				return await foolCommand.handler(msg);
-			case playYoutubeCommand.prefix.test(msg.content):
+			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg);
-			case birthdayCommand.prefix.test(msg.content):
+			case /.*!birthday.*/gim.test(msg.content):
 				return await birthdayCommand.handler(msg);
-			case sheeshCommand.prefix.test(msg.content):
+			case /.*!s+h+ee+s+h+.*/gim.test(msg.content):
 				return await sheeshCommand.handler(msg);
-			case stockCommand.prefix.test(msg.content):
+			case /.*!stock.*/gim.test(msg.content):
 				return await stockCommand.handler(msg);
-			case buyStockCommand.prefix.test(msg.content):
+			case /.*!buystock.*/gim.test(msg.content):
 				return await buyStockCommand.handler(msg);
-			case sellStockCommand.prefix.test(msg.content):
+			case /.*!sellstock.*/gim.test(msg.content):
 				return await sellStockCommand.handler(msg);
-			case portfolioCommand.prefix.test(msg.content):
+			case /.*!portfolio.*/gim.test(msg.content):
 				return await portfolioCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
