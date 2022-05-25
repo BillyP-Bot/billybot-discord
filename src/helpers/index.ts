@@ -137,5 +137,24 @@ export function isBlackjackReact(react: MessageReaction) {
 	return blackjackReacts.includes(react.emoji.toString());
 }
 
+export const getTrendEmoji = (delta: number) => {
+	switch (true) {
+		case delta > 0:
+			return "📈";
+		case delta < 0:
+			return "📉";
+		default:
+			return "";
+	}
+};
+
+export const plusSignIfNotNegative = (amount: number) => {
+	return amount >= 0 ? "+" : "";
+};
+
+export const pluralIfNotOne = (amount: number) => {
+	return amount === 1 ? "" : "s";
+};
+
 export { Api } from "./api";
 export { Embed } from "./embed";
