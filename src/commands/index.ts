@@ -23,6 +23,7 @@ import { buyStockCommand } from "./stock-buy";
 import { sellStockCommand } from "./stock-sell";
 import { portfolioCommand } from "./stock-portfolio";
 import { birthdayCommand } from "./birthday";
+import { sheeshCommand } from "./sheesh";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -50,7 +51,8 @@ export const handlers: ICommand[] = [
 	sellStockCommand,
 	portfolioCommand,
 	playYoutubeCommand,
-	birthdayCommand
+	birthdayCommand,
+	sheeshCommand
 ];
 
 export { bingCommand };
@@ -77,3 +79,4 @@ export { buyStockCommand };
 export { sellStockCommand };
 export { portfolioCommand };
 export { birthdayCommand };
+export { sheeshCommand };
