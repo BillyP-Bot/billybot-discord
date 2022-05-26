@@ -28,7 +28,7 @@ export const portfolioCommand: ICommand = {
 
 		let output = "";
 		let net = 0;
-		for (const stock of stocks) {
+		stocks.map((stock) => {
 			const amountDiff = stock.amount_worth - stock.amount;
 			net += amountDiff;
 			const priceDiff = stock.price_current - stock.price_bought;
@@ -55,7 +55,7 @@ export const portfolioCommand: ICommand = {
 			output += `Avg Price Bought At: \`${stock.price_bought} ${stock.currency}\`\n`;
 
 			output += `Current Price: \`${stock.price_current} ${stock.currency}\`\n\n`;
-		}
+		});
 		output += `Uninvested Cash: \`${bucks} BillyBuck${pluralIfNotOne(bucks)}\``;
 
 		const embed = Embed.success(msg, output, `Stock Portfolio ${getTrendEmoji(net)}`);
