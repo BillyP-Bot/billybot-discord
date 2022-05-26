@@ -1,7 +1,7 @@
 import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
-import { Api, assertMayor, readFool, Embed, getFirstMentionOrSelf } from "../helpers";
+import { Api, assertMayor, Embed, getFirstMentionOrSelf, readFool } from "../helpers";
 
 export const foolCommand: ICommand = {
 	prefix: /.*!fool .*/gim,
