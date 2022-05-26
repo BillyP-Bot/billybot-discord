@@ -35,6 +35,4 @@ bower_components
 Thumbs.db
 
 # Ignore built ts files
-build/**/*
-
-bt-bot-dev-container/data/**/*
+build/
