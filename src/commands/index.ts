@@ -20,6 +20,10 @@ import { foolCommand } from "./fool";
 import { playYoutubeCommand } from "./play-youtube-video";
 import { birthdayCommand } from "./birthday";
 import { sheeshCommand } from "./sheesh";
+import { stockCommand } from "./stock";
+import { buyStockCommand } from "./stock-buy";
+import { sellStockCommand } from "./stock-sell";
+import { portfolioCommand } from "./stock-portfolio";
 
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
@@ -43,7 +47,11 @@ export const handlers: ICommand[] = [
 	foolCommand,
 	playYoutubeCommand,
 	birthdayCommand,
-	sheeshCommand
+	sheeshCommand,
+	stockCommand,
+	buyStockCommand,
+	sellStockCommand,
+	portfolioCommand
 ];
 
 export { bingCommand };
@@ -67,3 +75,7 @@ export { foolCommand };
 export { playYoutubeCommand };
 export { birthdayCommand };
 export { sheeshCommand };
+export { stockCommand };
+export { buyStockCommand };
+export { sellStockCommand };
+export { portfolioCommand };

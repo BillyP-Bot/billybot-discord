@@ -27,6 +27,10 @@ import {
 	announcementsCommand,
 	birthdayCommand,
 	sheeshCommand,
+	stockCommand,
+	buyStockCommand,
+	sellStockCommand,
+	portfolioCommand,
 	handlers
 } from "./commands";
 import { buckReact, blackjackReact, updateEmoteMetrics } from "./reactions";
@@ -40,7 +44,7 @@ client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	config.IS_PROD && client.user.setActivity(Activities.farmville);
-	client.channels.fetch("738194989917536317");
+	client.channels.fetch(Channels.bot);
 });
 
 async function help(msg: Message) {
@@ -55,6 +59,7 @@ async function help(msg: Message) {
 	msg.channel.send(embed);
 	return;
 }
+
 async function messageHandler(msg: Message) {
 	try {
 		if (msg.channel.type === "dm") return;
@@ -62,8 +67,10 @@ async function messageHandler(msg: Message) {
 		if (msg.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (msg.author.bot) return;
 		switch (true) {
-			case msg.channel.name === "admin-announcements":
+			case msg.channel.id === Channels.adminAnnouncements:
 				return await announcementsCommand.handler(msg);
+			case /.*(!help).*/gim.test(msg.content):
+				return await help(msg);
 			case /.*bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
 			case /.*!bucks.*/gim.test(msg.content):
@@ -106,8 +113,14 @@ async function messageHandler(msg: Message) {
 				return await birthdayCommand.handler(msg);
 			case /.*!s+h+ee+s+h+.*/gim.test(msg.content):
 				return await sheeshCommand.handler(msg);
-			case /.*(!help).*/gim.test(msg.content):
-				return await help(msg);
+			case /.*!stock.*/gim.test(msg.content):
+				return await stockCommand.handler(msg);
+			case /.*!buystock.*/gim.test(msg.content):
+				return await buyStockCommand.handler(msg);
+			case /.*!sellstock.*/gim.test(msg.content):
+				return await sellStockCommand.handler(msg);
+			case /.*!portfolio.*/gim.test(msg.content):
+				return await portfolioCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
