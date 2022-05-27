@@ -60,7 +60,7 @@ async function messageHandler(msg: Message) {
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
 				return await announcementsCommand.handler(msg);
-			case /.*(!help).*/gim.test(msg.content):
+			case /.*!help.*/gim.test(msg.content):
 				return await help(msg);
 			case /.*bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
