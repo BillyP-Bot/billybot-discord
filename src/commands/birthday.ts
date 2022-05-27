@@ -42,7 +42,7 @@ export const birthdayCommand: ICommand = {
 			output +=
 				"\n\nRun `!birthday [MM-DD]` to set your birthday.\n\n" +
 				"(**WARNING**: You can only set your birthday once!)";
-		const embed = Embed.success(msg, output, name);
+		const embed = Embed.success(output, name);
 		msg.channel.send(embed);
 		return;
 	}
@@ -75,7 +75,6 @@ const setOwnBirthday = async (
 	])) as unknown as IUser[];
 
 	const embed = Embed.success(
-		msg,
 		`You successfully set your birthday to ${formatBirthday(updated.birthday)}!`,
 		name
 	);

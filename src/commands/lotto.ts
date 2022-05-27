@@ -17,7 +17,7 @@ export const lottoCommand: ICommand = {
 			entrants_count: number;
 		}>(`lottery/server/${msg.guild.id}`);
 		if (data.entrants.length <= 0) {
-			const embed = Embed.success(msg, "No entrants yet!", "Weekly Lottery");
+			const embed = Embed.success("No entrants yet!", "Weekly Lottery");
 			msg.channel.send(embed);
 			return;
 		}
@@ -28,7 +28,7 @@ export const lottoCommand: ICommand = {
 		body += `Current Jackpot: ${data.jackpot}\n`;
 		body += `Entrants: ${data.entrants_count}\n\n`;
 		data.entrants.map(({ user_id }) => (body += lookup[user_id] + "\n"));
-		const embed = Embed.success(msg, body, "Weekly Lottery");
+		const embed = Embed.success(body, "Weekly Lottery");
 		msg.channel.send(embed);
 		return;
 	}

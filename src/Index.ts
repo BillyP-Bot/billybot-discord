@@ -117,25 +117,32 @@ async function messageHandler(msg: Message) {
 		}
 	} catch (error) {
 		console.log({ error });
-		msg.channel.send(Embed.error(msg, error));
+		msg.channel.send(Embed.error(error));
 	}
 }
 
 client.on("message", messageHandler);
 
-client.on("messageReactionAdd", (react: MessageReaction, user: User) => {
-	if (react.message.author.id === user.id) return;
-	updateEmoteMetrics(react, user.id);
-	if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
-		return react.message.channel.send(`<@${user.id}> 🖕`);
+async function reactHandler(react: MessageReaction, user: User) {
+	try {
+		if (react.message.author.id === user.id) return;
+		await updateEmoteMetrics(react, user.id);
+		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
+			return await react.message.channel.send(`<@${user.id}> 🖕`);
+		}
+		if (react.emoji.name === Emotes.billy_buck) {
+			return await buckReact(react, user.id);
+		}
+		if (isBlackjackReact(react)) {
+			return await blackjackReact(react, user.id);
+		}
+	} catch (error) {
+		console.log({ error });
+		await react.message.channel.send(Embed.error(error));
 	}
-	if (react.emoji.name === Emotes.billy_buck) {
-		return buckReact(react, user.id);
-	}
-	if (isBlackjackReact(react)) {
-		return blackjackReact(react, user.id);
-	}
-});
+}
+
+client.on("messageReactionAdd", reactHandler);
 
 client.on("unhandledRejection", console.error);
 

@@ -22,7 +22,6 @@ export const featuresCommand: ICommand = {
 			body: body.trim()
 		});
 		const embed = Embed.success(
-			msg,
 			`\`${feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! `,
 			"Feature Posted"
 		);

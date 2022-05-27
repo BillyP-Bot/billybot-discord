@@ -18,10 +18,10 @@ export async function blackjackReact(react: MessageReaction, sender_id: string) 
 	if (Object.entries(game).length === 0) return;
 	switch (react.emoji.toString()) {
 		case BlackjackReacts.hit:
-			return blackjackHitCommand.reactHandler(react, sender_id);
+			return await blackjackHitCommand.reactHandler(react, sender_id);
 		case BlackjackReacts.stand:
-			return blackjackStandCommand.reactHandler(react, sender_id);
+			return await blackjackStandCommand.reactHandler(react, sender_id);
 		case BlackjackReacts.doubleDown:
-			return blackjackDoubleDownCommand.reactHandler(react, sender_id);
+			return await blackjackDoubleDownCommand.reactHandler(react, sender_id);
 	}
 }

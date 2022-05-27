@@ -40,7 +40,6 @@ export const concedeCommand: ICommand = {
 		author.roles.add(foolRole);
 		currentFool.roles.remove(foolRole);
 		const embed = Embed.success(
-			msg,
 			`<@${targetUserId}> is now the mayor!\n@<${author.id}> is the new fool!`,
 			"Mayoral Decree!"
 		);

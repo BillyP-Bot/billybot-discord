@@ -6,7 +6,7 @@ import { ICommand } from "../types/index";
 
 import type { Message } from "discord.js";
 export class Embed {
-	static success(msg: Message, description: string, title?: string) {
+	static success(description: string, title?: string) {
 		const embed = new MessageEmbed();
 		embed.setColor(Colors.green);
 		title && embed.setTitle(title);
@@ -14,7 +14,7 @@ export class Embed {
 		return embed;
 	}
 
-	static error(msg: Message, description: string, title?: string) {
+	static error(description: string, title?: string) {
 		const embed = new MessageEmbed();
 		embed.setColor(Colors.red).setTitle(title ?? "Error");
 		embed.setDescription(description);

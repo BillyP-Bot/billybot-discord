@@ -21,7 +21,6 @@ export const payBucksCommand: ICommand = {
 		});
 		const sender = data[msg.author.id] as IUser;
 		const embed = Embed.success(
-			msg,
 			`You paid ${name} ${amount} BillyBuck(s)! \n You now have ${sender.billy_bucks} BillyBucks!`,
 			`+${amount}`
 		);

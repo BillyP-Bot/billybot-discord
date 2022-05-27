@@ -28,14 +28,12 @@ export const spinCommand: ICommand = {
 		const { user, outcome } = data;
 		if (!outcome.won) {
 			const embed = Embed.error(
-				msg,
 				`It's ${outcome.winning_color}! You lose your bet of ${bet} BillyBucks! You're a DEAD MAAANNN!\n You now have ${user.billy_bucks} BillyBucks.`,
 				"You Lost!"
 			);
 			return msg.channel.send(embed);
 		}
 		const embed = Embed.success(
-			msg,
 			`It's ${outcome.winning_color}! You win ${outcome.payout} BillyBucks! Lady LUUUCCCCKKK!\n You now have ${user.billy_bucks} BillyBucks.`,
 			"You Won!"
 		);
