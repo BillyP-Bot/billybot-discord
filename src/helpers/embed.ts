@@ -43,8 +43,10 @@ const constructCommandsEmbedArray = (commands: ICommand[]) => {
 		if (commandsAdded % commandsPerPage === 0) {
 			const embed = new MessageEmbed();
 			const pageNumber = Math.ceil(commandsAdded / commandsPerPage) + 1;
-			embed.setColor(Colors.green).setTitle(`Commands (${pageNumber}/${pageCount})`);
-			embed.addField(command, description);
+			embed
+				.setColor(Colors.green)
+				.setTitle(`Commands (${pageNumber}/${pageCount})`)
+				.addField(command, description);
 			acc.push(embed);
 			return acc;
 		}
