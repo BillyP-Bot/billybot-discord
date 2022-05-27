@@ -1,5 +1,5 @@
 import type { Message, MessageReaction, User } from "discord.js";
-import { Client, Intents, MessageEmbed } from "discord.js";
+import { Client, Intents } from "discord.js";
 
 import {
 	allowanceCommand,
@@ -32,8 +32,9 @@ import {
 } from "./commands";
 import { Embed, isBlackjackReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
+import { sendPaginatedCommandList } from "./helpers/embed";
 import { blackjackReact, buckReact, updateEmoteMetrics } from "./reactions";
-import { Activities, Channels, Colors, Emotes, Images } from "./types/enums";
+import { Activities, Channels, Emotes, Images } from "./types/enums";
 
 const intents = new Intents();
 intents.add(Intents.ALL);
@@ -47,16 +48,7 @@ client.on("ready", () => {
 });
 
 async function help(msg: Message) {
-	const embed = new MessageEmbed();
-	embed.setColor(Colors.green).setTitle("Commands");
-	embed.setDescription("Here is a list of my commands!");
-	embed.addField("!help", "Shows a list of my commands.");
-	handlers.map(({ command, description }) => {
-		if (!command) return;
-		embed.addField(command, description);
-	});
-	msg.channel.send(embed);
-	return;
+	await sendPaginatedCommandList(handlers, msg);
 }
 
 async function messageHandler(msg: Message) {

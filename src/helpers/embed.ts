@@ -1,9 +1,10 @@
-import { MessageEmbed } from "discord.js";
+import { Embeds } from "discord-paginationembed";
+import { MessageEmbed, TextChannel } from "discord.js";
 
 import { Colors } from "../types/enums";
+import { ICommand } from "../types/index";
 
 import type { Message } from "discord.js";
-
 export class Embed {
 	static success(msg: Message, description: string, title?: string) {
 		const embed = new MessageEmbed();
@@ -20,3 +21,34 @@ export class Embed {
 		return embed;
 	}
 }
+
+export const sendPaginatedCommandList = async (commands: ICommand[], msg: Message) => {
+	const embeds = constructCommandsEmbedArray(commands);
+	await new Embeds()
+		.setArray(embeds)
+		.setAuthorizedUsers(msg.author.id)
+		.setChannel(msg.channel as TextChannel)
+		.setTimeout(60000)
+		.build();
+};
+
+const constructCommandsEmbedArray = (commands: ICommand[]) => {
+	const commandsPerPage = 10;
+	const pageCount = Math.ceil(commands.length / commandsPerPage);
+	return commands.reduce((acc, { command, description }) => {
+		if (!command) return acc;
+		const lastEmbed = acc[acc.length - 1];
+		const commandsAdded =
+			Math.max(acc.length - 1, 0) * commandsPerPage + lastEmbed?.fields.length || 0;
+		if (commandsAdded % commandsPerPage === 0) {
+			const embed = new MessageEmbed();
+			const pageNumber = Math.ceil(commandsAdded / commandsPerPage) + 1;
+			embed.setColor(Colors.green).setTitle(`Commands (${pageNumber}/${pageCount})`);
+			embed.addField(command, description);
+			acc.push(embed);
+			return acc;
+		}
+		lastEmbed.addField(command, description);
+		return acc;
+	}, [] as MessageEmbed[]);
+};
