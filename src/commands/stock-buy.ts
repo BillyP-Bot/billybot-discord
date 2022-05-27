@@ -31,7 +31,7 @@ export const buyStockCommand: ICommand = {
 		}\` in \`${res.symbol}\` at \`${res.price} ${res.currency}\`!\n\n`;
 		output += `You now have ${res.bucks} BillyBuck${pluralIfNotOne(res.bucks)}.`;
 
-		const embed = Embed.success(msg, output, "Stock Purchased 🚀");
+		const embed = Embed.success(output, "Stock Purchased 🚀");
 		msg.channel.send(embed);
 		return;
 	}

@@ -9,7 +9,7 @@ export const birthdayCommand: ICommand = {
 	command: "!birthday",
 	description:
 		"View your own or another user's birthday, or set your own birthday if it has not been set yet. " +
-		"Usage: `!birthday` or `!birthday [@user]` to view, or `!birthday [MM-DD]` to set.",
+		"Usage: `!birthday` or `!birthday [username/@user]` to view, or `!birthday [MM-DD]` to set.",
 	handler: async (msg: Message) => {
 		const args = msg.content.slice("!birthday".length).trim().split(" ");
 		let mentions = msg.mentions.members.array().length;
@@ -40,8 +40,9 @@ export const birthdayCommand: ICommand = {
 		let output = `${onSelf ? "Your" : `<@${user.user_id}>'s`} birthday is ${date}!`;
 		if (onSelf && !user.birthday)
 			output +=
-				"\n\nRun `!birthday [MM-DD]` to set your birthday.\n\n(**WARNING**: You can only set your birthday once!)";
-		const embed = Embed.success(msg, output, name);
+				"\n\nRun `!birthday [MM-DD]` to set your birthday.\n\n" +
+				"(**WARNING**: You can only set your birthday once!)";
+		const embed = Embed.success(output, name);
 		msg.channel.send(embed);
 		return;
 	}
@@ -65,20 +66,19 @@ const setOwnBirthday = async (
 	if (!isValidDate(month, day))
 		throw `Invalid date! \`${birthday}\` is in the required \`MM-DD\` format, but is not a valid calendar date!`;
 
-	await Api.put<IUser>("users", [
+	const [updated] = (await Api.put<IUser>("users", [
 		{
 			server_id: user.server_id,
 			user_id: user.user_id,
 			birthday
 		}
-	]);
+	])) as unknown as IUser[];
 
 	const embed = Embed.success(
-		msg,
-		`You successfully set your birthday to ${month}/${day}!`,
+		`You successfully set your birthday to ${formatBirthday(updated.birthday)}!`,
 		name
 	);
-	msg.channel.send(embed);
+	await msg.channel.send(embed);
 };
 
 const isValidDate = (month: string, day: string) => {

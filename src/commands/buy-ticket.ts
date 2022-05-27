@@ -16,7 +16,7 @@ export const buyTicketCommand: ICommand = {
 		const user = data[msg.author.id] as IUser;
 		let body = `You bought a lottery ticket for ${data.ticket_cost} BillyBucks!\n\n`;
 		body += `You now have ${user.billy_bucks} BillyBucks, a winner will be picked on Friday at noon!`;
-		const embed = Embed.success(msg, body, "Lottery Ticket Purchased");
+		const embed = Embed.success(body, "Lottery Ticket Purchased");
 		msg.channel.send(embed);
 		return;
 	}

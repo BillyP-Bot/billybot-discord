@@ -16,7 +16,6 @@ export const allowanceCommand: ICommand = {
 		const { name } = getServerDisplayName(msg);
 		const user = data[msg.author.id] as IUser;
 		const embed = Embed.success(
-			msg,
 			`Here's your allowance, ${name}! You now have ${user.billy_bucks} BillyBucks!`,
 			"+ 200"
 		);

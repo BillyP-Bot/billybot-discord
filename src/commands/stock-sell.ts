@@ -32,7 +32,7 @@ export const sellStockCommand: ICommand = {
 		} BillyBuck${pluralIfNotOne(res.delta)}\` ${getTrendEmoji(res.delta)}\n\n`;
 		output += `You now have ${res.bucks} BillyBucks.`;
 
-		const embed = Embed.success(msg, output, "Stock Sold 💰");
+		const embed = Embed.success(output, "Stock Sold 💰");
 		msg.channel.send(embed);
 		return;
 	}

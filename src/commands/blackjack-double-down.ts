@@ -6,7 +6,7 @@ import { Api, buildBlackjackResponse } from "../helpers";
 export const blackjackDoubleDownCommand: ICommand = {
 	prefix: /.*!doubledown.*/gim,
 	command: "!doubledown",
-	description: "Double down and hit in BLackjack, must be turn 1!",
+	description: "Double down and hit in Blackjack, must be turn 1!",
 	handler: async (msg: Message) => {
 		return await doubleDown(msg.guild.id, msg.author.id, msg.channel);
 	},

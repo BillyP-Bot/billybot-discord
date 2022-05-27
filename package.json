@@ -37,6 +37,7 @@
     "apisauce": "^2.1.5",
     "axios": "^0.21.1",
     "btbot-types": "^1.2.0",
+    "discord-paginationembed": "^2.1.0",
     "discord.js": "^12.5.1",
     "dotenv": "^16.0.1",
     "youtube-sr": "^4.1.17",

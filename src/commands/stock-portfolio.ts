@@ -58,7 +58,7 @@ export const portfolioCommand: ICommand = {
 		});
 		output += `Uninvested Cash: \`${bucks} BillyBuck${pluralIfNotOne(bucks)}\``;
 
-		const embed = Embed.success(msg, output, `Stock Portfolio ${getTrendEmoji(net)}`);
+		const embed = Embed.success(output, `Stock Portfolio ${getTrendEmoji(net)}`);
 		msg.channel.send(embed);
 		return;
 	}

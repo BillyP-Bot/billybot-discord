@@ -29,7 +29,7 @@ export const foolCommand: ICommand = {
 		const mention = await msg.guild.members.fetch(targetUserId);
 		mention.roles.add(foolRole);
 		currentFool.roles.remove(foolRole);
-		const embed = Embed.success(msg, `<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
+		const embed = Embed.success(`<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
 		msg.channel.send(embed);
 		return;
 	}
