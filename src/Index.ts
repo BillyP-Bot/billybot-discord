@@ -62,7 +62,7 @@ async function messageHandler(msg: Message) {
 				return await announcementsCommand.handler(msg);
 			case /.*!help.*/gim.test(msg.content):
 				return await help(msg);
-			case /.*bing.*/gim.test(msg.content):
+			case /.*!bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
 			case /.*!bucks.*/gim.test(msg.content):
 				return await bucksCommand.handler(msg);
