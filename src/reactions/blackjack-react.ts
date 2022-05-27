@@ -2,13 +2,14 @@ import type { MessageReaction } from "discord.js";
 
 import { BlackjackReacts } from "btbot-types";
 
-import { Api } from "../helpers";
-import type { BlackJackGameResponse } from "../types";
 import {
+	blackjackDoubleDownCommand,
 	blackjackHitCommand,
-	blackjackStandCommand,
-	blackjackDoubleDownCommand
+	blackjackStandCommand
 } from "../commands";
+import { Api } from "../helpers";
+
+import type { BlackJackGameResponse } from "../types";
 
 export async function blackjackReact(react: MessageReaction, sender_id: string) {
 	const game = await Api.get<BlackJackGameResponse>(

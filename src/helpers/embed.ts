@@ -1,7 +1,8 @@
 import { MessageEmbed } from "discord.js";
-import type { Message } from "discord.js";
 
 import { Colors } from "../types/enums";
+
+import type { Message } from "discord.js";
 
 export class Embed {
 	static success(msg: Message, description: string, title?: string) {

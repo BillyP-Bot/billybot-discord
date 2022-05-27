@@ -2,10 +2,11 @@ import type { Message, MessageReaction } from "discord.js";
 
 import type { ICard, IUser } from "btbot-types";
 import { BlackjackReacts, CardSuit } from "btbot-types";
+
 import { Roles } from "../types/enums";
-import type { BlackJackGameResponse } from "../types";
 import { Api } from "./api";
 
+import type { BlackJackGameResponse } from "../types";
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",

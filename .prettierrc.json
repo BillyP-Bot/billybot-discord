@@ -1,11 +1,16 @@
 {
+  "endOfLine": "crlf",
   "printWidth": 100,
-  "semi": true,
-  "singleQuote": false,
+  "tabWidth": 4,
   "trailingComma": "none",
+  "useTabs": true,
+  "singleQuote": false,
+  "bracketSpacing": true,
+  "semi": true,
+  "arrowParens": "always",
   "overrides": [
     {
-      "files": "*.json",
+      "files": ["*.json", "*.yml"],
       "options": {
         "tabWidth": 2,
         "useTabs": false

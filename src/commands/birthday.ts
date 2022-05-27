@@ -1,9 +1,9 @@
 import { Message } from "discord.js";
 
-import type { ISOTimestamp, IUser } from "btbot-types";
-import type { ICommand } from "../types";
 import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
 
+import type { ISOTimestamp, IUser } from "btbot-types";
+import type { ICommand } from "../types";
 export const birthdayCommand: ICommand = {
 	prefix: /.*!birthday.*/gim,
 	command: "!birthday",

@@ -1,10 +1,10 @@
 import type { Message } from "discord.js";
 import type { IFeature } from "btbot-types";
 
-import { config } from "../helpers/config";
-import type { ICommand } from "../types";
 import { Api, Embed } from "../helpers";
+import { config } from "../helpers/config";
 
+import type { ICommand } from "../types";
 export const featuresCommand: ICommand = {
 	prefix: /.*!feature.*/gim,
 	command: "!feature",

@@ -1,10 +1,10 @@
 import { Message, MessageEmbed } from "discord.js";
 
-import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
 import { Api, mapToDisplayName } from "../helpers";
 import { Colors } from "../types/enums";
 
+import type { IUser } from "btbot-types";
+import type { ICommand } from "../types";
 export const serfsCommand: ICommand = {
 	prefix: /.*!serfs.*/gim,
 	command: "!serfs",

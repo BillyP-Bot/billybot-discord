@@ -1,6 +1,7 @@
 import { create } from "apisauce";
 
 import { config } from "./config";
+
 import type { ApiResponse, UserLookup } from "../types";
 
 export class Api {
