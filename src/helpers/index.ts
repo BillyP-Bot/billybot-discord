@@ -4,9 +4,11 @@ import type { ICard, IUser } from "btbot-types";
 import { BlackjackReacts, CardSuit } from "btbot-types";
 
 import { Roles } from "../types/enums";
-import { Api } from "./api";
 
-import type { BlackJackGameResponse } from "../types";
+import type { BlackJackGameResponse, IChallengeResponse } from "../types";
+import { Api } from "./api";
+import { Embed } from "./embed";
+
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",
@@ -96,6 +98,13 @@ export async function assertMayor(msg: Message) {
 	return mayorRole;
 }
 
+export async function readMayor(msg: Message) {
+	await msg.guild.members.fetch();
+	const mayorRole = msg.guild.roles.cache.find((a) => a.name == Roles.mayor);
+	const currentMayor = msg.guild.members.cache.find((a) => a.roles.cache.has(mayorRole.id));
+	return { mayorRole, currentMayor };
+}
+
 export async function readFool(msg: Message) {
 	await msg.guild.members.fetch();
 	const foolRole = msg.guild.roles.cache.find((a) => a.name == Roles.fool);
@@ -149,6 +158,42 @@ export const getTrendEmoji = (delta: number) => {
 export const plusSignIfNotNegative = (amount: number) => (amount >= 0 ? "+" : "");
 
 export const pluralIfNotOne = (amount: number) => (amount === 1 ? "" : "s");
+export async function getCurrentChallenge(msg: Message) {
+	const response = await Api.get<IChallengeResponse>(
+		`challenges/server/${msg.guild.id}?is_active=true`
+	);
+	return response.challenges[0];
+}
+
+export async function postCurrentChallenge(msg: Message) {
+	const challenge = await getCurrentChallenge(msg);
+	if (!challenge) throw "There is no current challenge!";
+	const { participants } = challenge;
+	const mayor = participants[0].is_mayor ? participants[0] : participants[1];
+	const challenger = participants[0].is_mayor ? participants[1] : participants[0];
+	const { name: mayorName } = getServerDisplayName(msg, mayor.user_id);
+	const { name: challengerName } = getServerDisplayName(msg, challenger.user_id);
+	let content = `\`${challengerName}\` has challenged mayor \`${mayorName}\`!\n`;
+	content += "Use Command\n\n";
+	const mentions = participants.map(({ user_id }) => {
+		return `\`!bet\` <@${user_id}>`;
+	});
+	content += mentions.join(" or \n");
+	content += "\nto bet on a winner\n\n";
+	content += `>>> ${challenge.details}`;
+	const embed = Embed.success(content, "Current Challenge");
+	return embed;
+}
+
+export function buildCongratsMessage(msg: Message, results: IUser[]) {
+	if (results.length <= 0) return "No one bet correctly!";
+	let content = "Congratulations to:\n";
+	const usernames = results.map(({ user_id }) => {
+		return getServerDisplayName(msg, user_id);
+	});
+	content += usernames.join(" \n");
+	return (content += "for their wise bets!");
+}
 
 export { Api } from "./api";
 export { Embed } from "./embed";

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import type { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
-import type { ICard, IUser } from "btbot-types";
+import type { ICard, IUser, IChallenge } from "btbot-types";
 
 export type ApiError = {
 	status?: number;
@@ -37,4 +37,8 @@ export interface ICommand {
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
 
+export interface IChallengeResponse {
+	pages: number;
+	challenges: IChallenge[];
+}
 export type DiscordChannel = TextChannel | DMChannel | NewsChannel;
