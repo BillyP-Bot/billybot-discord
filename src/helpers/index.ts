@@ -189,10 +189,11 @@ export function buildCongratsMessage(msg: Message, results: IUser[]) {
 	if (results.length <= 0) return "No one bet correctly!";
 	let content = "Congratulations to:\n";
 	const usernames = results.map(({ user_id }) => {
-		return getServerDisplayName(msg, user_id);
+		const { name } = getServerDisplayName(msg, user_id);
+		return name;
 	});
-	content += usernames.join(" \n");
-	return (content += "for their wise bets!");
+	content += usernames.join(", \n");
+	return (content += "\nfor their wise bets!");
 }
 
 export { Api } from "./api";

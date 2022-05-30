@@ -21,16 +21,16 @@ export const concedeCommand: ICommand = {
 		const targetUserId = getFirstMentionOrSelf(msg);
 		const { new_mayor_id, new_fool_id, results } = await Api.put("challenges/resolve", {
 			server_id: msg.guild.id,
-			targetUserId
+			participant_id: targetUserId
 		});
 		const newMayor = await msg.guild.members.fetch(new_mayor_id);
 		const newFool = await msg.guild.members.fetch(new_fool_id);
 		newMayor.roles.add(mayorRole);
 		newFool.roles.remove(mayorRole);
 		newFool.roles.add(foolRole);
-		currentFool.roles.remove(foolRole);
+		currentFool?.roles.remove(foolRole);
 		const embed = Embed.success(
-			`<@${newMayor.user.id}> is now the mayor!\n@<${newFool.user.id}> is the new fool!\n` +
+			`<@${newMayor.user.id}> is now the mayor!\n<@${newFool.user.id}> is the new fool!\n\n` +
 				buildCongratsMessage(msg, results),
 			"Mayoral Decree!"
 		);
