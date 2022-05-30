@@ -4,7 +4,6 @@ import type { ICommand } from "../types";
 import { Api, readMayor, Embed, getServerDisplayName, postCurrentChallenge } from "../helpers";
 import { IChallenge } from "btbot-types";
 
-// TODO - FIX
 export const challengeCommand: ICommand = {
 	prefix: /.*!challenge .*/gim,
 	command: "!challenge",
