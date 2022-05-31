@@ -4,6 +4,7 @@ import { Client, Intents } from "discord.js";
 import {
 	allowanceCommand,
 	announcementsCommand,
+	betCommand,
 	bingCommand,
 	birthdayCommand,
 	blackjackCommand,
@@ -13,6 +14,7 @@ import {
 	bucksCommand,
 	buyStockCommand,
 	buyTicketCommand,
+	challengeCommand,
 	concedeCommand,
 	configureCommand,
 	featuresCommand,
@@ -64,6 +66,8 @@ async function messageHandler(msg: Message) {
 				return await help(msg);
 			case /.*!bing.*/gim.test(msg.content):
 				return await bingCommand.handler(msg);
+			case /.*!bet.*/gim.test(msg.content):
+				return await betCommand.handler(msg);
 			case /.*!bucks.*/gim.test(msg.content):
 				return await bucksCommand.handler(msg);
 			case /.*!lotto.*/gim.test(msg.content):
@@ -94,6 +98,8 @@ async function messageHandler(msg: Message) {
 				return await configureCommand.handler(msg);
 			case /.*!concede .*/gim.test(msg.content):
 				return await concedeCommand.handler(msg);
+			case /.*!challenge.*/gim.test(msg.content):
+				return await challengeCommand.handler(msg);
 			case /.*!feature .*/gim.test(msg.content):
 				return await featuresCommand.handler(msg);
 			case /.*!fool .*/gim.test(msg.content):

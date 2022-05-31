@@ -1,7 +1,14 @@
 import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
-import { Api, assertMayor, Embed, getFirstMentionOrSelf, readFool } from "../helpers";
+import {
+	Api,
+	assertMayor,
+	readFool,
+	Embed,
+	getFirstMentionOrSelf,
+	buildCongratsMessage
+} from "../helpers";
 
 export const concedeCommand: ICommand = {
 	prefix: /.*!concede .*/gim,
@@ -11,36 +18,20 @@ export const concedeCommand: ICommand = {
 	handler: async (msg: Message) => {
 		const mayorRole = await assertMayor(msg);
 		const { foolRole, currentFool } = await readFool(msg);
-		const author = await msg.guild.members.fetch(msg.author.id);
 		const targetUserId = getFirstMentionOrSelf(msg);
-		if (targetUserId === author.user.id) throw "you are already the mayor!";
-		const server_id = msg.guild.id;
-		const body = [
-			{
-				server_id,
-				user_id: targetUserId,
-				is_mayor: true
-			},
-			{
-				server_id,
-				user_id: author.user.id,
-				is_mayor: false,
-				is_fool: true
-			},
-			{
-				server_id,
-				user_id: currentFool.user.id,
-				is_fool: false
-			}
-		];
-		await Api.put("users", body);
-		const mention = await msg.guild.members.fetch(targetUserId);
-		mention.roles.add(mayorRole);
-		author.roles.remove(mayorRole);
-		author.roles.add(foolRole);
-		currentFool.roles.remove(foolRole);
+		const { new_mayor_id, new_fool_id, results } = await Api.put("challenges/resolve", {
+			server_id: msg.guild.id,
+			participant_id: targetUserId
+		});
+		const newMayor = await msg.guild.members.fetch(new_mayor_id);
+		const newFool = await msg.guild.members.fetch(new_fool_id);
+		newMayor.roles.add(mayorRole);
+		newFool.roles.remove(mayorRole);
+		newFool.roles.add(foolRole);
+		currentFool?.roles.remove(foolRole);
 		const embed = Embed.success(
-			`<@${targetUserId}> is now the mayor!\n@<${author.id}> is the new fool!`,
+			`<@${newMayor.user.id}> is now the mayor!\n<@${newFool.user.id}> is the new fool!\n\n` +
+				buildCongratsMessage(msg, results),
 			"Mayoral Decree!"
 		);
 		msg.channel.send(embed);

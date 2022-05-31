@@ -1,5 +1,6 @@
 import type { ICommand } from "../types";
 import { allowanceCommand } from "./allowance";
+import { betCommand } from "./bet";
 import { bingCommand } from "./bing";
 import { birthdayCommand } from "./birthday";
 import { blackjackCommand } from "./blackjack";
@@ -9,6 +10,7 @@ import { blackjackStandCommand } from "./blackjack-stand";
 import { bucksCommand } from "./bucks";
 import { buyTicketCommand } from "./buy-ticket";
 import { concedeCommand } from "./concede";
+import { challengeCommand } from "./challenge";
 import { configureCommand } from "./configure";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
@@ -28,6 +30,7 @@ import { taxesCommand } from "./taxes";
 export { announcementsCommand } from "./admin-announcement";
 export const handlers: ICommand[] = [
 	bingCommand,
+	betCommand,
 	bucksCommand,
 	lottoCommand,
 	buyTicketCommand,
@@ -43,6 +46,7 @@ export const handlers: ICommand[] = [
 	taxesCommand,
 	configureCommand,
 	concedeCommand,
+	challengeCommand,
 	featuresCommand,
 	foolCommand,
 	playYoutubeCommand,
@@ -55,6 +59,7 @@ export const handlers: ICommand[] = [
 ];
 
 export { bingCommand };
+export { betCommand };
 export { bucksCommand };
 export { lottoCommand };
 export { buyTicketCommand };
@@ -70,6 +75,7 @@ export { blackjackDoubleDownCommand };
 export { taxesCommand };
 export { configureCommand };
 export { concedeCommand };
+export { challengeCommand };
 export { featuresCommand };
 export { foolCommand };
 export { playYoutubeCommand };
