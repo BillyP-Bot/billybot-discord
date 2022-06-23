@@ -15,7 +15,7 @@ export const featuresCommand: ICommand = {
 		const nlPos = trimmedContent.indexOf("\n");
 		const title = nlPos === -1 ? trimmedContent : trimmedContent.slice(0, nlPos);
 		const body = nlPos === -1 ? "" : trimmedContent.slice(trimmedContent.indexOf("\n"));
-		const result = await Api.post<{ feature: IFeature & { billyBucks: number } }>("features", {
+		const result = await Api.post<{ feature: IFeature & { billy_bucks: number } }>("features", {
 			server_id: msg.guild.id,
 			user_id: msg.author.id,
 			title: title.trim(),

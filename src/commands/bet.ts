@@ -20,7 +20,7 @@ export const betCommand: ICommand = {
 			participant_id,
 			amount
 		};
-		const result = await Api.post<{ bet: IBet & { billyBucks: number } }>(
+		const result = await Api.post<{ bet: IBet & { billy_bucks: number } }>(
 			"/challenges/bet",
 			body
 		);
