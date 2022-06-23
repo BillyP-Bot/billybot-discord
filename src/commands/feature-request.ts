@@ -22,7 +22,7 @@ export const featuresCommand: ICommand = {
 			body: body.trim()
 		});
 		const embed = Embed.success(
-			`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! \n\nYou now have ${result.billyBucks} BillyBucks`,
+			`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! \n\nYou now have ${result.billy_bucks} BillyBucks`,
 			"Feature Posted"
 		);
 		msg.channel.send(embed);

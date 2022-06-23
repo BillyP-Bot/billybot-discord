@@ -26,7 +26,7 @@ export const betCommand: ICommand = {
 		);
 		const { name } = getServerDisplayName(msg, participant_id);
 		const embed = Embed.success(
-			`Bet ${amount} on ${name}\n\nYou now have ${result.billyBucks} BillyBucks`
+			`Bet ${amount} on ${name}\n\nYou now have ${result.billy_bucks} BillyBucks`
 		);
 		msg.channel.send(embed);
 		return;
