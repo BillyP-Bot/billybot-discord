@@ -2,6 +2,7 @@ import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
 import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
+import { IBet } from "btbot-types";
 
 export const betCommand: ICommand = {
 	prefix: /.*!bet .*/gim,
@@ -19,9 +20,14 @@ export const betCommand: ICommand = {
 			participant_id,
 			amount
 		};
-		await Api.post("/challenges/bet", body);
+		const result = await Api.post<{ bet: IBet & { billyBucks: number } }>(
+			"/challenges/bet",
+			body
+		);
 		const { name } = getServerDisplayName(msg, participant_id);
-		const embed = Embed.success(`Bet ${amount} on ${name}`);
+		const embed = Embed.success(
+			`Bet ${amount} on ${name}\n\nYou now have ${result.billyBucks} BillyBucks`
+		);
 		msg.channel.send(embed);
 		return;
 	}
