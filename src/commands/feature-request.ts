@@ -15,14 +15,14 @@ export const featuresCommand: ICommand = {
 		const nlPos = trimmedContent.indexOf("\n");
 		const title = nlPos === -1 ? trimmedContent : trimmedContent.slice(0, nlPos);
 		const body = nlPos === -1 ? "" : trimmedContent.slice(trimmedContent.indexOf("\n"));
-		const feature = await Api.post<IFeature>("features", {
+		const result = await Api.post<{ feature: IFeature & { billy_bucks: number } }>("features", {
 			server_id: msg.guild.id,
 			user_id: msg.author.id,
 			title: title.trim(),
 			body: body.trim()
 		});
 		const embed = Embed.success(
-			`\`${feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! `,
+			`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! \n\nYou now have ${result.billy_bucks} BillyBucks`,
 			"Feature Posted"
 		);
 		msg.channel.send(embed);
