@@ -25,7 +25,7 @@ export const playYoutubeCommand: ICommand = {
 		const url = `https://www.youtube.com/watch?v=${video.id}`;
 		const channel = msg.member.voice.channel;
 		const connection = await channel.join();
-		const stream = connection.play(ytdl(url, { filter: "audioonly" }));
+		const stream = connection.play(ytdl(url, { filter: "audioonly", highWaterMark: 1 << 25 }));
 		stream.setVolume(0.2);
 		stream.on("finish", () => {
 			connection.disconnect();
