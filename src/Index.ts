@@ -17,6 +17,7 @@ import {
 	challengeCommand,
 	concedeCommand,
 	configureCommand,
+	connectFourCommand,
 	featuresCommand,
 	foolCommand,
 	handlers,
@@ -32,10 +33,10 @@ import {
 	stockCommand,
 	taxesCommand
 } from "./commands";
-import { Embed, isBlackjackReact, updateEngagementMetrics } from "./helpers";
+import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
 import { sendPaginatedCommandList } from "./helpers/embed";
-import { blackjackReact, buckReact, updateEmoteMetrics } from "./reactions";
+import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
 
 const intents = new Intents();
@@ -118,6 +119,8 @@ async function messageHandler(msg: Message) {
 				return await sellStockCommand.handler(msg);
 			case /.*!portfolio.*/gim.test(msg.content):
 				return await portfolioCommand.handler(msg);
+			case /.*!connectfour.*/gim.test(msg.content):
+				return await connectFourCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
@@ -132,6 +135,8 @@ client.on("message", messageHandler);
 async function reactHandler(react: MessageReaction, user: User) {
 	try {
 		if (react.message.author.id === user.id) return;
+		if (react.message.channel.id === Channels.botTesting && config.IS_PROD) return;
+		if (react.message.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		await updateEmoteMetrics(react, user.id);
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
 			return await react.message.channel.send(`<@${user.id}> 🖕`);
@@ -141,6 +146,9 @@ async function reactHandler(react: MessageReaction, user: User) {
 		}
 		if (isBlackjackReact(react)) {
 			return await blackjackReact(react, user.id);
+		}
+		if (isConnectFourReact(react)) {
+			return await connectFourReact(react, user.id);
 		}
 	} catch (error) {
 		console.log({ error });

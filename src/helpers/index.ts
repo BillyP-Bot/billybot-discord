@@ -1,14 +1,13 @@
 import type { Message, MessageReaction } from "discord.js";
 
-import type { ICard, IUser } from "btbot-types";
-import { BlackjackReacts, CardSuit } from "btbot-types";
+import type { ICard, IConnectFour, IUser } from "btbot-types";
+import { BlackjackReacts, CardSuit, ConnectFourColor, ConnectFourReacts } from "btbot-types";
 
 import { Roles } from "../types/enums";
-
-import type { BlackJackGameResponse, IChallengeResponse } from "../types";
 import { Api } from "./api";
 import { Embed } from "./embed";
 
+import type { BlackJackGameResponse, IChallengeResponse } from "../types";
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",
@@ -144,6 +143,84 @@ export function isBlackjackReact(react: MessageReaction) {
 	).includes(react.emoji.toString());
 }
 
+export function buildConnectFourChallengeResponse(data: IConnectFour, msg: Message) {
+	const { red_user_id, yellow_user_id, wager } = data;
+	return `<@${red_user_id}> has challenged <@${yellow_user_id}> to a game of Connect Four${
+		wager > 0 ? ` for ${wager} BillyBuck${pluralIfNotOne(wager)}` : ""
+	}!\n\n<@${yellow_user_id}>: Run...\`\`\`!connectfour @${
+		msg.author.username
+	}\`\`\`...to accept the challenge!`;
+}
+
+export function buildConnectFourMoveResponse(data: IConnectFour) {
+	const { board, red_user_id, yellow_user_id, to_move, is_complete, wager } = data;
+
+	let message =
+		ConnectFourReacts.one +
+		ConnectFourReacts.two +
+		ConnectFourReacts.three +
+		ConnectFourReacts.four +
+		ConnectFourReacts.five +
+		ConnectFourReacts.six +
+		ConnectFourReacts.seven +
+		"\n\n";
+
+	for (let i = 5; i >= 0; i--) {
+		for (let j = 0; j < 7; j++) {
+			const pos = board[j][i];
+			message +=
+				pos == ConnectFourColor.red
+					? ConnectFourColor.red
+					: pos == ConnectFourColor.yellow
+					? ConnectFourColor.yellow
+					: ConnectFourColor.empty;
+		}
+		message += "\n";
+	}
+	message += "\n";
+
+	message += `${ConnectFourColor.red}: <@${red_user_id}>\n`;
+	message += `${ConnectFourColor.yellow}: <@${yellow_user_id}>\n\n`;
+
+	if (is_complete) {
+		if (to_move) {
+			message += `Four in a row for ${
+				to_move === red_user_id ? ConnectFourColor.red : ConnectFourColor.yellow
+			} - <@${to_move}> wins${
+				wager > 0 ? ` and scoops the pot of ${wager * 2} BillyBucks` : ""
+			}!`;
+		} else {
+			message += `It's a draw!${
+				wager > 0
+					? ` The wager amount of ${wager} BillyBuck${pluralIfNotOne(
+							wager
+					  )} is returned to each player.`
+					: ""
+			}`;
+		}
+		return message;
+	}
+
+	message += `${
+		to_move === red_user_id ? ConnectFourColor.red : ConnectFourColor.yellow
+	} to move - <@${to_move}>'s turn!`;
+	return message;
+}
+
+export function isConnectFourReact(react: MessageReaction) {
+	return (
+		[
+			ConnectFourReacts.one,
+			ConnectFourReacts.two,
+			ConnectFourReacts.three,
+			ConnectFourReacts.four,
+			ConnectFourReacts.five,
+			ConnectFourReacts.six,
+			ConnectFourReacts.seven
+		] as string[]
+	).includes(react.emoji.toString());
+}
+
 export const getTrendEmoji = (delta: number) => {
 	switch (true) {
 		case delta > 0:
@@ -158,6 +235,7 @@ export const getTrendEmoji = (delta: number) => {
 export const plusSignIfNotNegative = (amount: number) => (amount >= 0 ? "+" : "");
 
 export const pluralIfNotOne = (amount: number) => (amount === 1 ? "" : "s");
+
 export async function getCurrentChallenge(msg: Message) {
 	const response = await Api.get<IChallengeResponse>(
 		`challenges/server/${msg.guild.id}?is_active=true`
