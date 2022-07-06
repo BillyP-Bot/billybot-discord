@@ -4,10 +4,10 @@ import type { ICard, IUser } from "btbot-types";
 import { BlackjackReacts, CardSuit } from "btbot-types";
 
 import { Roles } from "../types/enums";
-
-import type { BlackJackGameResponse, IChallengeResponse } from "../types";
 import { Api } from "./api";
 import { Embed } from "./embed";
+
+import type { BlackJackGameResponse, IChallengeResponse } from "../types";
 
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
@@ -93,28 +93,28 @@ export function mapToDisplayName(msg: Message, users: IUser[]) {
 
 export async function assertMayor(msg: Message) {
 	await msg.member.fetch();
-	const mayorRole = msg.member.roles.cache.find((a) => a.name == Roles.mayor);
+	const mayorRole = msg.member.roles.cache.find((a) => a.id == Roles.mayor);
 	if (!mayorRole) throw "only the mayor can run this command!";
 	return mayorRole;
 }
 
 export async function readMayor(msg: Message) {
 	await msg.guild.members.fetch();
-	const mayorRole = msg.guild.roles.cache.find((a) => a.name == Roles.mayor);
+	const mayorRole = msg.guild.roles.cache.find((a) => a.id == Roles.mayor);
 	const currentMayor = msg.guild.members.cache.find((a) => a.roles.cache.has(mayorRole.id));
 	return { mayorRole, currentMayor };
 }
 
 export async function readFool(msg: Message) {
 	await msg.guild.members.fetch();
-	const foolRole = msg.guild.roles.cache.find((a) => a.name == Roles.fool);
+	const foolRole = msg.guild.roles.cache.find((a) => a.id == Roles.fool);
 	const currentFool = msg.guild.members.cache.find((a) => a.roles.cache.has(foolRole.id));
 	return { foolRole, currentFool };
 }
 
 export async function assertDeveloper(msg: Message) {
 	await msg.member.fetch();
-	const devRole = msg.member.roles.cache.find((a) => a.name == Roles.developer);
+	const devRole = msg.member.roles.cache.find((a) => a.id == Roles.developer);
 	if (!devRole) throw "unauthorized";
 }
 
