@@ -441,10 +441,10 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
-btbot-types@^1.6.5:
-  version "1.6.5"
-  resolved "https://registry.yarnpkg.com/btbot-types/-/btbot-types-1.6.5.tgz#ba1eaef8c96ee000ae44bd9ccd124a82ff2300d7"
-  integrity sha512-2xBZqxEzx1zfl0Zfob7akFPDIif7ODrUMLVaoCr22QNDO3UABBSWEi8FvBI55oMU1cBatb3+JuQEy06FsQhQsA==
+btbot-types@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/btbot-types/-/btbot-types-1.8.0.tgz#8bc7df135ff77cc35420655e2b6369e7eb3085c9"
+  integrity sha512-ojDPA0ttZdnfQ7jEZ0yF+w8qzqxiGP0JQpROfGaZ563QHIxApKvFc6foywxxq0PfvkQ4paUBfmK54XnoJQmC9g==
 
 buffer-from@^1.0.0:
   version "1.1.2"

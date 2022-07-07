@@ -9,9 +9,10 @@ import { blackjackHitCommand } from "./blackjack-hit";
 import { blackjackStandCommand } from "./blackjack-stand";
 import { bucksCommand } from "./bucks";
 import { buyTicketCommand } from "./buy-ticket";
-import { concedeCommand } from "./concede";
 import { challengeCommand } from "./challenge";
+import { concedeCommand } from "./concede";
 import { configureCommand } from "./configure";
+import { connectFourCommand } from "./connect-four";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
 import { lottoCommand } from "./lotto";
@@ -55,7 +56,8 @@ export const handlers: ICommand[] = [
 	stockCommand,
 	buyStockCommand,
 	sellStockCommand,
-	portfolioCommand
+	portfolioCommand,
+	connectFourCommand
 ];
 
 export { bingCommand };
@@ -85,3 +87,4 @@ export { stockCommand };
 export { buyStockCommand };
 export { sellStockCommand };
 export { portfolioCommand };
+export { connectFourCommand };
