@@ -15,26 +15,48 @@ export const playYoutubeCommand: ICommand = {
 	description: "Play a youtube video in current voice channel. Usage: `!p [url/text]`",
 	handler: async (msg: Message) => {
 		const searchTerm = msg.content.split("!p ")[1];
-		const video = await fetchFirstVideo(searchTerm);
-		if (!video) throw "no results found";
+		const [video, playlist] = await Promise.all([
+			fetchFirstVideo(searchTerm),
+			fetchFirstPlaylist(searchTerm)
+		]);
+		if (!video && !playlist) throw "no results found";
 		const connection = await msg.member.voice.channel.join();
-		queue.enqueue(video);
-		if (queue.length() === 1) {
+
+		if (!video) {
+			for (const v of playlist) {
+				queue.enqueue(v);
+			}
+		} else queue.enqueue(video);
+
+		if (queue.length() === (video ? 1 : playlist.videoCount)) {
 			await playNextVideoInQueue(msg, connection);
 		} else {
-			await msg.channel.send(`✅ Queued:\n\`${video.title}\`\n\n` + getNowPlayingAndNextUp());
+			await msg.channel.send(
+				`✅ Queued ${video ? "Video" : "Playlist"}:\n\`${
+					video?.title || playlist.title
+				}\`\n\n` + getNowPlayingAndNextUp()
+			);
 		}
 		return;
 	}
 };
 
 const fetchFirstVideo = (term: string) => {
-	const isUrl =
-		/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(
-			term
-		);
-	if (!isUrl) return YouTube.searchOne(term);
+	const isVideoUrl = isUrl(term) && !term.includes("playlist?list=");
+	if (!isVideoUrl) return YouTube.searchOne(term);
 	return YouTube.getVideo(term);
+};
+
+const fetchFirstPlaylist = (term: string) => {
+	const isPlaylistUrl = isUrl(term) && term.includes("playlist?list=");
+	if (!isPlaylistUrl) return YouTube.searchOne(term, "playlist");
+	return YouTube.getPlaylist(term);
+};
+
+const isUrl = (term: string) => {
+	return /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(
+		term
+	);
 };
 
 const playNextVideoInQueue = async (msg: Message, connection: VoiceConnection) => {
