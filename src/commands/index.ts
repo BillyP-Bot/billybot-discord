@@ -18,7 +18,7 @@ import { foolCommand } from "./fool";
 import { lottoCommand } from "./lotto";
 import { noblemenCommand } from "./noblemen";
 import { payBucksCommand } from "./pay-bucks";
-import { playYoutubeCommand } from "./play-youtube-video";
+import { playYoutubeCommand, queueCommand, skipCommand } from "./play-youtube-video";
 import { serfsCommand } from "./serfs";
 import { sheeshCommand } from "./sheesh";
 import { spinCommand } from "./spin";
@@ -51,6 +51,8 @@ export const handlers: ICommand[] = [
 	featuresCommand,
 	foolCommand,
 	playYoutubeCommand,
+	skipCommand,
+	queueCommand,
 	birthdayCommand,
 	sheeshCommand,
 	stockCommand,
@@ -81,6 +83,8 @@ export { challengeCommand };
 export { featuresCommand };
 export { foolCommand };
 export { playYoutubeCommand };
+export { skipCommand };
+export { queueCommand };
 export { birthdayCommand };
 export { sheeshCommand };
 export { stockCommand };

@@ -276,7 +276,7 @@ export function buildCongratsMessage(msg: Message, results: IUser[]) {
 }
 
 export class VideoQueue {
-	items: Video[];
+	private items: Video[];
 
 	constructor() {
 		this.clear();
@@ -294,8 +294,18 @@ export class VideoQueue {
 		this.items.shift();
 	}
 
-	public next() {
+	public front() {
 		return this.items[0];
+	}
+
+	public length() {
+		return this.items.length;
+	}
+
+	public list() {
+		return this.items.reduce((acc, video, i) => {
+			return acc + (i > 0 ? `${i}. \`${video.title}\`\n` : "");
+		}, "");
 	}
 }
 
