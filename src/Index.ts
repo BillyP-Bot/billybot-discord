@@ -33,6 +33,7 @@ import {
 	stockCommand,
 	taxesCommand
 } from "./commands";
+import { clearVideoQueue } from "./commands/play-youtube-video";
 import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
 import { sendPaginatedCommandList } from "./helpers/embed";
@@ -159,5 +160,9 @@ async function reactHandler(react: MessageReaction, user: User) {
 client.on("messageReactionAdd", reactHandler);
 
 client.on("unhandledRejection", console.error);
+
+client.on("disconnect", () => {
+	clearVideoQueue();
+});
 
 client.login(config.BOT_TOKEN).catch(console.error);

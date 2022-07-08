@@ -1,9 +1,13 @@
 import YouTube from "youtube-sr";
 import ytdl from "ytdl-core";
 
+import { VideoQueue } from "../helpers";
+
 import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
+
+const queue = new VideoQueue();
 
 async function fetchFirstVideo(term: string) {
 	const isUrl =
@@ -22,14 +26,32 @@ export const playYoutubeCommand: ICommand = {
 		const searchTerm = msg.content.split("!p")[1];
 		const video = await fetchFirstVideo(searchTerm);
 		if (!video) throw "no results found";
-		const url = `https://www.youtube.com/watch?v=${video.id}`;
-		const channel = msg.member.voice.channel;
-		const connection = await channel.join();
-		const stream = connection.play(ytdl(url, { filter: "audioonly", highWaterMark: 1 << 25 }));
-		stream.setVolume(0.2);
-		stream.on("finish", () => {
-			connection.disconnect();
-		});
+		queue.enqueue(video);
+		if (queue.items.length === 1) {
+			await playNextVideoInQueue(msg);
+		} else msg.channel.send(`Queued: ${video.title}`);
 		return;
 	}
+};
+
+const playNextVideoInQueue = async (msg: Message) => {
+	try {
+		const video = queue.next();
+		const url = `https://www.youtube.com/watch?v=${video.id}`;
+		const connection = await msg.member.voice.channel.join();
+		const stream = connection.play(ytdl(url, { filter: "audioonly", highWaterMark: 1 << 25 }));
+		stream.setVolume(0.2);
+		msg.channel.send(`Now Playing: ${video.title}`);
+		stream.on("finish", async () => {
+			queue.dequeue();
+			if (!queue.next()) connection.disconnect();
+			else await playNextVideoInQueue(msg);
+		});
+	} catch (error) {
+		clearVideoQueue();
+	}
+};
+
+export const clearVideoQueue = () => {
+	queue.clear();
 };
