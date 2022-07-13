@@ -2,6 +2,7 @@ import type { Message, MessageReaction } from "discord.js";
 
 import type { ICard, IConnectFour, IUser } from "btbot-types";
 import { BlackjackReacts, CardSuit, ConnectFourColor, ConnectFourReacts } from "btbot-types";
+import { Video } from "youtube-sr";
 
 import { Roles } from "../types/enums";
 import { Api } from "./api";
@@ -273,6 +274,40 @@ export function buildCongratsMessage(msg: Message, results: IUser[]) {
 	});
 	content += usernames.join(", \n");
 	return (content += "\nfor their wise bets!");
+}
+
+export class VideoQueue {
+	private items: Video[];
+
+	constructor() {
+		this.clear();
+	}
+
+	public clear() {
+		this.items = [];
+	}
+
+	public enqueue(video: Video) {
+		this.items.push(video);
+	}
+
+	public dequeue() {
+		this.items.shift();
+	}
+
+	public front() {
+		return this.items[0];
+	}
+
+	public length() {
+		return this.items.length;
+	}
+
+	public list() {
+		return this.items.reduce((acc, video, i) => {
+			return acc + (i > 0 ? `${i}. \`${video.title}\`\n` : "");
+		}, "");
+	}
 }
 
 export { Api } from "./api";

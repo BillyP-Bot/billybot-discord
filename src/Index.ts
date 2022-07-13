@@ -26,13 +26,16 @@ import {
 	payBucksCommand,
 	playYoutubeCommand,
 	portfolioCommand,
+	queueCommand,
 	sellStockCommand,
 	serfsCommand,
 	sheeshCommand,
+	skipCommand,
 	spinCommand,
 	stockCommand,
 	taxesCommand
 } from "./commands";
+import { clearVideoQueue } from "./commands/play-youtube-video";
 import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
 import { sendPaginatedCommandList } from "./helpers/embed";
@@ -107,6 +110,10 @@ async function messageHandler(msg: Message) {
 				return await foolCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg);
+			case /.*!skip.*/gim.test(msg.content):
+				return await skipCommand.handler(msg);
+			case /.*!queue.*/gim.test(msg.content):
+				return await queueCommand.handler(msg);
 			case /.*!birthday.*/gim.test(msg.content):
 				return await birthdayCommand.handler(msg);
 			case /.*!s+h+ee+s+h+.*/gim.test(msg.content):
@@ -159,5 +166,9 @@ async function reactHandler(react: MessageReaction, user: User) {
 client.on("messageReactionAdd", reactHandler);
 
 client.on("unhandledRejection", console.error);
+
+client.on("voiceStateUpdate", () => {
+	clearVideoQueue();
+});
 
 client.login(config.BOT_TOKEN).catch(console.error);
