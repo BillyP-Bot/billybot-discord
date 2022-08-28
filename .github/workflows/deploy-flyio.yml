@@ -9,24 +9,24 @@ env:
 
 jobs:
   deploy:
-      name: Deploy Production
+    name: Deploy Production
 
-      runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-      environment: Production
+    environment: Production
 
-      steps:
-        - uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-        - name: Use Node.js 16
-          uses: actions/setup-node@v3
-          with:
-            node-version: 16.x
-            cache: yarn
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: yarn
 
-        - run: yarn install --frozen-lockfile
-        - run: yarn lint
-        - run: yarn build
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn build
 
-        - uses: superfly/flyctl-actions/setup-flyctl@master
-        - run: flyctl deploy --remote-only
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
