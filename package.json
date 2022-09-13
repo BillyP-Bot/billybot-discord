@@ -19,8 +19,6 @@
   "author": "daniel walsh",
   "license": "MIT",
   "devDependencies": {
-    "@types/axios": "^0.14.0",
-    "@types/get-image-colors": "^2.0.0",
     "@types/node": "^14.14.14",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^4.10.0",
@@ -33,16 +31,12 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
-    "@discordjs/opus": "github:discordjs/opus",
     "apisauce": "^2.1.5",
-    "axios": "^0.21.1",
     "btbot-types": "^1.9.0",
     "discord-paginationembed": "^2.1.0",
     "discord.js": "^12.5.1",
     "dotenv": "^16.0.1",
-    "ffmpeg-static": "^5.0.2",
     "youtube-sr": "^4.1.17",
-    "ytdl-core": "^4.11.2",
-    "ytdl-core-discord": "^1.3.1"
+    "ytdl-core": "^4.11.2"
   }
 }
