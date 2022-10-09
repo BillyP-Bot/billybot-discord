@@ -1,8 +1,14 @@
 import { Message } from "discord.js";
 
-import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
+import {
+	Api,
+	Embed,
+	formatDateMMDD,
+	getFirstMentionOrSelf,
+	getServerDisplayName
+} from "../helpers";
 
-import type { ISOTimestamp, IUser } from "btbot-types";
+import type { IUser } from "btbot-types";
 import type { ICommand } from "../types";
 export const birthdayCommand: ICommand = {
 	prefix: /.*!birthday.*/gim,
@@ -29,7 +35,7 @@ export const birthdayCommand: ICommand = {
 			`users?user_id=${targetUserId}&server_id=${msg.guild.id}`
 		);
 
-		const date = user.birthday ? formatBirthday(user.birthday) : "not set";
+		const date = user.birthday ? formatDateMMDD(user.birthday) : "not set";
 
 		if (onSelf && args[0] && mentions === 0) {
 			if (user.birthday) throw `Your birthday is already set to ${date}. Cannot set again!`;
@@ -46,10 +52,6 @@ export const birthdayCommand: ICommand = {
 		msg.channel.send(embed);
 		return;
 	}
-};
-
-const formatBirthday = (birthday: ISOTimestamp) => {
-	return new Date(birthday).toLocaleDateString().slice(0, -5);
 };
 
 const setOwnBirthday = async (
@@ -75,7 +77,7 @@ const setOwnBirthday = async (
 	])) as unknown as IUser[];
 
 	const embed = Embed.success(
-		`You successfully set your birthday to ${formatBirthday(updated.birthday)}!`,
+		`You successfully set your birthday to ${formatDateMMDD(updated.birthday)}!`,
 		name
 	);
 	await msg.channel.send(embed);

@@ -7,6 +7,7 @@ import {
 	betCommand,
 	bingCommand,
 	birthdayCommand,
+	birthdaysCommand,
 	blackjackCommand,
 	blackjackDoubleDownCommand,
 	blackjackHitCommand,
@@ -114,6 +115,8 @@ async function messageHandler(msg: Message) {
 				return await skipCommand.handler(msg);
 			case /.*!queue.*/gim.test(msg.content):
 				return await queueCommand.handler(msg);
+			case /.*!birthdays.*/gim.test(msg.content):
+				return await birthdaysCommand.handler(msg);
 			case /.*!birthday.*/gim.test(msg.content):
 				return await birthdayCommand.handler(msg);
 			case /.*!s+h+ee+s+h+.*/gim.test(msg.content):
