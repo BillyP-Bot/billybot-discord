@@ -13,7 +13,7 @@ export const birthdaysCommand: ICommand = {
 		const users = await Api.get<IUser[]>(`users/birthday/server/${msg.guild.id}`);
 		const output = users.reduce((acc, user) => {
 			return user.birthday
-				? acc + `<@${user.user_id}>: ${formatDateMMDD(user.birthday)}\n`
+				? acc + `${user.username}: ${formatDateMMDD(user.birthday)}\n`
 				: acc;
 		}, "");
 		const embed = Embed.success(output, "All Birthdays");
