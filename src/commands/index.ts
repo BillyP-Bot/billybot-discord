@@ -3,6 +3,7 @@ import { allowanceCommand } from "./allowance";
 import { betCommand } from "./bet";
 import { bingCommand } from "./bing";
 import { birthdayCommand } from "./birthday";
+import { birthdaysCommand } from "./birthdays";
 import { blackjackCommand } from "./blackjack";
 import { blackjackDoubleDownCommand } from "./blackjack-double-down";
 import { blackjackHitCommand } from "./blackjack-hit";
@@ -54,6 +55,7 @@ export const handlers: ICommand[] = [
 	skipCommand,
 	queueCommand,
 	birthdayCommand,
+	birthdaysCommand,
 	sheeshCommand,
 	stockCommand,
 	buyStockCommand,
@@ -86,6 +88,7 @@ export { playYoutubeCommand };
 export { skipCommand };
 export { queueCommand };
 export { birthdayCommand };
+export { birthdaysCommand };
 export { sheeshCommand };
 export { stockCommand };
 export { buyStockCommand };

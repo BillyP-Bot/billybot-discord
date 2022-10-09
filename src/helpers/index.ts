@@ -1,7 +1,13 @@
 import type { Message, MessageReaction } from "discord.js";
 
 import type { ICard, IConnectFour, IUser } from "btbot-types";
-import { BlackjackReacts, CardSuit, ConnectFourColor, ConnectFourReacts } from "btbot-types";
+import {
+	BlackjackReacts,
+	CardSuit,
+	ConnectFourColor,
+	ConnectFourReacts,
+	ISOTimestamp
+} from "btbot-types";
 import { Video } from "youtube-sr";
 
 import { Roles } from "../types/enums";
@@ -309,6 +315,10 @@ export class VideoQueue {
 		}, "");
 	}
 }
+
+export const formatDateMMDD = (birthday: ISOTimestamp) => {
+	return new Date(birthday).toLocaleDateString().slice(0, -5);
+};
 
 export { Api } from "./api";
 export { Embed } from "./embed";
