@@ -22,7 +22,7 @@ export const taxesCommand: ICommand = {
 			charged_users: number;
 			user: IUser;
 		}>("bucks/taxes", body);
-		const { name } = getServerDisplayName(msg);
+		const { name } = getServerDisplayName(msg, msg.author.id);
 		let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
 		text += `Collection Payout: +${data.payout}\n`;
 		text += `Mayor ${name} now has ${data.user.billy_bucks} BillyBucks!`;
