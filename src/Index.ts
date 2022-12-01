@@ -151,7 +151,7 @@ async function reactHandler(react: MessageReaction, user: User) {
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
 			return await react.message.channel.send(`<@${user.id}> 🖕`);
 		}
-		if (react.emoji.name === Emotes.billy_buck) {
+		if (react.emoji.name === Emotes.billy_buck && !react.message.author.bot) {
 			return await buckReact(react, user.id);
 		}
 		if (isBlackjackReact(react)) {
