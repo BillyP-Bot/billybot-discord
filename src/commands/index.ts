@@ -16,6 +16,7 @@ import { configureCommand } from "./configure";
 import { connectFourCommand } from "./connect-four";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
+import { imageCommand } from "./image";
 import { lottoCommand } from "./lotto";
 import { noblemenCommand } from "./noblemen";
 import { payBucksCommand } from "./pay-bucks";
@@ -61,7 +62,8 @@ export const handlers: ICommand[] = [
 	buyStockCommand,
 	sellStockCommand,
 	portfolioCommand,
-	connectFourCommand
+	connectFourCommand,
+	imageCommand
 ];
 
 export { bingCommand };
@@ -95,3 +97,4 @@ export { buyStockCommand };
 export { sellStockCommand };
 export { portfolioCommand };
 export { connectFourCommand };
+export { imageCommand };

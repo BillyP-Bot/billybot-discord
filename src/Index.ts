@@ -22,6 +22,7 @@ import {
 	featuresCommand,
 	foolCommand,
 	handlers,
+	imageCommand,
 	lottoCommand,
 	noblemenCommand,
 	payBucksCommand,
@@ -131,6 +132,8 @@ async function messageHandler(msg: Message) {
 				return await portfolioCommand.handler(msg);
 			case /.*!connectfour.*/gim.test(msg.content):
 				return await connectFourCommand.handler(msg);
+			case /.*!image.*/gim.test(msg.content):
+				return await imageCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
