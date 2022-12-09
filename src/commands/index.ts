@@ -1,4 +1,5 @@
 import type { ICommand } from "../types";
+import { albumCommand } from "./album";
 import { allowanceCommand } from "./allowance";
 import { betCommand } from "./bet";
 import { bingCommand } from "./bing";
@@ -63,7 +64,8 @@ export const handlers: ICommand[] = [
 	sellStockCommand,
 	portfolioCommand,
 	connectFourCommand,
-	imageCommand
+	imageCommand,
+	albumCommand
 ];
 
 export { bingCommand };
@@ -98,3 +100,4 @@ export { sellStockCommand };
 export { portfolioCommand };
 export { connectFourCommand };
 export { imageCommand };
+export { albumCommand };
