@@ -10,12 +10,14 @@ export const imageCommand: ICommand = {
 	handler: async (msg: Message) => {
 		const prompt = msg.content.slice("!image".length).trim();
 		if (!prompt) throw "Must enter a valid prompt! Usage: `!image [prompt]`";
-		const res = await Api.post<{ image_url: string }>("image", {
+		if (prompt.length > 1000) throw "Prompt must be no more than 1000 characters in length!";
+		msg.channel.send("Generating your image...");
+		const res = await Api.post<{ permalink: string }>("image", {
 			prompt,
 			user_id: msg.author.id,
 			server_id: msg.guild.id
 		});
-		const embed = Embed.success("").setImage(res.image_url);
+		const embed = Embed.success("").setImage(res.permalink);
 		msg.channel.send(embed);
 		return;
 	}
