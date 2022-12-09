@@ -1,6 +1,7 @@
 import type { ICommand } from "../types";
 import { albumCommand } from "./album";
 import { allowanceCommand } from "./allowance";
+import { amaCommand } from "./ama";
 import { betCommand } from "./bet";
 import { bingCommand } from "./bing";
 import { birthdayCommand } from "./birthday";
@@ -65,7 +66,8 @@ export const handlers: ICommand[] = [
 	portfolioCommand,
 	connectFourCommand,
 	imageCommand,
-	albumCommand
+	albumCommand,
+	amaCommand
 ];
 
 export { bingCommand };
@@ -101,3 +103,4 @@ export { portfolioCommand };
 export { connectFourCommand };
 export { imageCommand };
 export { albumCommand };
+export { amaCommand };
