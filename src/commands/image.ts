@@ -10,7 +10,11 @@ export const imageCommand: ICommand = {
 	handler: async (msg: Message) => {
 		const prompt = msg.content.slice("!image".length).trim();
 		if (!prompt) throw "Must enter a valid prompt! Usage: `!image [prompt]`";
-		const res = await Api.post<{ image_url: string }>("image", { prompt });
+		const res = await Api.post<{ image_url: string }>("image", {
+			prompt,
+			user_id: msg.author.id,
+			server_id: msg.guild.id
+		});
 		const embed = Embed.success("").setImage(res.image_url);
 		msg.channel.send(embed);
 		return;
