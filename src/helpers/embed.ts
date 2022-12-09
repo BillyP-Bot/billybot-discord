@@ -4,6 +4,8 @@ import { MessageEmbed, TextChannel } from "discord.js";
 import { Colors } from "../types/enums";
 import { ICommand } from "../types/index";
 
+import type { IOpenAiImage } from "btbot-types";
+
 import type { Message } from "discord.js";
 export class Embed {
 	static success(description: string, title?: string) {
@@ -51,6 +53,30 @@ const constructCommandsEmbedArray = (commands: ICommand[]) => {
 			return acc;
 		}
 		lastEmbed.addField(command, description);
+		return acc;
+	}, [] as MessageEmbed[]);
+};
+
+export const sendPaginatedImageList = async (images: IOpenAiImage[], msg: Message) => {
+	const embeds = constructAlbumEmbedArray(images, msg.author.username);
+	await new Embeds()
+		.setArray(embeds)
+		.setAuthorizedUsers(msg.author.id)
+		.setChannel(msg.channel as TextChannel)
+		.setTimeout(60000)
+		.build();
+};
+
+const constructAlbumEmbedArray = (images: IOpenAiImage[], username: string) => {
+	return images.reduce((acc, { prompt, permalink }, index) => {
+		if (!prompt || !permalink) return acc;
+		const embed = new MessageEmbed();
+		embed
+			.setColor(Colors.green)
+			.setTitle(`${username}'s Images (${index + 1}/${images.length})`)
+			.setDescription(prompt)
+			.setImage(permalink);
+		acc.push(embed);
 		return acc;
 	}, [] as MessageEmbed[]);
 };

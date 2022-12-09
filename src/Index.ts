@@ -2,6 +2,7 @@ import type { Message, MessageReaction, User } from "discord.js";
 import { Client, Intents } from "discord.js";
 
 import {
+	albumCommand,
 	allowanceCommand,
 	announcementsCommand,
 	betCommand,
@@ -22,6 +23,7 @@ import {
 	featuresCommand,
 	foolCommand,
 	handlers,
+	imageCommand,
 	lottoCommand,
 	noblemenCommand,
 	payBucksCommand,
@@ -131,6 +133,10 @@ async function messageHandler(msg: Message) {
 				return await portfolioCommand.handler(msg);
 			case /.*!connectfour.*/gim.test(msg.content):
 				return await connectFourCommand.handler(msg);
+			case /.*!image.*/gim.test(msg.content):
+				return await imageCommand.handler(msg);
+			case /.*!album.*/gim.test(msg.content):
+				return await albumCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
