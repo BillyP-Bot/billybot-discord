@@ -11,13 +11,16 @@ export const imageCommand: ICommand = {
 		const prompt = msg.content.slice("!image".length).trim();
 		if (!prompt) throw "Must enter a valid prompt! Usage: `!image [prompt]`";
 		if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
-		msg.channel.send("Generating your image...");
-		const res = await Api.post<{ permalink: string }>("images", {
-			prompt,
-			user_id: msg.author.id,
-			server_id: msg.guild.id
-		});
+		const [waitMsg, res] = await Promise.all([
+			msg.channel.send("Generating your image..."),
+			Api.post<{ permalink: string }>("images", {
+				prompt,
+				user_id: msg.author.id,
+				server_id: msg.guild.id
+			})
+		]);
 		const embed = Embed.success("").setImage(res.permalink);
+		waitMsg.delete();
 		msg.channel.send(embed);
 		return;
 	}

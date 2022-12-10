@@ -4,6 +4,7 @@ import { Client, Intents } from "discord.js";
 import {
 	albumCommand,
 	allowanceCommand,
+	amaCommand,
 	announcementsCommand,
 	betCommand,
 	bingCommand,
@@ -137,6 +138,8 @@ async function messageHandler(msg: Message) {
 				return await imageCommand.handler(msg);
 			case /.*!album.*/gim.test(msg.content):
 				return await albumCommand.handler(msg);
+			case /.*!ama.*/gim.test(msg.content):
+				return await amaCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
