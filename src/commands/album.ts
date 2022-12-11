@@ -9,7 +9,8 @@ import { sendPaginatedImageList } from "../helpers/embed";
 export const albumCommand: ICommand = {
 	prefix: /.*!album.*/gim,
 	command: "!album",
-	description: "View an album of all of your previously generated images.",
+	description:
+		"View an album of your (or another user's) previously generated images. Usage: `!album` / `!album [username/@user]`",
 	handler: async (msg: Message) => {
 		const { name, id } = getServerDisplayName(msg);
 		const isSelf = msg.author.id === id;
