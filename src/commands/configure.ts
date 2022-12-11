@@ -29,5 +29,5 @@ export const configureGuildUsers = async (guild: Guild) => {
 		});
 		return acc;
 	}, [] as Partial<IUser>[]);
-	return await Api.post<IUser[]>("users", users);
+	return Api.post<IUser[]>("users", users);
 };
