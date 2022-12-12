@@ -1,4 +1,4 @@
-import type { Message, MessageReaction, User } from "discord.js";
+import type { GuildMember, Message, MessageReaction, User } from "discord.js";
 import { Client, Intents } from "discord.js";
 
 import {
@@ -39,6 +39,7 @@ import {
 	stockCommand,
 	taxesCommand
 } from "./commands";
+import { configureGuildUsers } from "./commands/configure";
 import { clearVideoQueue } from "./commands/play-youtube-video";
 import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
@@ -176,6 +177,12 @@ async function reactHandler(react: MessageReaction, user: User) {
 }
 
 client.on("messageReactionAdd", reactHandler);
+
+async function guildMemberAddHandler(member: GuildMember) {
+	await configureGuildUsers(member.guild);
+}
+
+client.on("guildMemberAdd", guildMemberAddHandler);
 
 client.on("unhandledRejection", console.error);
 
