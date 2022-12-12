@@ -57,8 +57,12 @@ const constructCommandsEmbedArray = (commands: ICommand[]) => {
 	}, [] as MessageEmbed[]);
 };
 
-export const sendPaginatedImageList = async (images: IOpenAiImage[], msg: Message) => {
-	const embeds = constructAlbumEmbedArray(images, msg.author.username);
+export const sendPaginatedImageList = async (
+	images: IOpenAiImage[],
+	msg: Message,
+	username: string
+) => {
+	const embeds = constructAlbumEmbedArray(images, username);
 	await new Embeds()
 		.setArray(embeds)
 		.setAuthorizedUsers(msg.author.id)

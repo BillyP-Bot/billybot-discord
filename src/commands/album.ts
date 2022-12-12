@@ -23,7 +23,7 @@ export const albumCommand: ICommand = {
 			);
 			return;
 		}
-		await sendPaginatedImageList(res, msg);
+		await sendPaginatedImageList(res, msg, name);
 		return;
 	}
 };
