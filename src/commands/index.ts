@@ -16,6 +16,7 @@ import { challengeCommand } from "./challenge";
 import { concedeCommand } from "./concede";
 import { configureCommand } from "./configure";
 import { connectFourCommand } from "./connect-four";
+import { factCheckCommand } from "./fact-check";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
 import { imageCommand } from "./image";
@@ -67,7 +68,8 @@ export const handlers: ICommand[] = [
 	connectFourCommand,
 	imageCommand,
 	albumCommand,
-	amaCommand
+	amaCommand,
+	factCheckCommand
 ];
 
 export { bingCommand };
@@ -104,3 +106,4 @@ export { connectFourCommand };
 export { imageCommand };
 export { albumCommand };
 export { amaCommand };
+export { factCheckCommand };
