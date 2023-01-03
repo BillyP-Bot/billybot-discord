@@ -21,6 +21,7 @@ import {
 	concedeCommand,
 	configureCommand,
 	connectFourCommand,
+	factCheckCommand,
 	featuresCommand,
 	foolCommand,
 	handlers,
@@ -141,6 +142,8 @@ async function messageHandler(msg: Message) {
 				return await albumCommand.handler(msg);
 			case /.*!ama.*/gim.test(msg.content):
 				return await amaCommand.handler(msg);
+			case /.*!factcheck.*/gim.test(msg.content):
+				return await factCheckCommand.handler(msg);
 			default:
 				return updateEngagementMetrics(msg);
 		}
