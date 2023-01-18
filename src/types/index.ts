@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import type { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
-import type { ICard, IUser, IChallenge } from "btbot-types";
+import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
 
 export type ApiError = {
 	status?: number;
@@ -28,6 +28,8 @@ export type BlackJackGameResponse = {
 	billy_bucks: number;
 	status: string;
 };
+
+export type BetAggregate = [{ _id: string; bets: IBet[]; count: number }];
 
 export interface ICommand {
 	prefix: RegExp;

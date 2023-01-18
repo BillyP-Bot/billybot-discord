@@ -10,6 +10,7 @@ import {
 } from "btbot-types";
 import { Video } from "youtube-sr";
 
+import { BetAggregate } from "../types";
 import { Roles } from "../types/enums";
 import { Api } from "./api";
 import { Embed } from "./embed";
@@ -280,6 +281,21 @@ export function buildCongratsMessage(msg: Message, results: IUser[]) {
 	});
 	content += usernames.join(", \n");
 	return (content += "\nfor their wise bets!");
+}
+
+export function buildCurrentBetsMessage(msg: Message, results: BetAggregate) {
+	if (results.length <= 0) return "No one placed any bets!";
+	let content = "The current bets are:\n\n";
+	const participants = results.map(({ _id, bets }) => {
+		const { name: partName } = getServerDisplayName(msg, _id);
+		const userBets = bets.map(({ user_id, amount }) => {
+			const { name } = getServerDisplayName(msg, user_id);
+			return `• ${name}:\t${amount}`;
+		});
+		return `**${partName}**\n` + userBets.join("\n");
+	});
+	content += participants.join("\n\n");
+	return content;
 }
 
 export class VideoQueue {
