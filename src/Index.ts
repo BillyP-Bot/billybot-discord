@@ -18,6 +18,7 @@ import {
 	buyStockCommand,
 	buyTicketCommand,
 	challengeCommand,
+	closeBetCommand,
 	concedeCommand,
 	configureCommand,
 	connectFourCommand,
@@ -110,6 +111,8 @@ async function messageHandler(msg: Message) {
 				return await concedeCommand.handler(msg);
 			case /.*!challenge.*/gim.test(msg.content):
 				return await challengeCommand.handler(msg);
+			case /.*!closebet.*/gim.test(msg.content):
+				return await closeBetCommand.handler(msg);
 			case /.*!feature .*/gim.test(msg.content):
 				return await featuresCommand.handler(msg);
 			case /.*!fool .*/gim.test(msg.content):

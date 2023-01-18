@@ -13,6 +13,7 @@ import { blackjackStandCommand } from "./blackjack-stand";
 import { bucksCommand } from "./bucks";
 import { buyTicketCommand } from "./buy-ticket";
 import { challengeCommand } from "./challenge";
+import { closeBetCommand } from "./close-bet";
 import { concedeCommand } from "./concede";
 import { configureCommand } from "./configure";
 import { connectFourCommand } from "./connect-four";
@@ -53,6 +54,7 @@ export const handlers: ICommand[] = [
 	configureCommand,
 	concedeCommand,
 	challengeCommand,
+	closeBetCommand,
 	featuresCommand,
 	foolCommand,
 	playYoutubeCommand,
@@ -90,6 +92,7 @@ export { taxesCommand };
 export { configureCommand };
 export { concedeCommand };
 export { challengeCommand };
+export { closeBetCommand };
 export { featuresCommand };
 export { foolCommand };
 export { playYoutubeCommand };
