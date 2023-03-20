@@ -51,7 +51,7 @@ import { Activities, Channels, Emotes, Images } from "./types/enums";
 
 const intents = new Intents();
 intents.add(Intents.ALL);
-const client = new Client({ restTimeOffset: 0 });
+const client = new Client({ restTimeOffset: 0, ws: { intents: ["GUILD_VOICE_STATES"] } });
 
 client.on("ready", () => {
 	console.log(`Logged in as ${client.user.tag}!`);
