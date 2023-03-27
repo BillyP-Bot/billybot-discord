@@ -23,7 +23,7 @@ import {
 } from "discord.js";
 
 const paginationTypeList = ["description", "field", "both"] as const;
-type paginationType = typeof paginationTypeList[number];
+type paginationType = (typeof paginationTypeList)[number];
 
 interface EmbedItems {
 	authors?: EmbedAuthorOptions[];
