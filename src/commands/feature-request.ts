@@ -25,7 +25,7 @@ export const featuresCommand: ICommand = {
 			`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${msg.guild.id})! \n\nYou now have ${result.billy_bucks} BillyBucks`,
 			"Feature Posted"
 		);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

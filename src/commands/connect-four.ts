@@ -32,7 +32,7 @@ export const connectFourCommand: ICommand = {
 		}
 
 		const mentionedUser =
-			msg.mentions.members.array()[0] ||
+			msg.mentions.members.first() ||
 			msg.guild.members.cache.find(
 				(a) => a.user.username.toUpperCase().trim() === args[0].toUpperCase().trim()
 			);

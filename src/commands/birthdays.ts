@@ -39,8 +39,8 @@ export const birthdaysCommand: ICommand = {
 				: acc;
 		}, "");
 
-		const embed = Embed.success(output, "Upcoming Birthdays");
-		msg.channel.send(embed);
+		const embed = Embed.success(output ?? "No Birthdays Registered", "Upcoming Birthdays");
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

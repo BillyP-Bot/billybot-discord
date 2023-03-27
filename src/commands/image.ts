@@ -19,9 +19,9 @@ export const imageCommand: ICommand = {
 				server_id: msg.guild.id
 			})
 		]);
-		const embed = Embed.success("").setImage(res.permalink);
+		const embed = Embed.success(null).setImage(res.permalink);
 		waitMsg.delete();
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

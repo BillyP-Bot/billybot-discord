@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
-import type { DMChannel, Message, MessageReaction, NewsChannel, TextChannel } from "discord.js";
+import type { GuildTextBasedChannel, TextBasedChannel, Message, MessageReaction } from "discord.js";
+import { DisTube } from "distube";
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
 
 export type ApiError = {
@@ -35,7 +36,7 @@ export interface ICommand {
 	prefix: RegExp;
 	command?: string;
 	description: string;
-	handler: (msg: Message) => Promise<any>;
+	handler: (msg: Message, distube?: DisTube) => Promise<any>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
 
@@ -43,4 +44,4 @@ export interface IChallengeResponse {
 	pages: number;
 	challenges: IChallenge[];
 }
-export type DiscordChannel = TextChannel | DMChannel | NewsChannel;
+export type DiscordChannel = GuildTextBasedChannel | TextBasedChannel;

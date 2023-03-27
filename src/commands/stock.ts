@@ -13,7 +13,7 @@ export const stockCommand: ICommand = {
 		const symbol = args[0];
 		const res = await Api.get<IStock>(`stocks/price?symbol=${symbol}`);
 		const embed = Embed.success(`\`${res.price} ${res.currency}\``, res.symbol);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

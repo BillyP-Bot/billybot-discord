@@ -33,7 +33,7 @@ export const sellStockCommand: ICommand = {
 		output += `You now have ${res.bucks} BillyBucks.`;
 
 		const embed = Embed.success(output, "Stock Sold 💰");
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };
