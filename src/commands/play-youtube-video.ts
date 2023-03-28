@@ -31,7 +31,7 @@ export const playYoutubeCommand = {
 		} catch (error) {
 			console.log(error);
 			if (error.errorCode === "NO_RESULT") {
-				msg.reply("No results found!");
+				throw "No results found!";
 			}
 		}
 	}
