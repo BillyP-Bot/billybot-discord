@@ -5,7 +5,7 @@
       "type": "node-terminal",
       "request": "launch",
       "name": "Debug",
-      "command": "yarn dev"
+      "command": "npm run dev"
     }
   ]
 }

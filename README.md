@@ -19,6 +19,5 @@ https://discord.js.org/#/docs/main/11.1.0/general/welcome
         -   `GOOGLE_CX_KEY`
 -   Download and install [Node.js](https://nodejs.org/en/download/)
 -   Set up the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend) to run locally
--   Run `npm i -g yarn` to install yarn globally
--   Run `yarn` to ensure that the local project has all packages installed
--   Run `yarn dev` to start project (will restart everytime a file is saved)
+-   Run `npm install` to ensure that the local project has all packages installed
+-   Run `npm run dev` to start project (will restart everytime a file is saved)
