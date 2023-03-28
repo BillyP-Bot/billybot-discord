@@ -8,7 +8,7 @@ import {
 	ConnectFourReacts,
 	ISOTimestamp
 } from "btbot-types";
-import { Video } from "youtube-sr";
+import { SearchResultVideo } from "distube";
 
 import { BetAggregate } from "../types";
 import { Roles } from "../types/enums";
@@ -300,7 +300,7 @@ export function buildCurrentBetsMessage(msg: Message, results: BetAggregate) {
 }
 
 export class VideoQueue {
-	private items: Video[];
+	private items: SearchResultVideo[];
 
 	constructor() {
 		this.clear();
@@ -310,7 +310,7 @@ export class VideoQueue {
 		this.items = [];
 	}
 
-	public enqueue(video: Video) {
+	public enqueue(video: SearchResultVideo) {
 		this.items.push(video);
 	}
 
@@ -328,7 +328,7 @@ export class VideoQueue {
 
 	public list() {
 		return this.items.reduce((acc, video, i) => {
-			return acc + (i > 0 ? `${i}. \`${video.title}\`\n` : "");
+			return acc + (i > 0 ? `${i}. \`${video.name}\`\n` : "");
 		}, "");
 	}
 }

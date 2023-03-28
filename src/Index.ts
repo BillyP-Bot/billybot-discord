@@ -1,5 +1,5 @@
-import type { GuildMember, Message, MessageReaction, User } from "discord.js";
-import { Client, Events, GatewayIntentBits, ChannelType } from "discord.js";
+import type { GuildMember, Message, MessageReaction, User, VoiceState } from "discord.js";
+import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
 import { DisTube } from "distube";
 
 import {
@@ -61,12 +61,7 @@ const client = new Client({
 	]
 });
 
-const distube = new DisTube(client, {
-	leaveOnStop: true,
-	emitNewSongOnly: true,
-	emitAddSongWhenCreatingQueue: false,
-	emitAddListWhenCreatingQueue: false
-});
+const distube = new DisTube(client, { leaveOnStop: false });
 
 client.once(Events.ClientReady, () => {
 	console.log(`Logged in as ${client.user.tag}!`);
@@ -135,7 +130,7 @@ async function messageHandler(msg: Message) {
 			case /.*!p .*/gim.test(msg.content):
 				return await playYoutubeCommand.handler(msg, distube);
 			case /.*!skip.*/gim.test(msg.content):
-				return await skipCommand.handler(msg);
+				return await skipCommand.handler(msg, distube);
 			case /.*!queue.*/gim.test(msg.content):
 				return await queueCommand.handler(msg);
 			case /.*!birthdays.*/gim.test(msg.content):
@@ -207,8 +202,12 @@ client.on(Events.GuildMemberAdd, guildMemberAddHandler);
 
 client.on("unhandledRejection", console.error);
 
-client.on(Events.VoiceStateUpdate, () => {
-	clearVideoQueue();
+client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
+	// when bot leaves voice channel
+	if (oldState.member.user.bot && oldState.channelId) {
+		distube.removeAllListeners();
+		clearVideoQueue();
+	}
 });
 
 client.login(config.BOT_TOKEN).catch(console.error);

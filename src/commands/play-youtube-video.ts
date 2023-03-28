@@ -1,131 +1,90 @@
-// import YouTube from "youtube-sr";
-//import ytdl from "ytdl-core";
-
-import { DisTube } from "distube";
+import { DisTube, Events } from "distube";
 
 import { VideoQueue } from "../helpers";
 
-import type { GuildTextBasedChannel, Message } from "discord.js";
+import type { Message } from "discord.js";
 
-import type { ICommand } from "../types";
+const INACTIVITY_SEC = 60;
 
 const queue = new VideoQueue();
 
-export const playYoutubeCommand: ICommand = {
+export const playYoutubeCommand = {
 	prefix: /.*!p .*/gim,
 	command: "!p",
-	description: "Play a youtube video in current voice channel. Usage: `!p [url/text]`",
+	description: "Play a YouTube video in current voice channel. Usage: `!p [url/text]`",
 	handler: async (msg: Message, distube: DisTube) => {
-		const searchTerm = msg.content.split("!p ")[1];
-
-		distube.play(msg.member.voice.channel, searchTerm, {
-			member: msg.member,
-			textChannel: msg.channel as GuildTextBasedChannel,
-			message: msg
-		});
-
-		// const [video, playlist] = await Promise.all([
-		// 	fetchFirstVideo(searchTerm),
-		// 	fetchFirstPlaylist(searchTerm)
-		// ]);
-		// if (!video && !playlist) throw "no results found";
-		// const connection = await msg.member.voice.channel.join();
-
-		// if (!video) {
-		// 	for (const v of playlist) {
-		// 		queue.enqueue(v);
-		// 	}
-		// } else queue.enqueue(video);
-
-		// if (queue.length() === (video ? 1 : playlist.videoCount)) {
-		// 	//await playNextVideoInQueue(msg, connection);
-		// } else {
-		// 	await msg.channel.send(
-		// 		`✅ Queued ${video ? "Video" : "Playlist"}:\n\`${
-		// 			video?.title || playlist.title
-		// 		}\`\n\n` + getNowPlayingAndNextUp()
-		// 	);
-		// }
-		// return;
+		try {
+			const searchTerm = msg.content.split("!p ")[1];
+			const video = (await distube.search(searchTerm, { limit: 1 }))[0];
+			if (!video) {
+				msg.channel.send("No results found!");
+				return;
+			}
+			queue.enqueue(video);
+			if (queue.length() === 1) {
+				playNextVideoInQueue(msg, distube);
+			} else {
+				msg.channel.send(
+					`✅ Queued Video:\n\`${video.name}\`\n\n` + getNowPlayingAndNextUp()
+				);
+			}
+		} catch (error) {
+			console.log(error);
+			if (error.errorCode === "NO_RESULT") {
+				msg.reply("No results found!");
+			}
+		}
 	}
 };
-// const fetchFirstVideo = (term: string) => {
-// 	const isVideoUrl = isUrl(term) && !term.includes("playlist?list=");
-// 	if (!isVideoUrl) return YouTube.searchOne(term);
-// 	return YouTube.getVideo(term);
-// };
 
-// const fetchFirstPlaylist = (term: string) => {
-// 	const isPlaylistUrl = isUrl(term) && term.includes("playlist?list=");
-// 	if (!isPlaylistUrl) return YouTube.searchOne(term, "playlist");
-// 	return YouTube.getPlaylist(term);
-// };
+export const skipCommand = {
+	prefix: /.*!skip.*/gim,
+	command: "!skip",
+	description: "Skip the track that is currently playing.",
+	handler: async (msg: Message, distube: DisTube) => {
+		if (!queue.front()) throw "No track is currently playing!";
+		msg.channel.send("⏭️ Skipping track...");
+		distube.seek(msg.guildId, queue.front().duration);
+	}
+};
 
-// const isUrl = (term: string) => {
-// 	return /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\\-]+\?v=|embed\/|v\/)?)([\w\\-]+)(\S+)?$/.test(
-// 		term
-// 	);
-// };
-
-// const playNextVideoInQueue = async (msg: Message) => {
-// 	try {
-// 		const video = queue.front();
-// 		const url = `https://www.youtube.com/watch?v=${video.id}`;
-// 		const stream = connection.play(ytdl(url, { filter: "audioonly", highWaterMark: 1 << 25 }));
-// 		stream.setVolume(0.2);
-// 		await msg.channel.send(getNowPlayingAndNextUp());
-// 		stream.on("finish", async () => {
-// 			queue.dequeue();
-// 			if (!queue.front())
-// 				setTimeout(() => {
-// 					connection.disconnect();
-// 				}, 30000);
-// 			else await playNextVideoInQueue(msg, connection);
-// 		});
-// 	} catch (error) {
-// 		clearVideoQueue();
-// 		throw error;
-// 	}
-// };
-
-// const getNowPlayingAndNextUp = () => {
-// 	let text = `▶️ Now Playing:\n\`${queue.front().title}\`\n\n`;
-// 	if (queue.length() > 1) {
-// 		text += "🎶 Next Up:\n";
-// 		text += queue.list();
-// 	}
-// 	return text;
-// };
+export const queueCommand = {
+	prefix: /.*!queue.*/gim,
+	command: "!queue",
+	description: "List the track currently playing along with the upcoming tracks in the queue.",
+	handler: async (msg: Message) => {
+		if (queue.length() === 0) throw "No tracks in the queue!";
+		msg.channel.send(getNowPlayingAndNextUp());
+	}
+};
 
 export const clearVideoQueue = () => {
 	queue.clear();
 };
 
-export const skipCommand: ICommand = {
-	prefix: /.*!skip.*/gim,
-	command: "!skip",
-	description: "Skip the track that is currently playing.",
-	handler: async (msg: Message) => {
-		// if (!queue.front()) throw "No track is currently playing!";
-		// await msg.channel.send("⏭️ Skipping track...");
-		// const connection = await msg.member.voice.channel.join();
-		// if (queue.length() === 1) {
-		// 	(connection.player as VoiceConnection).dispatcher.end();
-		// 	return;
-		// }
-		// queue.dequeue();
-		// await playNextVideoInQueue(msg, connection);
-		return;
-	}
+const playNextVideoInQueue = (msg: Message, distube: DisTube) => {
+	const video = queue.front();
+	if (!video) return exitAfterTimeoutIfNothingInQueue(msg, distube);
+	msg.channel.send(getNowPlayingAndNextUp());
+	distube.play(msg.member.voice.channel, video);
+	distube.removeAllListeners();
+	distube.on(Events.FINISH_SONG, () => {
+		queue.dequeue();
+		playNextVideoInQueue(msg, distube);
+	});
 };
 
-export const queueCommand: ICommand = {
-	prefix: /.*!queue.*/gim,
-	command: "!queue",
-	description: "List the track currently playing along with the upcoming tracks in the queue.",
-	handler: async (msg: Message) => {
-		// if (queue.length() === 0) throw "No tracks in the queue!";
-		// await msg.channel.send(getNowPlayingAndNextUp());
-		return;
+const getNowPlayingAndNextUp = () => {
+	let text = `▶️ Now Playing:\n\`${queue.front().name}\`\n\n`;
+	if (queue.length() > 1) {
+		text += "🎶 Next Up:\n";
+		text += queue.list();
 	}
+	return text;
+};
+
+const exitAfterTimeoutIfNothingInQueue = (msg: Message, distube: DisTube) => {
+	setTimeout(() => {
+		if (!queue.front()) distube.voices.leave(msg.guildId);
+	}, INACTIVITY_SEC * 1000);
 };
