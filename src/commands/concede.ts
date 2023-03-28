@@ -1,4 +1,5 @@
 import type { Message } from "discord.js";
+import type { IUser } from "btbot-types";
 
 import type { ICommand } from "../types";
 import {
@@ -19,7 +20,11 @@ export const concedeCommand: ICommand = {
 		const mayorRole = await assertMayor(msg);
 		const { foolRole, currentFool } = await readFool(msg);
 		const targetUserId = getFirstMentionOrSelf(msg);
-		const { new_mayor_id, new_fool_id, results } = await Api.put("challenges/resolve", {
+		const { new_mayor_id, new_fool_id, results } = await Api.put<{
+			new_mayor_id: string;
+			new_fool_id: string;
+			results: IUser[];
+		}>("challenges/resolve", {
 			server_id: msg.guild.id,
 			participant_id: targetUserId
 		});
@@ -34,7 +39,7 @@ export const concedeCommand: ICommand = {
 				buildCongratsMessage(msg, results),
 			"Mayoral Decree!"
 		);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

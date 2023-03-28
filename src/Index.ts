@@ -1,5 +1,6 @@
-import type { GuildMember, Message, MessageReaction, User } from "discord.js";
-import { Client, Intents } from "discord.js";
+import type { GuildMember, Message, MessageReaction, User, VoiceState } from "discord.js";
+import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
+import { DisTube } from "distube";
 
 import {
 	albumCommand,
@@ -49,11 +50,20 @@ import { sendPaginatedCommandList } from "./helpers/embed";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
 
-const intents = new Intents();
-intents.add(Intents.ALL);
-const client = new Client({ restTimeOffset: 0 });
+const client = new Client({
+	intents: [
+		GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.MessageContent,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildVoiceStates
+	]
+});
 
-client.on("ready", () => {
+const distube = new DisTube(client, { leaveOnStop: false });
+
+client.once(Events.ClientReady, () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	config.IS_PROD && client.user.setActivity(Activities.farmville);
@@ -66,7 +76,7 @@ async function help(msg: Message) {
 
 async function messageHandler(msg: Message) {
 	try {
-		if (msg.channel.type === "dm") return;
+		if (msg.channel.type === ChannelType.DM) return;
 		if (msg.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (msg.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (msg.author.bot) return;
@@ -118,9 +128,9 @@ async function messageHandler(msg: Message) {
 			case /.*!fool .*/gim.test(msg.content):
 				return await foolCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
-				return await playYoutubeCommand.handler(msg);
+				return await playYoutubeCommand.handler(msg, distube);
 			case /.*!skip.*/gim.test(msg.content):
-				return await skipCommand.handler(msg);
+				return await skipCommand.handler(msg, distube);
 			case /.*!queue.*/gim.test(msg.content):
 				return await queueCommand.handler(msg);
 			case /.*!birthdays.*/gim.test(msg.content):
@@ -152,11 +162,11 @@ async function messageHandler(msg: Message) {
 		}
 	} catch (error) {
 		console.log({ error });
-		msg.channel.send(Embed.error(error));
+		msg.channel.send({ embeds: [Embed.error(error)] });
 	}
 }
 
-client.on("message", messageHandler);
+client.on(Events.MessageCreate, messageHandler);
 
 async function reactHandler(react: MessageReaction, user: User) {
 	try {
@@ -178,22 +188,26 @@ async function reactHandler(react: MessageReaction, user: User) {
 		}
 	} catch (error) {
 		console.log({ error });
-		await react.message.channel.send(Embed.error(error));
+		await react.message.channel.send({ embeds: [Embed.error(error)] });
 	}
 }
 
-client.on("messageReactionAdd", reactHandler);
+client.on(Events.MessageReactionAdd, reactHandler);
 
 async function guildMemberAddHandler(member: GuildMember) {
 	await configureGuildUsers(member.guild);
 }
 
-client.on("guildMemberAdd", guildMemberAddHandler);
+client.on(Events.GuildMemberAdd, guildMemberAddHandler);
 
 client.on("unhandledRejection", console.error);
 
-client.on("voiceStateUpdate", () => {
-	clearVideoQueue();
+client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
+	// when bot leaves voice channel
+	if (oldState.member.user.bot && oldState.channelId) {
+		distube.removeAllListeners();
+		clearVideoQueue();
+	}
 });
 
 client.login(config.BOT_TOKEN).catch(console.error);

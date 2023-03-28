@@ -27,7 +27,7 @@ export const taxesCommand: ICommand = {
 		text += `Collection Payout: +${data.payout}\n`;
 		text += `Mayor ${name} now has ${data.user.billy_bucks} BillyBucks!`;
 		const embed = Embed.success(text, "Tax Time!");
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

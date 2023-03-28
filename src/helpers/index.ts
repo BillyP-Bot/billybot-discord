@@ -8,7 +8,7 @@ import {
 	ConnectFourReacts,
 	ISOTimestamp
 } from "btbot-types";
-import { Video } from "youtube-sr";
+import { SearchResultVideo } from "distube";
 
 import { BetAggregate } from "../types";
 import { Roles } from "../types/enums";
@@ -42,9 +42,9 @@ export const valueLookup: Record<number, string> = {
 
 export async function updateEngagementMetrics(msg: Message) {
 	const server_id = msg.guild.id;
-	const mentions = msg.mentions.members.array();
+	const mentions = msg.mentions.members;
 	const operations =
-		mentions.length >= 1 &&
+		mentions.size >= 1 &&
 		mentions.reduce((acc, { user }) => {
 			if (user.bot) return acc;
 			if (user.id === msg.author.id) return acc;
@@ -67,8 +67,8 @@ export async function updateEngagementMetrics(msg: Message) {
 }
 
 export function getFirstMentionOrSelf(msg: Message, skip?: number) {
-	const mentions = msg.mentions.members.array();
-	if (mentions.length >= 1) return mentions[0].user.id;
+	const mentions = msg.mentions.members;
+	if (mentions.size >= 1) return mentions.first().user.id;
 	// no mentions
 	const _skip = skip ? skip : msg.content.split(" ")[0].length;
 	const params = msg.content.slice(_skip).trim().split(" ");
@@ -90,9 +90,10 @@ export function getServerDisplayName(msg: Message, id?: string) {
 	};
 }
 
-export function mapToDisplayName(msg: Message, users: IUser[]) {
+export async function mapToDisplayName(msg: Message, users: IUser[]) {
+	const guildMembers = await msg.guild.members.fetch();
 	const lookup = users.reduce((acc, user) => {
-		const { displayName, id } = msg.guild.members.cache.find((a) => a.user.id === user.user_id);
+		const { displayName, id } = guildMembers.find((a) => a.user.id === user.user_id);
 		acc[id] = displayName;
 		return acc;
 	}, {} as { [key: string]: string });
@@ -299,7 +300,7 @@ export function buildCurrentBetsMessage(msg: Message, results: BetAggregate) {
 }
 
 export class VideoQueue {
-	private items: Video[];
+	private items: SearchResultVideo[];
 
 	constructor() {
 		this.clear();
@@ -309,7 +310,7 @@ export class VideoQueue {
 		this.items = [];
 	}
 
-	public enqueue(video: Video) {
+	public enqueue(video: SearchResultVideo) {
 		this.items.push(video);
 	}
 
@@ -327,7 +328,7 @@ export class VideoQueue {
 
 	public list() {
 		return this.items.reduce((acc, video, i) => {
-			return acc + (i > 0 ? `${i}. \`${video.title}\`\n` : "");
+			return acc + (i > 0 ? `${i}. \`${video.name}\`\n` : "");
 		}, "");
 	}
 }

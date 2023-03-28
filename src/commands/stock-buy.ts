@@ -32,7 +32,7 @@ export const buyStockCommand: ICommand = {
 		output += `You now have ${res.bucks} BillyBuck${pluralIfNotOne(res.bucks)}.`;
 
 		const embed = Embed.success(output, "Stock Purchased 🚀");
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

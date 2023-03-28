@@ -19,7 +19,7 @@ export const allowanceCommand: ICommand = {
 			`Here's your allowance, ${name}! You now have ${user.billy_bucks} BillyBucks!`,
 			"+ 200"
 		);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

@@ -24,7 +24,7 @@ export const payBucksCommand: ICommand = {
 			`You paid ${name} ${amount} BillyBuck(s)! \n You now have ${sender.billy_bucks} BillyBucks!`,
 			`+${amount}`
 		);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

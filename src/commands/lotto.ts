@@ -18,10 +18,10 @@ export const lottoCommand: ICommand = {
 		}>(`lottery/server/${msg.guild.id}`);
 		if (data.entrants.length <= 0) {
 			const embed = Embed.success("No entrants yet!", "Weekly Lottery");
-			msg.channel.send(embed);
+			msg.channel.send({ embeds: [embed] });
 			return;
 		}
-		const lookup = mapToDisplayName(msg, data.entrants);
+		const lookup = await mapToDisplayName(msg, data.entrants);
 		let body = `A winner will be picked on Friday at noon! Buy a ticket today for ${data.ticket_cost} BillyBucks!\n\n`;
 		body += `Ticket Cost: ${data.ticket_cost}\n`;
 		body += `Base Lottery Jackpot: ${data.base_lottery_jackpot}\n`;
@@ -29,7 +29,7 @@ export const lottoCommand: ICommand = {
 		body += `Entrants: ${data.entrants_count}\n\n`;
 		data.entrants.map(({ user_id }) => (body += lookup[user_id] + "\n"));
 		const embed = Embed.success(body, "Weekly Lottery");
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

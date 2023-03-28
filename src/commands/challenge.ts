@@ -14,7 +14,7 @@ export const challengeCommand: ICommand = {
 		const details = msg.content.slice("!challenge".length).trim();
 		if (!details) {
 			const embed = await postCurrentChallenge(msg);
-			msg.channel.send(embed);
+			msg.channel.send({ embeds: [embed] });
 			return;
 		}
 		const author = getServerDisplayName(msg, msg.author.id);
@@ -34,7 +34,7 @@ export const challengeCommand: ICommand = {
 			"Challenger Approaches!"
 		);
 		msg.channel.send(reply);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

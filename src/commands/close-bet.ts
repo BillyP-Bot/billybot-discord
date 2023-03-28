@@ -23,7 +23,7 @@ export const closeBetCommand: ICommand = {
 		const embed = Embed.success(
 			`Closed betting on current challenge between ${usernames[0]} and ${usernames[1]}\n\n${betsMessage}`
 		);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

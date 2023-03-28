@@ -13,7 +13,7 @@ export const bucksCommand: ICommand = {
 		const data = await Api.get<IUser>(`users?user_id=${id}&server_id=${msg.guild.id}`);
 		const user = data;
 		const embed = Embed.success(`${name} has ${user.billy_bucks} BillyBucks!`);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

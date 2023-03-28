@@ -30,7 +30,7 @@ export const foolCommand: ICommand = {
 		mention.roles.add(foolRole);
 		currentFool.roles.remove(foolRole);
 		const embed = Embed.success(`<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };

@@ -18,7 +18,7 @@ export const birthdayCommand: ICommand = {
 		"Usage: `!birthday` or `!birthday [username/@user]` to view, or `!birthday [MM-DD]` to set.",
 	handler: async (msg: Message) => {
 		const args = msg.content.slice("!birthday".length).trim().split(" ");
-		let mentions = msg.mentions.members.array().length;
+		let mentions = msg.mentions.members.size;
 
 		let targetUserId;
 		try {
@@ -49,7 +49,7 @@ export const birthdayCommand: ICommand = {
 				"\n\nRun `!birthday [MM-DD]` to set your birthday.\n\n" +
 				"(**WARNING**: You can only set your birthday once!)";
 		const embed = Embed.success(output, name);
-		msg.channel.send(embed);
+		msg.channel.send({ embeds: [embed] });
 		return;
 	}
 };
@@ -80,7 +80,7 @@ const setOwnBirthday = async (
 		`You successfully set your birthday to ${formatDateMMDD(updated.birthday)}!`,
 		name
 	);
-	await msg.channel.send(embed);
+	await msg.channel.send({ embeds: [embed] });
 };
 
 const isValidDate = (month: string, day: string) => {
