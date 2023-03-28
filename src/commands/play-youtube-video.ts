@@ -16,13 +16,10 @@ export const playYoutubeCommand = {
 		try {
 			const searchTerm = msg.content.split("!p ")[1];
 			const video = (await distube.search(searchTerm, { limit: 1 }))[0];
-			if (!video) {
-				msg.channel.send("No results found!");
-				return;
-			}
+			if (!video) throw "No results found!";
 			queue.enqueue(video);
 			if (queue.length() === 1) {
-				playNextVideoInQueue(msg, distube);
+				await playNextVideoInQueue(msg, distube);
 			} else {
 				msg.channel.send(
 					`✅ Queued Video:\n\`${video.name}\`\n\n` + getNowPlayingAndNextUp()
@@ -30,8 +27,13 @@ export const playYoutubeCommand = {
 			}
 		} catch (error) {
 			console.log(error);
-			if (error.errorCode === "NO_RESULT") {
-				throw "No results found!";
+			switch (error.errorCode) {
+				case "NO_RESULT":
+					throw "No results found!";
+				case "INVALID_TYPE":
+					throw "User must be in a voice channel!";
+				default:
+					throw "Unexpected error occurred!";
 			}
 		}
 	}
@@ -62,11 +64,11 @@ export const clearVideoQueue = () => {
 	queue.clear();
 };
 
-const playNextVideoInQueue = (msg: Message, distube: DisTube) => {
+const playNextVideoInQueue = async (msg: Message, distube: DisTube) => {
 	const video = queue.front();
 	if (!video) return exitAfterTimeoutIfNothingInQueue(msg, distube);
+	await distube.play(msg.member.voice.channel, video);
 	msg.channel.send(getNowPlayingAndNextUp());
-	distube.play(msg.member.voice.channel, video);
 	distube.removeAllListeners();
 	distube.on(Events.FINISH_SONG, () => {
 		queue.dequeue();
