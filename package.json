@@ -2,14 +2,11 @@
   "name": "billypbot",
   "description": "billypbot",
   "version": "1.0.0",
-  "engines": {
-    "yarn": "*"
-  },
   "main": "build/Index.js",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "postinstall": "yarn build",
+    "postinstall": "npm run build",
     "lint": "eslint --fix --ext .ts,.tsx .",
     "format": "prettier --write .",
     "watch": "tsc --watch",
