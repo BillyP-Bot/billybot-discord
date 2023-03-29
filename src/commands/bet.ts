@@ -1,8 +1,9 @@
 import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
-import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
 import { IBet } from "btbot-types";
+
+import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
 
 export const betCommand: ICommand = {
 	prefix: /.*!bet .*/gim,

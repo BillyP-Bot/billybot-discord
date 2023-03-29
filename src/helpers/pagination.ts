@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
-	ColorResolvable,
-	EmbedBuilder,
-	ButtonInteraction,
-	ButtonBuilder,
-	ButtonStyle,
 	ActionRowBuilder,
-	Interaction,
-	Message,
-	TextChannel,
-	ComponentType,
+	ActionRowData,
+	APIActionRowComponent,
 	APIEmbedField,
+	APIMessageActionRowComponent,
+	ButtonBuilder,
+	ButtonInteraction,
+	ButtonStyle,
+	ColorResolvable,
+	ComponentType,
+	EmbedAuthorOptions,
+	EmbedBuilder,
+	EmbedFooterOptions,
+	Interaction,
+	InteractionCollector,
+	JSONEncodable,
+	Message,
 	MessageActionRowComponentBuilder,
 	MessageActionRowComponentData,
-	ActionRowData,
-	JSONEncodable,
-	APIActionRowComponent,
-	APIMessageActionRowComponent,
-	EmbedFooterOptions,
-	EmbedAuthorOptions,
-	InteractionCollector
+	TextChannel
 } from "discord.js";
 
 const paginationTypeList = ["description", "field", "both"] as const;
@@ -70,8 +70,8 @@ export class PaginatedEmbed {
 	private messageEmbed: EmbedBuilder;
 	private pages: EmbedItems[] = [];
 
-	private currentPage: number = 1;
-	private paginate: boolean = true;
+	private currentPage = 1;
+	private paginate = true;
 
 	private embedMsg: Message;
 

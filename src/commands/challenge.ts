@@ -1,8 +1,9 @@
 import type { Message } from "discord.js";
 
 import type { ICommand } from "../types";
-import { Api, readMayor, Embed, getServerDisplayName, postCurrentChallenge } from "../helpers";
 import { IChallenge } from "btbot-types";
+
+import { Api, Embed, getServerDisplayName, postCurrentChallenge, readMayor } from "../helpers";
 
 export const challengeCommand: ICommand = {
 	prefix: /.*!challenge .*/gim,

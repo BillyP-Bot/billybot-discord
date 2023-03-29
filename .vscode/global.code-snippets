@@ -1,14 +1,14 @@
 {
-	// Place your BT-Bots workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
-	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
-	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
-	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
-	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Place your BT-Bots workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
 	// Placeholders with the same ids are connected.
 	"Discord Message Handler": {
-	 	"scope": "javascript,typescript",
-	 	"prefix": "dmh",
-	 	"body": [
+		"scope": "javascript,typescript",
+		"prefix": "dmh",
+		"body": [
 			"/** ${TM_FILENAME_BASE}Handler",
 			" *",
 			" * @param {[any]} msg void [Discord Msg Context]",
@@ -25,11 +25,11 @@
 			"module.exports = {",
 			"\t${TM_FILENAME_BASE}Handler: ${TM_FILENAME_BASE}Handler",
 			"};",
-	 		"$2"
-	 	],
-	 	"description": "Create Skeleton Message Handler Based on File Name"
-	 },
-	 "New Mongoose Entity": {
+			"$2"
+		],
+		"description": "Create Skeleton Message Handler Based on File Name"
+	},
+	"New Mongoose Entity": {
 		"prefix": "nme",
 		"body": [
 			"import mongoose, { Document } from \"mongoose\";",

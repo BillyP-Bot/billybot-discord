@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import type { GuildTextBasedChannel, TextBasedChannel, Message, MessageReaction } from "discord.js";
 import { DisTube } from "distube";
+
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
 
 export type ApiError = {

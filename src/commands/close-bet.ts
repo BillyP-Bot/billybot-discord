@@ -1,8 +1,9 @@
 import type { Message } from "discord.js";
 
 import type { ICommand, BetAggregate } from "../types";
-import { Api, Embed, getServerDisplayName, buildCurrentBetsMessage } from "../helpers";
 import { IParticipant } from "btbot-types";
+
+import { Api, buildCurrentBetsMessage, Embed, getServerDisplayName } from "../helpers";
 
 export const closeBetCommand: ICommand = {
 	prefix: /.*!closebet .*/gim,
