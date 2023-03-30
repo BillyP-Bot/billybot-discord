@@ -60,6 +60,17 @@ export const queueCommand = {
 	}
 };
 
+export const clearQueueCommand = {
+	prefix: /.*!clearqueue.*/gim,
+	command: "!clearqueue",
+	description: "Clears all tracks from the YouTube queue.",
+	handler: async (msg: Message) => {
+		if (queue.length() === 0) throw "No tracks in the queue!";
+		clearVideoQueue();
+		await msg.channel.send("Queue cleared!");
+	}
+};
+
 export const clearVideoQueue = () => {
 	queue.clear();
 };
