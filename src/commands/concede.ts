@@ -5,10 +5,10 @@ import type { ICommand } from "../types";
 import {
 	Api,
 	assertMayor,
-	readFool,
+	buildCongratsMessage,
 	Embed,
 	getFirstMentionOrSelf,
-	buildCongratsMessage
+	readFool
 } from "../helpers";
 
 export const concedeCommand: ICommand = {

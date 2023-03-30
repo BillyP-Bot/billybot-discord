@@ -1,4 +1,4 @@
-import { Message, EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 
 import { Api, mapToDisplayName } from "../helpers";
 import { Colors } from "../types/enums";

@@ -1,8 +1,8 @@
-import { PaginatedEmbed } from "./pagination";
 import { EmbedBuilder, TextChannel } from "discord.js";
 
 import { Colors } from "../types/enums";
 import { ICommand } from "../types/index";
+import { PaginatedEmbed } from "./pagination";
 
 import type { IOpenAiImage } from "btbot-types";
 

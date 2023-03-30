@@ -19,6 +19,7 @@ import {
 	buyStockCommand,
 	buyTicketCommand,
 	challengeCommand,
+	clearQueueCommand,
 	closeBetCommand,
 	concedeCommand,
 	configureCommand,
@@ -133,6 +134,8 @@ async function messageHandler(msg: Message) {
 				return await skipCommand.handler(msg, distube);
 			case /.*!queue.*/gim.test(msg.content):
 				return await queueCommand.handler(msg);
+			case /.*!clearqueue.*/gim.test(msg.content):
+				return await clearQueueCommand.handler(msg);
 			case /.*!birthdays.*/gim.test(msg.content):
 				return await birthdaysCommand.handler(msg);
 			case /.*!birthday.*/gim.test(msg.content):

@@ -2,13 +2,13 @@
   "name": "billypbot",
   "description": "billypbot",
   "version": "1.0.0",
-  "main": "build/Index.js",
+  "main": "build/index.js",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
     "postinstall": "npm run build",
-    "lint": "eslint --fix --ext .ts,.tsx .",
-    "format": "prettier --write .",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx . && prettier --check .",
+    "format": "eslint --fix --ext .js,.jsx,.ts,.tsx . && prettier --write .",
     "watch": "tsc --watch",
     "start": "node .",
     "dev": "ts-node-dev --respawn --transpile-only ./src/index.ts"
