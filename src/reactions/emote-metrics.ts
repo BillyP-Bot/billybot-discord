@@ -17,7 +17,7 @@ export async function updateEmoteMetrics(react: MessageReaction, sender_id: stri
 				engagement: { reactions_received: 1 }
 			}
 		];
-		return Api.put("metrics/engagement", body);
+		return await Api.put("metrics/engagement", body);
 	} catch (error) {
 		console.log({ error });
 	}
