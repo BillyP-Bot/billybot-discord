@@ -1,5 +1,12 @@
 /* eslint-disable no-unused-vars */
-import type { GuildTextBasedChannel, TextBasedChannel, Message, MessageReaction } from "discord.js";
+import type {
+	ApplicationCommandOption,
+	ChatInputCommandInteraction,
+	GuildTextBasedChannel,
+	TextBasedChannel,
+	Message,
+	MessageReaction
+} from "discord.js";
 import { DisTube } from "distube";
 
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
@@ -39,6 +46,9 @@ export interface ICommand {
 	description: string;
 	handler: (msg: Message, distube?: DisTube) => Promise<any>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
+	name?: string;
+	options?: ApplicationCommandOption[];
+	slashHandler?: (interaction: ChatInputCommandInteraction) => Promise<any>;
 }
 
 export interface IChallengeResponse {

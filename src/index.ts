@@ -21,13 +21,13 @@ import {
 	challengeCommand,
 	clearQueueCommand,
 	closeBetCommand,
+	commands,
 	concedeCommand,
 	configureCommand,
 	connectFourCommand,
 	factCheckCommand,
 	featuresCommand,
 	foolCommand,
-	handlers,
 	imageCommand,
 	lottoCommand,
 	noblemenCommand,
@@ -48,6 +48,7 @@ import { clearVideoQueue } from "./commands/play-youtube-video";
 import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
 import { sendPaginatedCommandList } from "./helpers/embed";
+import { registerSlashCommands, slashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
 
@@ -64,15 +65,16 @@ const client = new Client({
 
 const distube = new DisTube(client, { leaveOnStop: false });
 
-client.once(Events.ClientReady, () => {
-	console.log(`Logged in as ${client.user.tag}!`);
+client.once(Events.ClientReady, async () => {
+	await registerSlashCommands(client.user.id);
 	config.IS_PROD && client.user.setAvatar(Images.billyMad);
 	config.IS_PROD && client.user.setActivity(Activities.farmville);
 	client.channels.fetch(Channels.bot);
+	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 async function help(msg: Message) {
-	await sendPaginatedCommandList(handlers, msg);
+	await sendPaginatedCommandList(commands, msg);
 }
 
 async function messageHandler(msg: Message) {
@@ -210,6 +212,20 @@ client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 	if (oldState.member.user.bot && oldState.channelId) {
 		distube.removeAllListeners();
 		clearVideoQueue();
+	}
+});
+
+client.on(Events.InteractionCreate, async (int) => {
+	try {
+		if (!int.isChatInputCommand()) return;
+		slashCommands.forEach(async (command) => {
+			if (command.name === int.commandName) {
+				await command.slashHandler(int);
+				return;
+			}
+		});
+	} catch (error) {
+		console.log({ error });
 	}
 });
 

@@ -40,7 +40,7 @@ import { sellStockCommand } from "./stock-sell";
 import { taxesCommand } from "./taxes";
 
 export { announcementsCommand } from "./admin-announcement";
-export const handlers: ICommand[] = [
+export const commands: ICommand[] = [
 	bingCommand,
 	betCommand,
 	bucksCommand,
