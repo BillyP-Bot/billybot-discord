@@ -46,9 +46,14 @@ export interface ICommand {
 	description: string;
 	handler: (msg: Message, distube?: DisTube) => Promise<any>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
-	name?: string;
+	slash?: ISlashCommand;
+}
+
+export interface ISlashCommand {
+	name: string;
+	description: string;
 	options?: ApplicationCommandOption[];
-	slashHandler?: (interaction: ChatInputCommandInteraction) => Promise<any>;
+	handler: (interaction: ChatInputCommandInteraction) => Promise<void>;
 }
 
 export interface IChallengeResponse {

@@ -3,9 +3,9 @@ import { REST, Routes } from "discord.js";
 import { commands } from "../commands";
 import { config } from "../helpers/config";
 
-export const slashCommands = commands.filter(
-	(command) => "name" in command && "slashHandler" in command
-);
+export const slashCommands = commands
+	.filter((command) => command.slash)
+	.map((command) => command.slash);
 
 const rest = new REST({ version: "10" }).setToken(config.BOT_TOKEN);
 

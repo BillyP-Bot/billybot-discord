@@ -218,12 +218,12 @@ client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 client.on(Events.InteractionCreate, async (int) => {
 	try {
 		if (!int.isChatInputCommand()) return;
-		slashCommands.forEach(async (command) => {
+		for (const command of slashCommands) {
 			if (command.name === int.commandName) {
-				await command.slashHandler(int);
-				return;
+				await command.handler(int);
+				break;
 			}
-		});
+		}
 	} catch (error) {
 		console.log({ error });
 	}
