@@ -1,4 +1,4 @@
-import type { Message, MessageReaction } from "discord.js";
+import type { ChatInputCommandInteraction, Guild, Message, MessageReaction } from "discord.js";
 
 import type { ICard, IConnectFour, IUser } from "btbot-types";
 import {
@@ -74,11 +74,7 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	const params = msg.content.slice(_skip).trim().split(" ");
 	// no valid plain text mentions
 	if (params[0] === "") return msg.author.id;
-	const found = msg.guild.members.cache.find(
-		(a) => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim()
-	);
-	if (!found) throw `could not find ${params[0]} in this server`;
-	return found.user.id;
+	return getUserIdFromUsername(params[0], msg.guild);
 }
 
 export function getServerDisplayName(msg: Message, id?: string) {
@@ -339,3 +335,31 @@ export const formatDateMMDD = (birthday: ISOTimestamp) => {
 
 export { Api } from "./api";
 export { Embed } from "./embed";
+
+//
+export const isAtMention = (toCheck: string) => {
+	const lengthCheck = toCheck.length === 21;
+	const frontCheck = toCheck.slice(0, 2) === "<@";
+	const backCheck = toCheck[20] === ">";
+	return lengthCheck && frontCheck && backCheck;
+};
+
+export const getUserIdFromAtMention = (atMention: string) => {
+	if (!isAtMention(atMention)) throw "provided string is not an @mention!";
+	return atMention.replace("<@", "").replace(">", "");
+};
+
+export const getUserIdFromUsername = (username: string, guild: Guild) => {
+	const found = guild.members.cache.find(
+		(a) => a.user.username.toUpperCase().trim() === username.toUpperCase().trim()
+	);
+	if (!found) throw `could not find ${username} in this server`;
+	return found.id;
+};
+
+export const getInteractionOptionValue = <T>(
+	optionName: string,
+	int: ChatInputCommandInteraction
+) => {
+	return int.options.get(optionName)?.value as T;
+};
