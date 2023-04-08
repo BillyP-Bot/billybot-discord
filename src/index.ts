@@ -2,53 +2,12 @@ import type { GuildMember, Message, MessageReaction, User, VoiceState } from "di
 import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
 import { DisTube } from "distube";
 
-import {
-	albumCommand,
-	allowanceCommand,
-	amaCommand,
-	announcementsCommand,
-	betCommand,
-	bingCommand,
-	birthdayCommand,
-	birthdaysCommand,
-	blackjackCommand,
-	blackjackDoubleDownCommand,
-	blackjackHitCommand,
-	blackjackStandCommand,
-	bucksCommand,
-	buyStockCommand,
-	buyTicketCommand,
-	challengeCommand,
-	clearQueueCommand,
-	closeBetCommand,
-	commands,
-	concedeCommand,
-	configureCommand,
-	connectFourCommand,
-	factCheckCommand,
-	featuresCommand,
-	foolCommand,
-	imageCommand,
-	lottoCommand,
-	noblemenCommand,
-	payBucksCommand,
-	playYoutubeCommand,
-	portfolioCommand,
-	queueCommand,
-	sellStockCommand,
-	serfsCommand,
-	sheeshCommand,
-	skipCommand,
-	spinCommand,
-	stockCommand,
-	taxesCommand
-} from "./commands";
+import { announcementsCommand, commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
 import { clearVideoQueue } from "./commands/play-youtube-video";
 import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
 import { config } from "./helpers/config";
-import { sendPaginatedCommandList } from "./helpers/embed";
-import { registerSlashCommands, slashCommands } from "./helpers/slash";
+import { registerSlashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
 
@@ -73,11 +32,7 @@ client.once(Events.ClientReady, async () => {
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
-async function help(msg: Message) {
-	await sendPaginatedCommandList(commands, msg);
-}
-
-async function messageHandler(msg: Message) {
+client.on(Events.MessageCreate, async (msg: Message) => {
 	try {
 		if (msg.channel.type === ChannelType.DM) return;
 		if (msg.channel.id === Channels.botTesting && config.IS_PROD) return;
@@ -86,98 +41,26 @@ async function messageHandler(msg: Message) {
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
 				return await announcementsCommand.handler(msg);
-			case /.*!help.*/gim.test(msg.content):
-				return await help(msg);
-			case /.*!bing.*/gim.test(msg.content):
-				return await bingCommand.handler(msg);
-			case /.*!bet.*/gim.test(msg.content):
-				return await betCommand.handler(msg);
-			case /.*!bucks.*/gim.test(msg.content):
-				return await bucksCommand.handler(msg);
-			case /.*!lotto.*/gim.test(msg.content):
-				return await lottoCommand.handler(msg);
-			case /.*!ticket.*/gim.test(msg.content):
-				return await buyTicketCommand.handler(msg);
-			case /.*!pay .* [0-9]{1,}/gim.test(msg.content):
-				return await payBucksCommand.handler(msg);
-			case /.*!allowance.*/gim.test(msg.content):
-				return await allowanceCommand.handler(msg);
-			case /.*!noblemen.*/gim.test(msg.content):
-				return await noblemenCommand.handler(msg);
-			case /.*!serfs.*/gim.test(msg.content):
-				return await serfsCommand.handler(msg);
-			case /.*!spin.*/gim.test(msg.content):
-				return await spinCommand.handler(msg);
-			case /.*!blackjack [0-9].*/gim.test(msg.content):
-				return await blackjackCommand.handler(msg);
-			case /.*!hit.*/gim.test(msg.content):
-				return await blackjackHitCommand.handler(msg);
-			case /.*!stand.*/gim.test(msg.content):
-				return await blackjackStandCommand.handler(msg);
-			case /.*!doubledown.*/gim.test(msg.content):
-				return await blackjackDoubleDownCommand.handler(msg);
-			case /.*!taxes.*/gim.test(msg.content):
-				return await taxesCommand.handler(msg);
-			case /.*!configure.*/gim.test(msg.content):
-				return await configureCommand.handler(msg);
-			case /.*!concede .*/gim.test(msg.content):
-				return await concedeCommand.handler(msg);
-			case /.*!challenge.*/gim.test(msg.content):
-				return await challengeCommand.handler(msg);
-			case /.*!closebet.*/gim.test(msg.content):
-				return await closeBetCommand.handler(msg);
-			case /.*!feature .*/gim.test(msg.content):
-				return await featuresCommand.handler(msg);
-			case /.*!fool .*/gim.test(msg.content):
-				return await foolCommand.handler(msg);
-			case /.*!p .*/gim.test(msg.content):
-				return await playYoutubeCommand.handler(msg);
-			case /.*!skip.*/gim.test(msg.content):
-				return await skipCommand.handler(msg);
-			case /.*!queue.*/gim.test(msg.content):
-				return await queueCommand.handler(msg);
-			case /.*!clearqueue.*/gim.test(msg.content):
-				return await clearQueueCommand.handler(msg);
-			case /.*!birthdays.*/gim.test(msg.content):
-				return await birthdaysCommand.handler(msg);
-			case /.*!birthday.*/gim.test(msg.content):
-				return await birthdayCommand.handler(msg);
-			case /.*!s+h+ee+s+h+.*/gim.test(msg.content):
-				return await sheeshCommand.handler(msg);
-			case /.*!stock.*/gim.test(msg.content):
-				return await stockCommand.handler(msg);
-			case /.*!buystock.*/gim.test(msg.content):
-				return await buyStockCommand.handler(msg);
-			case /.*!sellstock.*/gim.test(msg.content):
-				return await sellStockCommand.handler(msg);
-			case /.*!portfolio.*/gim.test(msg.content):
-				return await portfolioCommand.handler(msg);
-			case /.*!connectfour.*/gim.test(msg.content):
-				return await connectFourCommand.handler(msg);
-			case /.*!image.*/gim.test(msg.content):
-				return await imageCommand.handler(msg);
-			case /.*!album.*/gim.test(msg.content):
-				return await albumCommand.handler(msg);
-			case /.*!ama.*/gim.test(msg.content):
-				return await amaCommand.handler(msg);
-			case /.*!factcheck.*/gim.test(msg.content):
-				return await factCheckCommand.handler(msg);
 			default:
-				return updateEngagementMetrics(msg);
+				return await updateEngagementMetrics(msg);
 		}
 	} catch (error) {
 		console.log({ error });
 		msg.channel.send({ embeds: [Embed.error(error)] });
 	}
-}
+});
 
-client.on(Events.MessageCreate, messageHandler);
-
-async function reactHandler(react: MessageReaction, user: User) {
+client.on(Events.MessageReactionAdd, async (react: MessageReaction, user: User) => {
 	try {
 		if (react.message.author.id === user.id) return;
 		if (react.message.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (react.message.channel.id !== Channels.botTesting && !config.IS_PROD) return;
+		if (isBlackjackReact(react)) {
+			return await blackjackReact(react, user.id);
+		}
+		if (isConnectFourReact(react)) {
+			return await connectFourReact(react, user.id);
+		}
 		await updateEmoteMetrics(react, user.id);
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
 			return await react.message.channel.send(`<@${user.id}> 🖕`);
@@ -185,27 +68,15 @@ async function reactHandler(react: MessageReaction, user: User) {
 		if (react.emoji.name === Emotes.billy_buck && !react.message.author.bot) {
 			return await buckReact(react, user.id);
 		}
-		if (isBlackjackReact(react)) {
-			return await blackjackReact(react, user.id);
-		}
-		if (isConnectFourReact(react)) {
-			return await connectFourReact(react, user.id);
-		}
 	} catch (error) {
 		console.log({ error });
 		await react.message.channel.send({ embeds: [Embed.error(error)] });
 	}
-}
+});
 
-client.on(Events.MessageReactionAdd, reactHandler);
-
-async function guildMemberAddHandler(member: GuildMember) {
+client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
 	await configureGuildUsers(member);
-}
-
-client.on(Events.GuildMemberAdd, guildMemberAddHandler);
-
-client.on("unhandledRejection", console.error);
+});
 
 client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 	// when bot leaves voice channel
@@ -220,16 +91,14 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (!int.isChatInputCommand()) return;
 		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
-		for (const command of slashCommands) {
-			if (command.name === int.commandName) {
-				await command.handler(int);
-				break;
-			}
-		}
+		const commandRun = commandsLookup[int.commandName];
+		if (commandRun) await commandRun.handler(int);
 	} catch (error) {
 		console.log({ error });
 		if (int.isRepliable()) int.reply({ embeds: [Embed.error(error)] });
 	}
 });
+
+client.on("unhandledRejection", console.error);
 
 client.login(config.BOT_TOKEN).catch(console.error);

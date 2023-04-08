@@ -1,24 +1,16 @@
-import type { ChatInputCommandInteraction, GuildMember, Message } from "discord.js";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { Api, assertDeveloper } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const configureCommand: ICommand = {
-	prefix: /.*!configure.*/gim,
-	command: "!configure",
+export const configureCommand: ISlashCommand = {
+	name: CommandNames.configure,
 	description: "Command for admins to prep the server",
-	handler: async (msg: Message) => {
-		const users = await configureGuildUsers(msg.member);
-		await msg.channel.send(`${users.length} user(s) configured`);
-	},
-	slash: {
-		name: "configure",
-		description: "Command for admins to prep the server",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const users = await configureGuildUsers(int.member as GuildMember);
-			await int.reply(`${users.length} user(s) configured`);
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const users = await configureGuildUsers(int.member as GuildMember);
+		await int.reply(`${users.length} user(s) configured`);
 	}
 };
 

@@ -1,8 +1,9 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import type { IStock } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { Api, Embed, getTrendEmoji, pluralIfNotOne, plusSignIfNotNegative } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 interface IPortfolio {
 	stocks: IPortfolioStock[];
@@ -15,21 +16,12 @@ interface IPortfolioStock extends IStock {
 	amount_worth: number;
 }
 
-export const portfolioCommand: ICommand = {
-	prefix: /.*!portfolio.*/gim,
-	command: "!portfolio",
+export const portfolioCommand: ISlashCommand = {
+	name: CommandNames.portfolio,
 	description: "View info on your active investments",
-	handler: async (msg: Message) => {
-		const embed = await portfolio(msg.guild.id, msg.author.id);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "portfolio",
-		description: "View info on your active investments",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await portfolio(int.guild.id, int.user.id);
-			await int.reply({ embeds: [embed] });
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await portfolio(int.guild.id, int.user.id);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

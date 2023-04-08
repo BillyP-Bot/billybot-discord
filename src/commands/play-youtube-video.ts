@@ -1,46 +1,34 @@
-import type {
-	ChatInputCommandInteraction,
-	Message,
-	TextChannel,
-	VoiceBasedChannel
-} from "discord.js";
+import type { ChatInputCommandInteraction, TextChannel, VoiceBasedChannel } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 import { Events } from "distube";
 
 import { distube } from "../";
 import { getInteractionOptionValue, VideoQueue } from "../helpers";
-import { ICommand } from "../types";
+import { CommandNames } from "../types/enums";
+
+import type { ISlashCommand } from "../types";
 
 const INACTIVITY_SEC = 60;
 
 const queue = new VideoQueue();
 
-export const playYoutubeCommand: ICommand = {
-	prefix: /.*!p .*/gim,
-	command: "!p",
-	description: "Play a YouTube video in the current voice channel. Usage: `!p [url/text]`",
-	handler: async (msg: Message) => {
-		const searchText = msg.content.split("!p ")[1];
-		await play(searchText, msg.channel as TextChannel, msg.member.voice.channel);
-	},
-	slash: {
-		name: "p",
-		description: "Play a YouTube video in the current voice channel",
-		options: [
-			{
-				name: "search_text",
-				description: "Text to search YouTube for (plays first result)",
-				type: ApplicationCommandOptionType.String,
-				required: true
-			}
-		],
-		handler: async (int: ChatInputCommandInteraction) => {
-			const searchText = getInteractionOptionValue<string>("search_text", int);
-			const member = int.guild.members.cache.get(int.member.user.id);
-			const voiceChannel = member.voice.channel;
-			await int.reply(`Searching YouTube for \`${searchText}\`...`);
-			await play(searchText, int.channel as TextChannel, voiceChannel);
+export const playYoutubeCommand: ISlashCommand = {
+	name: CommandNames.p,
+	description: "Play a YouTube video in the current voice channel",
+	options: [
+		{
+			name: "search_text",
+			description: "Text to search YouTube for (plays first result)",
+			type: ApplicationCommandOptionType.String,
+			required: true
 		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const searchText = getInteractionOptionValue<string>("search_text", int);
+		const member = int.guild.members.cache.get(int.member.user.id);
+		const voiceChannel = member.voice.channel;
+		await int.reply(`Searching YouTube for \`${searchText}\`...`);
+		await play(searchText, int.channel as TextChannel, voiceChannel);
 	}
 };
 
@@ -73,61 +61,32 @@ const play = async (
 	}
 };
 
-export const skipCommand: ICommand = {
-	prefix: /.*!skip.*/gim,
-	command: "!skip",
+export const skipCommand: ISlashCommand = {
+	name: CommandNames.skip,
 	description: "Skip the track that is currently playing",
-	handler: async (msg: Message) => {
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (!queue.front()) throw "No track is currently playing!";
-		msg.channel.send("⏭️ Skipping track...");
-		distube.seek(msg.guildId, queue.front().duration);
-	},
-	slash: {
-		name: "skip",
-		description: "Skip the track that is currently playing",
-		handler: async (int: ChatInputCommandInteraction) => {
-			if (!queue.front()) throw "No track is currently playing!";
-			int.reply("⏭️ Skipping track...");
-			distube.seek(int.guild.id, queue.front().duration);
-		}
+		int.reply("⏭️ Skipping track...");
+		distube.seek(int.guild.id, queue.front().duration);
 	}
 };
 
-export const queueCommand: ICommand = {
-	prefix: /.*!queue.*/gim,
-	command: "!queue",
+export const queueCommand: ISlashCommand = {
+	name: CommandNames.queue,
 	description: "List the track currently playing along with the upcoming tracks in the queue",
-	handler: async (msg: Message) => {
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (queue.length() === 0) throw "No tracks in the queue!";
-		await msg.channel.send(getNowPlayingAndNextUp());
-	},
-	slash: {
-		name: "queue",
-		description: "List the track currently playing along with the upcoming tracks in the queue",
-		handler: async (int: ChatInputCommandInteraction) => {
-			if (queue.length() === 0) throw "No tracks in the queue!";
-			await int.reply(getNowPlayingAndNextUp());
-		}
+		await int.reply(getNowPlayingAndNextUp());
 	}
 };
 
-export const clearQueueCommand: ICommand = {
-	prefix: /.*!clearqueue.*/gim,
-	command: "!clearqueue",
+export const clearQueueCommand: ISlashCommand = {
+	name: CommandNames.clearqueue,
 	description: "Clears all tracks from the YouTube queue",
-	handler: async (msg: Message) => {
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (queue.length() === 0) throw "No tracks in the queue!";
 		clearVideoQueue();
-		await msg.channel.send("Queue cleared!");
-	},
-	slash: {
-		name: "clearqueue",
-		description: "Clears all tracks from the YouTube queue",
-		handler: async (int: ChatInputCommandInteraction) => {
-			if (queue.length() === 0) throw "No tracks in the queue!";
-			clearVideoQueue();
-			await int.reply("Queue cleared!");
-		}
+		await int.reply("Queue cleared!");
 	}
 };
 

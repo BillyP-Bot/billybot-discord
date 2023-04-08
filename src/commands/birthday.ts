@@ -1,50 +1,32 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import { ApplicationCommandOptionType } from "discord.js";
 
 import { Api, Embed, formatDateMMDD, getInteractionOptionValue } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
-export const birthdayCommand: ICommand = {
-	prefix: /.*!birthday.*/gim,
-	command: "!birthday",
-	description: "Set your own birthday if it has not already been set. Usage: `!birthday [MM-DD]`",
-	handler: async (msg: Message) => {
-		const birthdayDate = msg.content.slice("!birthday".length).trim().split(" ")[0];
-		const user = await Api.get<IUser>(
-			`users?user_id=${msg.author.id}&server_id=${msg.guild.id}`
-		);
+import type { ISlashCommand } from "../types";
+export const birthdayCommand: ISlashCommand = {
+	name: CommandNames.birthday,
+	description: "Set your own birthday if it has not already been set",
+	options: [
+		{
+			name: "date",
+			description: "Your birthday in MM-DD format",
+			type: ApplicationCommandOptionType.String,
+			required: true
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const birthdayDate = getInteractionOptionValue<string>("date", int);
+		const user = await Api.get<IUser>(`users?user_id=${int.user.id}&server_id=${int.guild.id}`);
 		if (user.birthday)
 			throw `Your birthday is already set to ${formatDateMMDD(
 				user.birthday
 			)}. Cannot set again!`;
 		const embed = await setOwnBirthday(user, birthdayDate);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "birthday",
-		description: "Set your own birthday if it has not already been set",
-		options: [
-			{
-				name: "date",
-				description: "Your birthday in [MM-DD] format",
-				type: ApplicationCommandOptionType.String,
-				required: true
-			}
-		],
-		handler: async (int: ChatInputCommandInteraction) => {
-			const birthdayDate = getInteractionOptionValue<string>("date", int);
-			const user = await Api.get<IUser>(
-				`users?user_id=${int.user.id}&server_id=${int.guild.id}`
-			);
-			if (user.birthday)
-				throw `Your birthday is already set to ${formatDateMMDD(
-					user.birthday
-				)}. Cannot set again!`;
-			const embed = await setOwnBirthday(user, birthdayDate);
-			await int.reply({ embeds: [embed] });
-		}
+		await int.reply({ embeds: [embed] });
 	}
 };
 
@@ -53,7 +35,7 @@ const setOwnBirthday = async (user: IUser, birthdayToValidate: string) => {
 	const birthdaySplit = birthday.split("-");
 	const [month, day] = birthdaySplit;
 	if (birthdaySplit.length !== 2 || month.length !== 2 || day.length !== 2)
-		throw "Invalid format! Must use `MM-DD` date format.\n\nExample: `!birthday 03-31` for March 31st.";
+		throw "Invalid format! Must use `MM-DD` date format.";
 	if (!isValidDate(month, day))
 		throw `Invalid date! \`${birthday}\` is in the required \`MM-DD\` format, but is not a valid calendar date!`;
 

@@ -1,4 +1,4 @@
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { albumCommand } from "./album";
 import { allowanceCommand } from "./allowance";
 import { amaCommand } from "./ama";
@@ -40,7 +40,7 @@ import { sellStockCommand } from "./stock-sell";
 import { taxesCommand } from "./taxes";
 
 export { announcementsCommand } from "./admin-announcement";
-export const commands: ICommand[] = [
+export const commands: ISlashCommand[] = [
 	bingCommand,
 	betCommand,
 	bucksCommand,
@@ -79,6 +79,11 @@ export const commands: ICommand[] = [
 	amaCommand,
 	factCheckCommand
 ];
+
+export const commandsLookup = commands.reduce((acc, command) => {
+	acc[command.name] = command;
+	return acc;
+}, {} as Record<string, ISlashCommand>);
 
 export { bingCommand };
 export { betCommand };

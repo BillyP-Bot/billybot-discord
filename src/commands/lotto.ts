@@ -1,24 +1,16 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { Api, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const lottoCommand: ICommand = {
-	prefix: /.*!lotto.*/gim,
-	command: "!lotto",
+export const lottoCommand: ISlashCommand = {
+	name: CommandNames.lotto,
 	description: "View the current jackpot and list of entrants in this week's lottery",
-	handler: async (msg: Message) => {
-		const embed = await lotto(msg.guild.id);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "lotto",
-		description: "View the current jackpot and list of entrants in this week's lottery",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await lotto(int.guild.id);
-			await int.reply({ embeds: [embed] });
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await lotto(int.guild.id);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

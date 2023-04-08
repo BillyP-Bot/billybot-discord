@@ -1,25 +1,17 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
-import type { ICommand, BetAggregate } from "../types";
+import type { ISlashCommand, BetAggregate } from "../types";
 import { IParticipant } from "btbot-types";
 
 import { Api, buildCurrentBetsMessage, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const closeBetCommand: ICommand = {
-	prefix: /.*!closebet .*/gim,
-	command: "!closebet",
-	description: "Close betting on the current mayoral challenge. Usage: `!closebet`",
-	handler: async (msg: Message) => {
-		const embed = await closeBet(msg.guild.id, msg.author.id);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "closebet",
-		description: "Close betting on the current mayoral challenge",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await closeBet(int.guild.id, int.user.id);
-			await int.reply({ embeds: [embed] });
-		}
+export const closeBetCommand: ISlashCommand = {
+	name: CommandNames.closebet,
+	description: "Close betting on the current mayoral challenge",
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await closeBet(int.guild.id, int.user.id);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

@@ -367,3 +367,9 @@ export const getInteractionOptionValue = <T>(
 ) => {
 	return int.options.get(optionName)?.value as T;
 };
+
+export const getCommandMention = async (name: string, guild: Guild) => {
+	const commands = await guild.commands.fetch();
+	const match = commands.find((cmd) => cmd.name === name);
+	return `</${name}:${match.id}>`;
+};

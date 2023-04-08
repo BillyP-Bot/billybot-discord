@@ -1,25 +1,16 @@
-import type { ChatInputCommandInteraction, GuildMember, Message } from "discord.js";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { Api, assertMayor, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const taxesCommand: ICommand = {
-	prefix: /.*!taxes.*/gim,
-	command: "!taxes",
-	description:
-		"The current mayor collects taxes from all middle and upper-class citizens. Resets every Friday.",
-	handler: async (msg: Message) => {
-		const embed = await taxes(msg.member);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "taxes",
-		description: "The current mayor collects taxes from all middle and upper-class citizens",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await taxes(int.member as GuildMember);
-			await int.reply({ embeds: [embed] });
-		}
+export const taxesCommand: ISlashCommand = {
+	name: CommandNames.taxes,
+	description: "The current mayor collects taxes from all middle and upper-class citizens",
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await taxes(int.member as GuildMember);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

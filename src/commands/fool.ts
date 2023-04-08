@@ -1,44 +1,35 @@
-import type { ChatInputCommandInteraction, GuildMember, Message } from "discord.js";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
 import {
 	Api,
 	assertMayor,
 	Embed,
-	getFirstMentionOrSelf,
 	getInteractionOptionValue,
 	getUserIdFromMentionOrUsername,
 	readFool
 } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-import type { ICommand } from "../types";
-export const foolCommand: ICommand = {
-	prefix: /.*!fool .*/gim,
-	command: "!fool",
-	description:
-		"Run by the current mayor to make another user the fool. Usage: `!fool [username/@user]`",
-	handler: async (msg: Message) => {
-		const embed = await fool(msg.member, () => getFirstMentionOrSelf(msg));
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "fool",
-		description: "Run by the current mayor to make another user the fool",
-		options: [
-			{
-				name: "user",
-				description: "The @mention or username of the user to make the new fool",
-				type: ApplicationCommandOptionType.String,
-				required: true
-			}
-		],
-		handler: async (int: ChatInputCommandInteraction) => {
-			const user = getInteractionOptionValue<string>("user", int);
-			const embed = await fool(int.member as GuildMember, () =>
-				user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id
-			);
-			await int.reply({ embeds: [embed] });
+import type { ISlashCommand } from "../types";
+
+export const foolCommand: ISlashCommand = {
+	name: CommandNames.fool,
+	description: "Run by the current mayor to make another user the fool",
+	options: [
+		{
+			name: "user",
+			description: "The @mention or username of the user to make the new fool",
+			type: ApplicationCommandOptionType.String,
+			required: true
 		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const user = getInteractionOptionValue<string>("user", int);
+		const embed = await fool(int.member as GuildMember, () =>
+			user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id
+		);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

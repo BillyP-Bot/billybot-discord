@@ -1,25 +1,17 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import { Api, Embed, formatDateMMDD } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 
-export const birthdaysCommand: ICommand = {
-	prefix: /.*!birthdays.*/gim,
-	command: "!birthdays",
+export const birthdaysCommand: ISlashCommand = {
+	name: CommandNames.birthdays,
 	description: "Show all birthdays that have been set",
-	handler: async (msg: Message) => {
-		const embed = await getBirthdays(msg.guild.id);
-		msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "birthdays",
-		description: "Show all birthdays that have been set",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await getBirthdays(int.guild.id);
-			int.reply({ embeds: [embed] });
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await getBirthdays(int.guild.id);
+		int.reply({ embeds: [embed] });
 	}
 };
 

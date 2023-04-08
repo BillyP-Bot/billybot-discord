@@ -1,29 +1,19 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 import type { IFunFact } from "btbot-types";
 
 import { Api } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 
-export const factCheckCommand: ICommand = {
-	prefix: /.*!factcheck.*/gim,
-	command: "!factcheck",
+export const factCheckCommand: ISlashCommand = {
+	name: CommandNames.factcheck,
 	description: "Check if the latest Fun Factoid of the Day is true or not",
-	handler: async (msg: Message) => {
+	handler: async (int: ChatInputCommandInteraction) => {
 		const { prompt, fact } = await buildPrompt();
-		await msg.channel.send(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
-		const output = await factCheck(msg.author.id, msg.guild.id, prompt);
-		await msg.channel.send(output);
-	},
-	slash: {
-		name: "factcheck",
-		description: "Check if the latest Fun Factoid of the Day is true or not",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const { prompt, fact } = await buildPrompt();
-			await int.reply(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
-			const output = await factCheck(int.user.id, int.guild.id, prompt);
-			await int.channel.send(output);
-		}
+		await int.reply(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
+		const output = await factCheck(int.user.id, int.guild.id, prompt);
+		await int.channel.send(output);
 	}
 };
 

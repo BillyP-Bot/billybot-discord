@@ -1,24 +1,16 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
 import { Api, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const buyTicketCommand: ICommand = {
-	prefix: /.*!ticket.*/gim,
-	command: "!ticket",
+export const buyTicketCommand: ISlashCommand = {
+	name: CommandNames.ticket,
 	description: "Buy a ticket for a chance to win this week's lottery",
-	handler: async (msg: Message) => {
-		const embed = await ticket(msg.author.id, msg.guild.id);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "ticket",
-		description: "Buy a ticket for a chance to win this week's lottery",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await ticket(int.user.id, int.guild.id);
-			await int.reply({ embeds: [embed] });
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await ticket(int.user.id, int.guild.id);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction, Guild, GuildMember, Message } from "discord.js";
+import type { ChatInputCommandInteraction, Guild, GuildMember } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
 import {
@@ -6,42 +6,32 @@ import {
 	assertMayor,
 	buildCongratsMessage,
 	Embed,
-	getFirstMentionOrSelf,
 	getInteractionOptionValue,
 	getUserIdFromMentionOrUsername,
 	readFool
 } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
 
-import type { ICommand } from "../types";
-export const concedeCommand: ICommand = {
-	prefix: /.*!concede .*/gim,
-	command: "!concede",
-	description:
-		"The current mayor makes another user the mayor. Usage: `!concede [username/@user]`",
-	handler: async (msg: Message) => {
-		const targetUserId = getFirstMentionOrSelf(msg);
-		const embed = await concede(targetUserId, msg.member, msg.guild);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "concede",
-		description: "The current mayor makes another user the mayor",
-		options: [
-			{
-				name: "user",
-				description: "The @mention or username of the user to make mayor",
-				type: ApplicationCommandOptionType.String,
-				required: true
-			}
-		],
-		handler: async (int: ChatInputCommandInteraction) => {
-			const user = getInteractionOptionValue<string>("user", int);
-			const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
-			const embed = await concede(targetUserId, int.member as GuildMember, int.guild);
-			await int.reply({ embeds: [embed] });
+import type { ISlashCommand } from "../types";
+
+export const concedeCommand: ISlashCommand = {
+	name: CommandNames.concede,
+	description: "The current mayor makes another user the mayor",
+	options: [
+		{
+			name: "user",
+			description: "The @mention or username of the user to make mayor",
+			type: ApplicationCommandOptionType.String,
+			required: true
 		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const user = getInteractionOptionValue<string>("user", int);
+		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
+		const embed = await concede(targetUserId, int.member as GuildMember, int.guild);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

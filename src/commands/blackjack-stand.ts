@@ -1,27 +1,19 @@
-import type { ChatInputCommandInteraction, Message, MessageReaction } from "discord.js";
+import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
-import type { BlackJackGameResponse, ICommand } from "../types";
+import type { BlackJackGameResponse, ISlashCommand } from "../types";
 import { Api, buildBlackjackResponse } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const blackjackStandCommand: ICommand = {
-	prefix: /.*!stand.*/gim,
-	command: "!stand",
+export const blackjackStandCommand: ISlashCommand = {
+	name: CommandNames.stand,
 	description: "Stand in your current blackjack hand",
-	handler: async (msg: Message) => {
-		const response = await stand(msg.guild.id, msg.author.id);
-		msg.channel.send(response);
+	handler: async (int: ChatInputCommandInteraction) => {
+		const response = await stand(int.guild.id, int.user.id);
+		await int.reply(response);
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
 		const response = await stand(react.message.guild.id, sender_id);
 		react.message.channel.send(response);
-	},
-	slash: {
-		name: "stand",
-		description: "Stand in your current blackjack hand",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const response = await stand(int.guild.id, int.user.id);
-			await int.reply(response);
-		}
 	}
 };
 

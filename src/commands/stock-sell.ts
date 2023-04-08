@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
 import {
@@ -9,41 +9,31 @@ import {
 	pluralIfNotOne,
 	plusSignIfNotNegative
 } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 import type { IStock } from "btbot-types";
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
+
 interface IStockSell extends IStock {
 	delta: number;
 	bucks: number;
 }
 
-export const sellStockCommand: ICommand = {
-	prefix: /.*!sellstock.*/gim,
-	command: "!sellstock",
-	description:
-		"Sell all stock you own in the given ticker symbol. Usage: `!sellstock [tickerSymbol]`",
-	handler: async (msg: Message) => {
-		const args = msg.content.slice("!sellstock".length).trim().split(" ");
-		const symbol = args[0].toUpperCase();
-		const embed = await sellStock(msg.guild.id, msg.author.id, symbol);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "sellstock",
-		description: "Sell all stock you own in the given ticker symbol",
-		options: [
-			{
-				name: "symbol",
-				description: "The ticker symbol of the stock to sell",
-				type: ApplicationCommandOptionType.String,
-				required: true
-			}
-		],
-		handler: async (int: ChatInputCommandInteraction) => {
-			const symbol = getInteractionOptionValue<string>("symbol", int);
-			const embed = await sellStock(int.guild.id, int.user.id, symbol);
-			await int.reply({ embeds: [embed] });
+export const sellStockCommand: ISlashCommand = {
+	name: CommandNames.sellstock,
+	description: "Sell all stock you own in the given ticker symbol",
+	options: [
+		{
+			name: "symbol",
+			description: "The ticker symbol of the stock to sell",
+			type: ApplicationCommandOptionType.String,
+			required: true
 		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const symbol = getInteractionOptionValue<string>("symbol", int);
+		const embed = await sellStock(int.guild.id, int.user.id, symbol);
+		await int.reply({ embeds: [embed] });
 	}
 };
 

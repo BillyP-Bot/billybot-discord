@@ -53,7 +53,8 @@ export interface ISlashCommand {
 	name: string;
 	description: string;
 	options?: ApplicationCommandOption[];
-	handler: (interaction: ChatInputCommandInteraction) => Promise<void>;
+	handler: (int: ChatInputCommandInteraction) => Promise<void>;
+	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
 
 export interface IChallengeResponse {

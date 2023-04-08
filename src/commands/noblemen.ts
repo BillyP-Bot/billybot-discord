@@ -1,24 +1,17 @@
-import { ChatInputCommandInteraction, Message } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 
 import { Api, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
-export const noblemenCommand: ICommand = {
-	prefix: /.*!noblemen.*/gim,
-	command: "!noblemen",
+import type { ISlashCommand } from "../types";
+
+export const noblemenCommand: ISlashCommand = {
+	name: CommandNames.noblemen,
 	description: "Get the 3 richest users in the server",
-	handler: async (msg: Message) => {
-		const embed = await noblemen(msg.guild.id);
-		await msg.channel.send({ embeds: [embed] });
-	},
-	slash: {
-		name: "noblemen",
-		description: "Get the 3 richest users in the server",
-		handler: async (int: ChatInputCommandInteraction) => {
-			const embed = await noblemen(int.guild.id);
-			await int.reply({ embeds: [embed] });
-		}
+	handler: async (int: ChatInputCommandInteraction) => {
+		const embed = await noblemen(int.guild.id);
+		await int.reply({ embeds: [embed] });
 	}
 };
 
