@@ -1,24 +1,44 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction, Message } from "discord.js";
 import type { IFunFact } from "btbot-types";
 
 import { Api } from "../helpers";
 
 import type { ICommand } from "../types";
+
 export const factCheckCommand: ICommand = {
 	prefix: /.*!factcheck.*/gim,
 	command: "!factcheck",
-	description: "Check if the latest Fun Factoid of the Day is true or not.",
+	description: "Check if the latest Fun Factoid of the Day is true or not",
 	handler: async (msg: Message) => {
-		const { fact } = await Api.get<IFunFact>("facts/latest");
-		if (!fact) throw "Error retrieving latest fun factoid!";
-		const prompt = `Is the following fact true? ${fact}`;
+		const { prompt, fact } = await buildPrompt();
 		await msg.channel.send(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
-		const res = await Api.post<{ output: string }>("completions", {
-			prompt,
-			user_id: msg.author.id,
-			server_id: msg.guild.id
-		});
-		msg.channel.send(res.output);
-		return;
+		const output = await factCheck(msg.author.id, msg.guild.id, prompt);
+		await msg.channel.send(output);
+	},
+	slash: {
+		name: "factcheck",
+		description: "Check if the latest Fun Factoid of the Day is true or not",
+		handler: async (int: ChatInputCommandInteraction) => {
+			const { prompt, fact } = await buildPrompt();
+			await int.reply(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
+			const output = await factCheck(int.user.id, int.guild.id, prompt);
+			await int.channel.send(output);
+		}
 	}
+};
+
+const buildPrompt = async () => {
+	const { fact } = await Api.get<IFunFact>("facts/latest");
+	if (!fact) throw "Error retrieving latest fun factoid!";
+	const prompt = `Is the following fact true? ${fact}`;
+	return { prompt, fact };
+};
+
+const factCheck = async (user_id: string, server_id: string, prompt: string) => {
+	const { output } = await Api.post<{ output: string }>("completions", {
+		prompt,
+		user_id,
+		server_id
+	});
+	return output;
 };

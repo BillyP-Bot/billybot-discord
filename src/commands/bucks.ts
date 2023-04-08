@@ -1,13 +1,12 @@
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, Message } from "discord.js";
+import type { ChatInputCommandInteraction, Message } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 
 import {
 	Api,
 	Embed,
 	getInteractionOptionValue,
 	getServerDisplayName,
-	getUserIdFromAtMention,
-	getUserIdFromUsername,
-	isAtMention
+	getUserIdFromMentionOrUsername
 } from "../helpers";
 
 import type { IUser } from "btbot-types";
@@ -15,17 +14,18 @@ import type { ICommand } from "../types";
 export const bucksCommand: ICommand = {
 	prefix: /.*!bucks.*/gim,
 	command: "!bucks",
-	description: "Get your current balance of BillyBucks, (Optional `!bucks [username/@user]`) ",
+	description: "Get your current balance of BillyBucks (optional `!bucks [username/@user]`) ",
 	handler: async (msg: Message) => {
 		const { id } = getServerDisplayName(msg);
-		const { billy_bucks } = await getUser(id, msg.guild.id);
+		const { billy_bucks } = await Api.get<IUser>(
+			`users?user_id=${id}&server_id=${msg.guild.id}`
+		);
 		const embed = Embed.success(`<@${id}> has ${billy_bucks} BillyBucks!`);
-		msg.channel.send({ embeds: [embed] });
-		return;
+		await msg.channel.send({ embeds: [embed] });
 	},
 	slash: {
 		name: "bucks",
-		description: "Get your or another user's current balance of BillyBucks",
+		description: "View your or another user's current balance of BillyBucks",
 		options: [
 			{
 				name: "user",
@@ -34,21 +34,13 @@ export const bucksCommand: ICommand = {
 			}
 		],
 		handler: async (int: ChatInputCommandInteraction) => {
-			let userId = int.user.id;
-			const userOptionValue = getInteractionOptionValue<string>("user", int);
-			if (userOptionValue) {
-				if (isAtMention(userOptionValue)) {
-					userId = getUserIdFromAtMention(userOptionValue);
-				} else {
-					userId = getUserIdFromUsername(userOptionValue, int.guild);
-				}
-			}
-			const { billy_bucks } = await getUser(userId, int.guild.id);
+			const user = getInteractionOptionValue<string>("user", int);
+			const userId = user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id;
+			const { billy_bucks } = await Api.get<IUser>(
+				`users?user_id=${userId}&server_id=${int.guild.id}`
+			);
 			const embed = Embed.success(`<@${userId}> has ${billy_bucks} BillyBucks!`);
-			int.reply({ embeds: [embed] });
+			await int.reply({ embeds: [embed] });
 		}
 	}
 };
-
-const getUser = async (user_id: string, server_id: string) =>
-	Api.get<IUser>(`users?user_id=${user_id}&server_id=${server_id}`);

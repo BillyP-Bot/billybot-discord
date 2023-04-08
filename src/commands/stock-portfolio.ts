@@ -1,4 +1,4 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction, Message } from "discord.js";
 
 import type { IStock } from "btbot-types";
 import type { ICommand } from "../types";
@@ -18,48 +18,49 @@ interface IPortfolioStock extends IStock {
 export const portfolioCommand: ICommand = {
 	prefix: /.*!portfolio.*/gim,
 	command: "!portfolio",
-	description: "View info on your active investments.",
+	description: "View info on your active investments",
 	handler: async (msg: Message) => {
-		const res = await Api.post<IPortfolio>("stocks/portfolio", {
-			server_id: msg.guild.id,
-			user_id: msg.author.id
-		});
-		const { stocks, bucks } = res;
-
-		let output = "";
-		let net = 0;
-		stocks.map((stock) => {
-			const amountDiff = stock.amount_worth - stock.amount;
-			net += amountDiff;
-			const priceDiff = stock.price_current - stock.price_bought;
-
-			output += `**${stock.symbol}** ${getTrendEmoji(amountDiff)}\n`;
-
-			output += `Net Gain/Loss: \`${plusSignIfNotNegative(
-				amountDiff
-			)}${amountDiff} BillyBuck${pluralIfNotOne(
-				Math.abs(amountDiff)
-			)} (${plusSignIfNotNegative(priceDiff)}${(
-				(priceDiff * 100) /
-				stock.price_bought
-			).toFixed(2)}%)\`\n`;
-
-			output += `Amount Invested: \`${stock.amount} BillyBuck${pluralIfNotOne(
-				stock.amount
-			)}\`\n`;
-
-			output += `Current Value: \`${stock.amount_worth} BillyBuck${pluralIfNotOne(
-				stock.amount_worth
-			)}\`\n`;
-
-			output += `Avg Price Bought At: \`${stock.price_bought} ${stock.currency}\`\n`;
-
-			output += `Current Price: \`${stock.price_current} ${stock.currency}\`\n\n`;
-		});
-		output += `Uninvested Cash: \`${bucks} BillyBuck${pluralIfNotOne(bucks)}\``;
-
-		const embed = Embed.success(output, `Stock Portfolio ${getTrendEmoji(net)}`);
-		msg.channel.send({ embeds: [embed] });
-		return;
+		const embed = await portfolio(msg.guild.id, msg.author.id);
+		await msg.channel.send({ embeds: [embed] });
+	},
+	slash: {
+		name: "portfolio",
+		description: "View info on your active investments",
+		handler: async (int: ChatInputCommandInteraction) => {
+			const embed = await portfolio(int.guild.id, int.user.id);
+			await int.reply({ embeds: [embed] });
+		}
 	}
+};
+
+const portfolio = async (server_id: string, user_id: string) => {
+	const res = await Api.post<IPortfolio>("stocks/portfolio", {
+		server_id,
+		user_id
+	});
+	const { stocks, bucks } = res;
+	let output = "";
+	let net = 0;
+	stocks.forEach(({ amount_worth, amount, price_current, price_bought, symbol, currency }) => {
+		const amountDiff = amount_worth - amount;
+		net += amountDiff;
+		const priceDiff = price_current - price_bought;
+		output += `**${symbol}** ${getTrendEmoji(amountDiff)}\n`;
+		output += `Net Gain/Loss: \`${plusSignIfNotNegative(
+			amountDiff
+		)}${amountDiff} BillyBuck${pluralIfNotOne(Math.abs(amountDiff))} (${plusSignIfNotNegative(
+			priceDiff
+		)}${((priceDiff * 100) / price_bought).toFixed(2)}%)\`\n`;
+		output += `Amount Invested: \`${amount} BillyBuck${pluralIfNotOne(amount)}\`\n`;
+		output += `Current Value: \`${amount_worth} BillyBuck${pluralIfNotOne(amount_worth)}\`\n`;
+		output += `Avg Price Bought At: \`${price_bought} ${currency}\`\n`;
+		output += `Current Price: \`${price_current} ${currency}\`\n\n`;
+	});
+	output += `Uninvested Cash: \`${bucks} BillyBuck${pluralIfNotOne(bucks)}\``;
+	return Embed.success(
+		output,
+		`Stock Portfolio ${getTrendEmoji(net)} \`${plusSignIfNotNegative(
+			net
+		)}${net} BillyBuck${pluralIfNotOne(net)}\``
+	);
 };

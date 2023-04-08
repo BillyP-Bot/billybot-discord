@@ -63,7 +63,7 @@ const client = new Client({
 	]
 });
 
-const distube = new DisTube(client, { leaveOnStop: false });
+export const distube = new DisTube(client, { leaveOnStop: false });
 
 client.once(Events.ClientReady, async () => {
 	await registerSlashCommands(client.user.id);
@@ -131,9 +131,9 @@ async function messageHandler(msg: Message) {
 			case /.*!fool .*/gim.test(msg.content):
 				return await foolCommand.handler(msg);
 			case /.*!p .*/gim.test(msg.content):
-				return await playYoutubeCommand.handler(msg, distube);
+				return await playYoutubeCommand.handler(msg);
 			case /.*!skip.*/gim.test(msg.content):
-				return await skipCommand.handler(msg, distube);
+				return await skipCommand.handler(msg);
 			case /.*!queue.*/gim.test(msg.content):
 				return await queueCommand.handler(msg);
 			case /.*!clearqueue.*/gim.test(msg.content):
@@ -200,7 +200,7 @@ async function reactHandler(react: MessageReaction, user: User) {
 client.on(Events.MessageReactionAdd, reactHandler);
 
 async function guildMemberAddHandler(member: GuildMember) {
-	await configureGuildUsers(member.guild);
+	await configureGuildUsers(member);
 }
 
 client.on(Events.GuildMemberAdd, guildMemberAddHandler);
@@ -218,6 +218,8 @@ client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 client.on(Events.InteractionCreate, async (int) => {
 	try {
 		if (!int.isChatInputCommand()) return;
+		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
+		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		for (const command of slashCommands) {
 			if (command.name === int.commandName) {
 				await command.handler(int);
@@ -226,6 +228,7 @@ client.on(Events.InteractionCreate, async (int) => {
 		}
 	} catch (error) {
 		console.log({ error });
+		if (int.isRepliable()) int.reply({ embeds: [Embed.error(error)] });
 	}
 });
 

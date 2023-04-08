@@ -8,7 +8,7 @@ export const announcementsCommand: ICommand = {
 	command: null,
 	description: null,
 	handler: async (msg: Message) => {
-		await assertDeveloper(msg);
+		await assertDeveloper(msg.member);
 		await msg.guild.fetch();
 		const general = msg.guild.channels.cache.find(
 			(channel: TextChannel) => channel.name === "general"
