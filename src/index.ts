@@ -25,10 +25,12 @@ const client = new Client({
 export const distube = new DisTube(client, { leaveOnStop: false });
 
 client.once(Events.ClientReady, async () => {
-	await registerSlashCommands(client.user.id);
-	config.IS_PROD && client.user.setAvatar(Images.billyMad);
-	config.IS_PROD && client.user.setActivity(Activities.farmville);
-	client.channels.fetch(Channels.bot);
+	await registerSlashCommands(client);
+	if (config.IS_PROD) {
+		await client.user.setAvatar(Images.billyMad);
+		client.user.setActivity(Activities.farmville);
+		await client.channels.fetch(Channels.bot);
+	}
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -91,8 +93,8 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (!int.isChatInputCommand()) return;
 		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
-		const commandRun = commandsLookup[int.commandName];
-		if (commandRun) await commandRun.handler(int);
+		const command = commandsLookup[int.commandName];
+		if (command) await command.handler(int);
 	} catch (error) {
 		console.log({ error });
 		if (int.isRepliable()) int.reply({ embeds: [Embed.error(error)] });

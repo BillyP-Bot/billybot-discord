@@ -2,7 +2,7 @@ import type { ChatInputCommandInteraction } from "discord.js";
 
 import type { IUser } from "btbot-types";
 import type { ISlashCommand } from "../types";
-import { Api, Embed } from "../helpers";
+import { Api, Embed, getCommandMention } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 export const lottoCommand: ISlashCommand = {
@@ -24,7 +24,8 @@ const lotto = async (server_id: string) => {
 	if (entrants.length <= 0) {
 		return Embed.success("No entrants yet!", "Weekly Lottery");
 	}
-	let body = `A winner will be picked on Friday at noon! Buy a ticket today for ${ticket_cost} BillyBucks!\n\n`;
+	const ticketCommandMention = getCommandMention(CommandNames.ticket);
+	let body = `A winner will be picked on Friday at noon! Run ${ticketCommandMention} to buy a ticket today for ${ticket_cost} BillyBucks!\n\n`;
 	body += `Ticket Cost: ${ticket_cost}\n`;
 	body += `Base Lottery Jackpot: ${base_lottery_jackpot}\n`;
 	body += `Current Jackpot: ${jackpot}\n`;

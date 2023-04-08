@@ -39,15 +39,13 @@ export const challengeCommand: ISlashCommand = {
 const challenge = async (details: string, user_id: string, guild: Guild) => {
 	const { currentMayor } = await readMayor(guild);
 	if (currentMayor.user.id === user_id) throw "mayor cannot challenge themselves";
-	const [betCommandMention] = await Promise.all([
-		getCommandMention("bet", guild),
-		Api.post<IChallenge>("challenges", {
-			server_id: guild.id,
-			user_id,
-			details
-		})
-	]);
+	await Api.post<IChallenge>("challenges", {
+		server_id: guild.id,
+		user_id,
+		details
+	});
 	const reply = `<@${currentMayor.id}>, <@${user_id}> has challenged you!`;
+	const betCommandMention = getCommandMention("bet");
 	const embed = Embed.success(
 		`<@${user_id}> has challenged mayor <@${currentMayor.id}>!\n\n` +
 			`Use ${betCommandMention} to bet on a winner.\n\n` +

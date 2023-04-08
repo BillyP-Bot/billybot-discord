@@ -53,7 +53,7 @@ export const connectFourCommand: ISlashCommand = {
 		});
 		const response = data.is_accepted
 			? buildConnectFourMoveResponse(data)
-			: buildConnectFourChallengeResponse(data, int.user.username);
+			: buildConnectFourChallengeResponse(data);
 
 		await sendConnectFourResponseInteraction(int, response, data);
 	}

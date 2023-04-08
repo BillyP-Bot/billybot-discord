@@ -17,12 +17,12 @@ import {
 import { SearchResultVideo } from "distube";
 
 import { BetAggregate } from "../types";
-import { Roles } from "../types/enums";
+import { CommandNames, Roles } from "../types/enums";
 import { Api } from "./api";
 import { Embed } from "./embed";
+import { slashCommandNameToIdLookup } from "./slash";
 
 import type { BlackJackGameResponse, IChallengeResponse } from "../types";
-
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",
@@ -134,17 +134,31 @@ export function buildReadableHand(hand: ICard[]) {
 }
 
 export function buildBlackjackResponse(data: BlackJackGameResponse, userId: string) {
-	const { player_hand, dealer_hand } = data;
-	let response = `<@${userId}>: ${data.player_count}\n`;
+	const {
+		player_hand,
+		dealer_hand,
+		player_count,
+		is_complete,
+		dealer_count,
+		wager,
+		status,
+		billy_bucks
+	} = data;
+	let response = `<@${userId}>: ${player_count}\n`;
 	const readablePlayer = buildReadableHand(player_hand);
 	const readableDealer = buildReadableHand(dealer_hand);
+	const defaultStatus = `${BlackjackReacts.hit} ${getCommandMention(CommandNames.hit)}\n${
+		BlackjackReacts.stand
+	} ${getCommandMention(CommandNames.stand)}\n${BlackjackReacts.doubleDown} ${getCommandMention(
+		CommandNames.doubledown
+	)}`;
 	response += `${readablePlayer.join("  ")}\n\n`;
-	response += `Dealer: ${data.is_complete ? data.dealer_count : ""}\n`;
-	response += `${readableDealer.join("  ")} ${data.is_complete ? "" : "🎴"}\n\n`;
-	response += `Bet: ${data.wager}\n\n`;
-	response += `${data.status}`;
-	if (data.is_complete) {
-		response += `\n\nYou now have ${data.billy_bucks} BillyBucks!`;
+	response += `Dealer: ${is_complete ? dealer_count : ""}\n`;
+	response += `${readableDealer.join("  ")} ${is_complete ? "" : "🎴"}\n\n`;
+	response += `Bet: ${wager}\n\n`;
+	response += `${status || defaultStatus}`;
+	if (is_complete) {
+		response += `\n\nYou now have ${billy_bucks} BillyBucks!`;
 	}
 	return response;
 }
@@ -155,11 +169,13 @@ export function isBlackjackReact(react: MessageReaction) {
 	).includes(react.emoji.toString());
 }
 
-export function buildConnectFourChallengeResponse(data: IConnectFour, username: string) {
+export function buildConnectFourChallengeResponse(data: IConnectFour) {
 	const { red_user_id, yellow_user_id, wager } = data;
 	return `<@${red_user_id}> has challenged <@${yellow_user_id}> to a game of Connect Four${
 		wager > 0 ? ` for ${wager} BillyBuck${pluralIfNotOne(wager)}` : ""
-	}!\n\n<@${yellow_user_id}>: Run...\`\`\`!connectfour @${username}\`\`\`...to accept the challenge!`;
+	}!\n\n<@${yellow_user_id}>: Run ${getCommandMention(
+		CommandNames.connectfour
+	)} to accept the challenge!`;
 }
 
 export function buildConnectFourMoveResponse(data: IConnectFour) {
@@ -368,8 +384,8 @@ export const getInteractionOptionValue = <T>(
 	return int.options.get(optionName)?.value as T;
 };
 
-export const getCommandMention = async (name: string, guild: Guild) => {
-	const commands = await guild.commands.fetch();
-	const match = commands.find((cmd) => cmd.name === name);
-	return `</${name}:${match.id}>`;
+export const getCommandMention = (name: string) => {
+	const id = slashCommandNameToIdLookup[name];
+	if (!id) throw `Slash command '${name}' not found!`;
+	return `</${name}:${id}>`;
 };
