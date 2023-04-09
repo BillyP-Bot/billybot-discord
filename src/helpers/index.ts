@@ -147,9 +147,9 @@ export function buildBlackjackResponse(data: BlackJackGameResponse, userId: stri
 	let response = `<@${userId}>: ${player_count}\n`;
 	const readablePlayer = buildReadableHand(player_hand);
 	const readableDealer = buildReadableHand(dealer_hand);
-	const defaultStatus = `${BlackjackReacts.hit} ${getCommandMention(CommandNames.hit)}\n${
+	const defaultStatus = `${BlackjackReacts.hit} ${mentionCommand(CommandNames.hit)}\n${
 		BlackjackReacts.stand
-	} ${getCommandMention(CommandNames.stand)}\n${BlackjackReacts.doubleDown} ${getCommandMention(
+	} ${mentionCommand(CommandNames.stand)}\n${BlackjackReacts.doubleDown} ${mentionCommand(
 		CommandNames.doubledown
 	)}`;
 	response += `${readablePlayer.join("  ")}\n\n`;
@@ -173,7 +173,7 @@ export function buildConnectFourChallengeResponse(data: IConnectFour) {
 	const { red_user_id, yellow_user_id, wager } = data;
 	return `<@${red_user_id}> has challenged <@${yellow_user_id}> to a game of Connect Four${
 		wager > 0 ? ` for ${wager} BillyBuck${pluralIfNotOne(wager)}` : ""
-	}!\n\n<@${yellow_user_id}>: Run ${getCommandMention(
+	}!\n\n<@${yellow_user_id}>: Run ${mentionCommand(
 		CommandNames.connectfour
 	)} to accept the challenge!`;
 }
@@ -384,7 +384,7 @@ export const getInteractionOptionValue = <T>(
 	return int.options.get(optionName)?.value as T;
 };
 
-export const getCommandMention = (name: string) => {
+export const mentionCommand = (name: string) => {
 	const id = slashCommandNameToIdLookup[name];
 	if (!id) return `\`/${name}\``;
 	return `</${name}:${id}>`;

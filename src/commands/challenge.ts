@@ -5,8 +5,8 @@ import { ApplicationCommandOptionType } from "discord.js";
 import {
 	Api,
 	Embed,
-	getCommandMention,
 	getInteractionOptionValue,
+	mentionCommand,
 	postCurrentChallenge,
 	readMayor
 } from "../helpers";
@@ -46,7 +46,7 @@ const challenge = async (details: string, user_id: string, guild: Guild) => {
 		details
 	});
 	const reply = `<@${currentMayor.id}>, <@${user_id}> has challenged you!`;
-	const betCommandMention = getCommandMention("bet");
+	const betCommandMention = mentionCommand(CommandNames.bet);
 	const embed = Embed.success(
 		`<@${user_id}> has challenged mayor <@${currentMayor.id}>!\n\n` +
 			`Use ${betCommandMention} to bet on a winner.\n\n` +

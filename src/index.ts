@@ -29,8 +29,8 @@ client.once(Events.ClientReady, async () => {
 	if (config.IS_PROD) {
 		await client.user.setAvatar(Images.billyMad);
 		client.user.setActivity(Activities.farmville);
-		await client.channels.fetch(Channels.bot);
 	}
+	await client.channels.fetch(Channels.bot);
 	console.log(`Logged in as ${client.user.tag}!`);
 });
 
@@ -97,7 +97,10 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (command) await command.handler(int);
 	} catch (error) {
 		console.log({ error });
-		if (int.isRepliable()) int.editReply({ embeds: [Embed.error(error)] });
+		if (int.isRepliable()) {
+			if (int.replied) await int.editReply({ embeds: [Embed.error(error)] });
+			else await int.reply({ embeds: [Embed.error(error)] });
+		}
 	}
 });
 
