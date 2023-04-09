@@ -97,7 +97,7 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (command) await command.handler(int);
 	} catch (error) {
 		console.log({ error });
-		if (int.isRepliable()) int.reply({ embeds: [Embed.error(error)] });
+		if (int.isRepliable()) int.editReply({ embeds: [Embed.error(error)] });
 	}
 });
 

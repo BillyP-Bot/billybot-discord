@@ -9,13 +9,14 @@ export const blackjackHitCommand: ISlashCommand = {
 	name: CommandNames.hit,
 	description: "Hit in your current blackjack hand",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/hit", {
 			server_id: int.guild.id,
 			user_id: int.user.id,
 			double_down: false
 		});
 		const response = buildBlackjackResponse(data, int.user.id);
-		const replyInt = await int.reply(response);
+		const replyInt = await int.editReply(response);
 		if (!data.is_complete) {
 			const replyMsg = await replyInt.fetch();
 			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨")]);

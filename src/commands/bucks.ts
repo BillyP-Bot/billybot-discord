@@ -19,12 +19,13 @@ export const bucksCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
 		const userId = user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id;
 		const { billy_bucks } = await Api.get<IUser>(
 			`users?user_id=${userId}&server_id=${int.guild.id}`
 		);
 		const embed = Embed.success(`<@${userId}> has ${billy_bucks} BillyBucks!`);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };

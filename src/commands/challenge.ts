@@ -24,14 +24,15 @@ export const challengeCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const details = getInteractionOptionValue<string>("details", int);
 		if (!details) {
 			const embed = await postCurrentChallenge(int.guild.id);
-			await int.reply({ embeds: [embed] });
+			await int.editReply({ embeds: [embed] });
 			return;
 		}
 		const { reply, embed } = await challenge(details, int.user.id, int.guild);
-		await int.reply(reply);
+		await int.editReply(reply);
 		await int.channel.send({ embeds: [embed] });
 	}
 };

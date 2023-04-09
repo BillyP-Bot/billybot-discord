@@ -8,8 +8,9 @@ export const blackjackDoubleDownCommand: ISlashCommand = {
 	name: CommandNames.doubledown,
 	description: "Double down in your current blackjack hand",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const response = await doubleDown(int.guild.id, int.user.id);
-		await int.reply(response);
+		await int.editReply(response);
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
 		const response = await doubleDown(react.message.guild.id, sender_id);

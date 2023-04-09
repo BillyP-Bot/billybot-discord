@@ -18,9 +18,10 @@ export const stockCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const symbol = getInteractionOptionValue<string>("symbol", int);
 		const embed = await stock(symbol);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

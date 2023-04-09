@@ -19,14 +19,17 @@ export const birthdayCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const birthdayDate = getInteractionOptionValue<string>("date", int);
 		const user = await Api.get<IUser>(`users?user_id=${int.user.id}&server_id=${int.guild.id}`);
-		if (user.birthday)
+		if (user.birthday) {
 			throw `Your birthday is already set to ${formatDateMMDD(
 				user.birthday
 			)}. Cannot set again!`;
+		}
+
 		const embed = await setOwnBirthday(user, birthdayDate);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

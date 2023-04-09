@@ -8,8 +8,9 @@ export const blackjackStandCommand: ISlashCommand = {
 	name: CommandNames.stand,
 	description: "Stand in your current blackjack hand",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const response = await stand(int.guild, int.user.id);
-		await int.reply(response);
+		await int.editReply(response);
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
 		const response = await stand(react.message.guild, sender_id);

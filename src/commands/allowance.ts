@@ -9,8 +9,9 @@ export const allowanceCommand: ISlashCommand = {
 	name: CommandNames.allowance,
 	description: "Collect your weekly BillyBuck allowance (only available once a week)",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await allowance(int.user.id, int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

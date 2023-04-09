@@ -14,7 +14,8 @@ export const registerSlashCommands = async (client: Client) => {
 		});
 		const _guild = (await client.guilds.fetch()).find((a) => a.id === config.SERVER_ID);
 		const guild = await _guild.fetch();
-		buildSlashCommandNameToIdLookup(await guild.commands.fetch());
+		const guildCommands = await guild.commands.fetch();
+		buildSlashCommandNameToIdLookup(guildCommands);
 	} catch (error) {
 		console.log(`Error registering slash commands: ${error}`);
 	}

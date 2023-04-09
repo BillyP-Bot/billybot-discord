@@ -386,6 +386,6 @@ export const getInteractionOptionValue = <T>(
 
 export const getCommandMention = (name: string) => {
 	const id = slashCommandNameToIdLookup[name];
-	if (!id) throw `Slash command '${name}' not found!`;
+	if (!id) return `\`/${name}\``;
 	return `</${name}:${id}>`;
 };

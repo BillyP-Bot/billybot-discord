@@ -41,10 +41,11 @@ export const spinCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const bet = getInteractionOptionValue<number>("bet", int);
 		const color = getInteractionOptionValue<string>("color", int);
 		const embed = await spin(bet, color, int.user.id, int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

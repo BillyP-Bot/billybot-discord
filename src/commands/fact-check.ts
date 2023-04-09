@@ -10,10 +10,13 @@ export const factCheckCommand: ISlashCommand = {
 	name: CommandNames.factcheck,
 	description: "Check if the latest Fun Factoid of the Day is true or not",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const { prompt, fact } = await buildPrompt();
-		await int.reply(`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`);
+		const waitMsg = await int.channel.send(
+			`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`
+		);
 		const output = await factCheck(int.user.id, int.guild.id, prompt);
-		await int.channel.send(output);
+		await Promise.all([int.editReply(`> *${fact}*\n${output}`), waitMsg.delete()]);
 	}
 };
 

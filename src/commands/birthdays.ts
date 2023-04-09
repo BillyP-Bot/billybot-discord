@@ -10,8 +10,9 @@ export const birthdaysCommand: ISlashCommand = {
 	name: CommandNames.birthdays,
 	description: "Show all birthdays that have been set",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await getBirthdays(int.guild.id);
-		int.reply({ embeds: [embed] });
+		int.editReply({ embeds: [embed] });
 	}
 };
 

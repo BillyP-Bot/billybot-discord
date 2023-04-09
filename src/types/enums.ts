@@ -26,7 +26,8 @@ export enum Activities {
 export enum Channels {
 	adminAnnouncements = "811639445514092564",
 	bot = "738194989917536317",
-	botTesting = "975795297257136189"
+	botTesting = "975795297257136189",
+	general = "689463685571149933"
 }
 
 export enum CommandNames {

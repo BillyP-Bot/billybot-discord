@@ -19,14 +19,17 @@ export const albumCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
 		const userId = user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id;
 		const isSelf = int.user.id === userId;
 		const res = await album(userId, int.guild.id);
 		if (!res || res.length === 0) {
-			int.reply(`${isSelf ? "You have" : `<@${userId}> has`} not generated any images yet!`);
+			int.editReply(
+				`${isSelf ? "You have" : `<@${userId}> has`} not generated any images yet!`
+			);
 		}
-		await int.reply(`${isSelf ? "Your" : `<@${userId}>'s`} Images:`);
+		await int.editReply(`${isSelf ? "Your" : `<@${userId}>'s`} Images:`);
 		await sendPaginatedImageList(res, int.user.id, int.channel as TextChannel);
 	}
 };

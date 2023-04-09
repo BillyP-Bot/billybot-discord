@@ -27,10 +27,11 @@ export const featuresCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const title = getInteractionOptionValue<string>("title", int);
 		const details = getInteractionOptionValue<string>("details", int);
 		const embed = await feature(int.guild.id, int.user.id, title, details);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

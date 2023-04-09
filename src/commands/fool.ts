@@ -25,11 +25,12 @@ export const foolCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
 		const embed = await fool(int.member as GuildMember, () =>
 			user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id
 		);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

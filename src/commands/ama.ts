@@ -18,12 +18,13 @@ export const amaCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const prompt = getInteractionOptionValue<string>("prompt", int);
 		const res = await Api.post<{ output: string }>("completions", {
 			prompt,
 			user_id: int.user.id,
 			server_id: int.guild.id
 		});
-		await int.reply(res.output);
+		await int.editReply(res.output);
 	}
 };

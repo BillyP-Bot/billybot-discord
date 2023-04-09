@@ -31,10 +31,11 @@ export const buyStockCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const symbol = getInteractionOptionValue<string>("symbol", int);
 		const amount = getInteractionOptionValue<number>("amount", int);
 		const embed = await buyStock(int.guild.id, int.user.id, symbol, amount);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

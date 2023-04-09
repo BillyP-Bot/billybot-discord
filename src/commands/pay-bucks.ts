@@ -26,11 +26,12 @@ export const payBucksCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
 		const recipient_id = getUserIdFromMentionOrUsername(user, int.guild);
 		const amount = getInteractionOptionValue<number>("amount", int);
 		const embed = await payBucks(int.guild.id, int.user.id, recipient_id, amount);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

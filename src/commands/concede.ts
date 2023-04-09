@@ -28,10 +28,11 @@ export const concedeCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
 		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
 		const embed = await concede(targetUserId, int.member as GuildMember, int.guild);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

@@ -10,8 +10,9 @@ export const closeBetCommand: ISlashCommand = {
 	name: CommandNames.closebet,
 	description: "Close betting on the current mayoral challenge",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await closeBet(int.guild.id, int.user.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

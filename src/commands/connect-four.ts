@@ -21,7 +21,8 @@ export const connectFourCommand: ISlashCommand = {
 		{
 			name: "user",
 			description: "The @mention or username of the user to challenge",
-			type: ApplicationCommandOptionType.String
+			type: ApplicationCommandOptionType.String,
+			required: true
 		},
 		{
 			name: "bet",
@@ -31,20 +32,11 @@ export const connectFourCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
-		if (!user) {
-			const game = await Api.get<IConnectFour>(
-				`gamble/connectfour/server/${int.guild.id}?user_id=${int.user.id}`
-			);
-			if (!game || Object.entries(game).length === 0)
-				throw "You do not have an active game of Connect Four!\n\nChallenge another player:\n`!connectfour [username/@user] [bet]`";
-			await sendConnectFourResponseInteraction(int, buildConnectFourMoveResponse(game), game);
-			return;
-		}
 		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
 		const bet = getInteractionOptionValue<number>("bet", int);
-		if (bet && bet < 0)
-			throw "Optional `bet` argument must be a non-negative number if specified!\n\nUsage: `!connectfour [username/@user] [bet]`";
+		if (bet && bet < 0) throw "The `bet` option must be a positive integer if specified!";
 		const data = await Api.post<IConnectFour>("gamble/connectfour/challenge", {
 			server_id: int.guild.id,
 			user_id: int.user.id,
@@ -55,7 +47,7 @@ export const connectFourCommand: ISlashCommand = {
 			? buildConnectFourMoveResponse(data)
 			: buildConnectFourChallengeResponse(data);
 
-		await sendConnectFourResponseInteraction(int, response, data);
+		await sendConnectFourResponse(int, response, data);
 	}
 };
 
@@ -68,15 +60,14 @@ export const sendConnectFourResponseMessage = async (
 	if (data.is_accepted && !data.is_complete) await reactWithConnectFourMoves(message);
 };
 
-const sendConnectFourResponseInteraction = async (
+const sendConnectFourResponse = async (
 	int: ChatInputCommandInteraction,
 	response: string,
 	data: IConnectFour
 ) => {
-	const replyInt = await int.reply(response);
+	const replyInt = await int.editReply(response);
 	if (data.is_accepted && !data.is_complete) {
-		const replyMsg = await replyInt.fetch();
-		await reactWithConnectFourMoves(replyMsg);
+		await reactWithConnectFourMoves(replyInt);
 	}
 };
 

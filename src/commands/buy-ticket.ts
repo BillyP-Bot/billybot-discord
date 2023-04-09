@@ -9,8 +9,9 @@ export const buyTicketCommand: ISlashCommand = {
 	name: CommandNames.ticket,
 	description: "Buy a ticket for a chance to win this week's lottery",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await ticket(int.user.id, int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

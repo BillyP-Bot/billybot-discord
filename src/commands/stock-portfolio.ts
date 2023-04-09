@@ -20,8 +20,9 @@ export const portfolioCommand: ISlashCommand = {
 	name: CommandNames.portfolio,
 	description: "View info on your active investments",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await portfolio(int.guild.id, int.user.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

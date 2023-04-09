@@ -9,8 +9,9 @@ export const taxesCommand: ISlashCommand = {
 	name: CommandNames.taxes,
 	description: "The current mayor collects taxes from all middle and upper-class citizens",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await taxes(int.member as GuildMember);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

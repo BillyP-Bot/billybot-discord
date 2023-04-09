@@ -9,8 +9,9 @@ export const lottoCommand: ISlashCommand = {
 	name: CommandNames.lotto,
 	description: "View the current jackpot and list of entrants in this week's lottery",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await lotto(int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

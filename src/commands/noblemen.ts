@@ -10,8 +10,9 @@ export const noblemenCommand: ISlashCommand = {
 	name: CommandNames.noblemen,
 	description: "Get the 3 richest users in the server",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await noblemen(int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 

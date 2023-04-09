@@ -9,8 +9,9 @@ export const configureCommand: ISlashCommand = {
 	name: CommandNames.configure,
 	description: "Command for admins to prep the server",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const users = await configureGuildUsers(int.member as GuildMember);
-		await int.reply(`${users.length} user(s) configured`);
+		await int.editReply(`${users.length} user(s) configured`);
 	}
 };
 

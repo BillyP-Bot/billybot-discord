@@ -25,6 +25,7 @@ export const betCommand: ISlashCommand = {
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const participant = getInteractionOptionValue<string>("participant", int);
 		const amount = getInteractionOptionValue<string>("amount", int);
 		const participantId = getUserIdFromMentionOrUsername(participant, int.guild);
@@ -37,6 +38,6 @@ export const betCommand: ISlashCommand = {
 		const embed = Embed.success(
 			`Bet ${amount} on <@${participantId}>\n\nYou now have ${res.billy_bucks} BillyBucks`
 		);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };

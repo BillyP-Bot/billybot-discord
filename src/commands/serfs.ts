@@ -9,8 +9,9 @@ export const serfsCommand: ISlashCommand = {
 	name: CommandNames.serfs,
 	description: "Get the 3 poorest users in the server",
 	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
 		const embed = await serfs(int.guild.id);
-		await int.reply({ embeds: [embed] });
+		await int.editReply({ embeds: [embed] });
 	}
 };
 
