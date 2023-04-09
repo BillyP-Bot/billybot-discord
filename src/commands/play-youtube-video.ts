@@ -66,7 +66,7 @@ export const skipCommand: ISlashCommand = {
 	description: "Skip the track that is currently playing",
 	handler: async (int: ChatInputCommandInteraction) => {
 		if (!queue.front()) throw "No track is currently playing!";
-		int.reply("⏭️ Skipping track...");
+		await int.reply("⏭️ Skipping track...");
 		distube.seek(int.guild.id, queue.front().duration);
 	}
 };
@@ -98,11 +98,11 @@ const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: Voic
 	const video = queue.front();
 	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
 	await distube.play(voiceChannel, video);
-	textChannel.send(getNowPlayingAndNextUp());
+	await textChannel.send(getNowPlayingAndNextUp());
 	distube.removeAllListeners();
-	distube.on(Events.FINISH_SONG, () => {
+	distube.on(Events.FINISH_SONG, async () => {
 		queue.dequeue();
-		playNextVideoInQueue(textChannel, voiceChannel);
+		await playNextVideoInQueue(textChannel, voiceChannel);
 	});
 };
 
