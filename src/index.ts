@@ -25,13 +25,17 @@ const client = new Client({
 export const distube = new DisTube(client, { leaveOnStop: false });
 
 client.once(Events.ClientReady, async () => {
-	await registerSlashCommands(client);
-	if (config.IS_PROD) {
-		await client.user.setAvatar(Images.billyMad);
-		client.user.setActivity(Activities.farmville);
+	try {
+		await registerSlashCommands(client);
+		if (config.IS_PROD) {
+			await client.user.setAvatar(Images.billyMad);
+			client.user.setActivity(Activities.farmville);
+		}
+		await client.channels.fetch(Channels.bot);
+		console.log(`Logged in as ${client.user.tag}!`);
+	} catch (error) {
+		console.error({ error });
 	}
-	await client.channels.fetch(Channels.bot);
-	console.log(`Logged in as ${client.user.tag}!`);
 });
 
 client.on(Events.MessageCreate, async (msg: Message) => {
@@ -47,7 +51,7 @@ client.on(Events.MessageCreate, async (msg: Message) => {
 				return await updateEngagementMetrics(msg);
 		}
 	} catch (error) {
-		console.log({ error });
+		console.error({ error });
 		msg.channel.send({ embeds: [Embed.error(error)] });
 	}
 });
@@ -71,20 +75,28 @@ client.on(Events.MessageReactionAdd, async (react: MessageReaction, user: User) 
 			return await buckReact(react, user.id);
 		}
 	} catch (error) {
-		console.log({ error });
+		console.error({ error });
 		await react.message.channel.send({ embeds: [Embed.error(error)] });
 	}
 });
 
 client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
-	await configureGuildUsers(member);
+	try {
+		await configureGuildUsers(member);
+	} catch (error) {
+		console.error({ error });
+	}
 });
 
 client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
-	// when bot leaves voice channel
-	if (oldState.member.user.bot && oldState.channelId) {
-		distube.removeAllListeners();
-		clearVideoQueue();
+	try {
+		// when bot leaves voice channel
+		if (oldState.member.user.bot && oldState.channelId) {
+			distube.removeAllListeners();
+			clearVideoQueue();
+		}
+	} catch (error) {
+		console.error({ error });
 	}
 });
 
@@ -96,7 +108,7 @@ client.on(Events.InteractionCreate, async (int) => {
 		const command = commandsLookup[int.commandName];
 		if (command) await command.handler(int);
 	} catch (error) {
-		console.log({ error });
+		console.error({ error });
 		if (int.isRepliable()) {
 			const embed = { embeds: [Embed.error(error)] };
 			if (int.deferred || int.replied) await int.editReply(embed);

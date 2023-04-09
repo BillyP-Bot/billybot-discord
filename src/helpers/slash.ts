@@ -15,7 +15,7 @@ export const registerSlashCommands = async (client: Client) => {
 		const guildCommands = await guild.commands.fetch();
 		setCommandIds(guildCommands);
 	} catch (error) {
-		console.log(`Error registering slash commands: ${error}`);
+		throw `Error registering slash commands: ${error}`;
 	}
 };
 
