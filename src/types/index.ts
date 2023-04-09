@@ -50,6 +50,7 @@ export interface ICommand {
 }
 
 export interface ISlashCommand {
+	id?: string;
 	name: string;
 	description: string;
 	options?: ApplicationCommandOption[];

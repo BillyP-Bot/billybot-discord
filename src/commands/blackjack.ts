@@ -20,16 +20,21 @@ export const blackjackCommand: ISlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
 		const bet = getInteractionOptionValue<number>("bet", int);
-		const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
-			server_id: int.guild.id,
-			user_id: int.user.id,
-			wager: bet
-		});
-		const response = buildBlackjackResponse(data, int.user.id);
+		if (bet < 10) throw "Bet amount must be at least 10 BillyBucks!";
+		const { response, is_complete } = await blackjack(int.guild.id, int.user.id, bet);
 		const replyInt = await int.editReply(response);
-		if (!data.is_complete) {
+		if (!is_complete) {
 			const replyMsg = await replyInt.fetch();
 			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨"), replyMsg.react("🟦")]);
 		}
 	}
+};
+
+const blackjack = async (server_id: string, user_id: string, wager: number) => {
+	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
+		server_id,
+		user_id,
+		wager
+	});
+	return { response: buildBlackjackResponse(data, user_id), is_complete: data.is_complete };
 };

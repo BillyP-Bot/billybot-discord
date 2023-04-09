@@ -16,11 +16,11 @@ import {
 } from "btbot-types";
 import { SearchResultVideo } from "distube";
 
+import { commandsLookup } from "../commands";
 import { BetAggregate } from "../types";
 import { CommandNames, Roles } from "../types/enums";
 import { Api } from "./api";
 import { Embed } from "./embed";
-import { slashCommandNameToIdLookup } from "./slash";
 
 import type { BlackJackGameResponse, IChallengeResponse } from "../types";
 export const suitLookup: Record<CardSuit, string> = {
@@ -385,7 +385,7 @@ export const getInteractionOptionValue = <T>(
 };
 
 export const mentionCommand = (name: string) => {
-	const id = slashCommandNameToIdLookup[name];
+	const id = commandsLookup[name].id;
 	if (!id) return `\`/${name}\``;
 	return `</${name}:${id}>`;
 };

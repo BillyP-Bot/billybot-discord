@@ -98,8 +98,9 @@ client.on(Events.InteractionCreate, async (int) => {
 	} catch (error) {
 		console.log({ error });
 		if (int.isRepliable()) {
-			if (int.replied) await int.editReply({ embeds: [Embed.error(error)] });
-			else await int.reply({ embeds: [Embed.error(error)] });
+			const embed = { embeds: [Embed.error(error)] };
+			if (int.deferred || int.replied) await int.editReply(embed);
+			else await int.reply(embed);
 		}
 	}
 });
