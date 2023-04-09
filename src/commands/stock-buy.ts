@@ -24,7 +24,7 @@ export const buyStockCommand: ISlashCommand = {
 		},
 		{
 			name: "amount",
-			description: "The amount of BillyBucks to invest",
+			description: "The number of BillyBucks to invest",
 			type: ApplicationCommandOptionType.Integer,
 			required: true,
 			minValue: 1
