@@ -19,15 +19,19 @@ export const imageCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const prompt = getInteractionOptionValue<string>("prompt", int);
-		if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
 		const waitMsg = await int.channel.send("Generating your image...");
-		const res = await Api.post<{ permalink: string }>("images", {
-			prompt,
-			user_id: int.user.id,
-			server_id: int.guild.id
-		});
-		const embed = Embed.success(null, prompt).setImage(res.permalink);
+		const prompt = getInteractionOptionValue<string>("prompt", int);
+		const embed = await image(int.guild.id, int.user.id, prompt);
 		await Promise.all([int.editReply({ embeds: [embed] }), waitMsg.delete()]);
 	}
+};
+
+const image = async (server_id: string, user_id: string, prompt: string) => {
+	if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
+	const res = await Api.post<{ permalink: string }>("images", {
+		prompt,
+		user_id,
+		server_id
+	});
+	return Embed.success(null, prompt).setImage(res.permalink);
 };

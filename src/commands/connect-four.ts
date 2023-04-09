@@ -36,19 +36,30 @@ export const connectFourCommand: ISlashCommand = {
 		const user = getInteractionOptionValue<string>("user", int);
 		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
 		const bet = getInteractionOptionValue<number>("bet", int);
-		if (bet && bet < 0) throw "The `bet` option must be a positive integer if specified!";
-		const data = await Api.post<IConnectFour>("gamble/connectfour/challenge", {
-			server_id: int.guild.id,
-			user_id: int.user.id,
-			mentioned_user_id: targetUserId,
-			wager: bet || 0
-		});
-		const response = data.is_accepted
-			? buildConnectFourMoveResponse(data)
-			: buildConnectFourChallengeResponse(data);
-
+		const { response, data } = await connectFour(int.guild.id, int.user.id, targetUserId, bet);
 		await sendConnectFourResponse(int, response, data);
 	}
+};
+
+const connectFour = async (
+	server_id: string,
+	user_id: string,
+	mentioned_user_id: string,
+	bet: number
+) => {
+	if (bet && bet < 0) throw "The `bet` option must be a positive integer if specified!";
+	const data = await Api.post<IConnectFour>("gamble/connectfour/challenge", {
+		server_id,
+		user_id,
+		mentioned_user_id,
+		wager: bet || 0
+	});
+	return {
+		response: data.is_accepted
+			? buildConnectFourMoveResponse(data)
+			: buildConnectFourChallengeResponse(data),
+		data
+	};
 };
 
 export const sendConnectFourResponseMessage = async (

@@ -350,16 +350,16 @@ export const formatDateMMDD = (birthday: ISOTimestamp) => {
 export { Api } from "./api";
 export { Embed } from "./embed";
 
-export const isAtMention = (toCheck: string) => {
+export const isUserMention = (toCheck: string) => {
 	const lengthCheck = toCheck.length === 21;
 	const frontCheck = toCheck.slice(0, 2) === "<@";
 	const backCheck = toCheck[20] === ">";
 	return lengthCheck && frontCheck && backCheck;
 };
 
-export const getUserIdFromMention = (atMention: string) => {
-	if (!isAtMention(atMention)) throw "Provided string is not an @mention";
-	return atMention.replace("<@", "").replace(">", "");
+export const getUserIdFromMention = (mention: string) => {
+	if (!isUserMention(mention)) throw "Provided string is not an @mention";
+	return mention.replace("<@", "").replace(">", "");
 };
 
 export const getUserIdFromUsername = (username: string, guild: Guild) => {
@@ -373,8 +373,20 @@ export const getUserIdFromUsername = (username: string, guild: Guild) => {
 };
 
 export const getUserIdFromMentionOrUsername = (mentionOrUsername: string, guild: Guild) => {
-	if (isAtMention(mentionOrUsername)) return getUserIdFromMention(mentionOrUsername);
+	if (isUserMention(mentionOrUsername)) return getUserIdFromMention(mentionOrUsername);
 	return getUserIdFromUsername(mentionOrUsername, guild);
+};
+
+export const getUserIdFromMentionOrUsernameWithDefault = (
+	mentionOrUsername: string,
+	guild: Guild,
+	defaultUserId: string
+) => {
+	try {
+		return getUserIdFromMentionOrUsername(mentionOrUsername, guild);
+	} catch (error) {
+		return defaultUserId;
+	}
 };
 
 export const getInteractionOptionValue = <T>(

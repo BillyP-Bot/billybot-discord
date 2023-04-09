@@ -28,12 +28,12 @@ export const birthdayCommand: ISlashCommand = {
 			)}. Cannot set again!`;
 		}
 
-		const embed = await setOwnBirthday(user, birthdayDate);
+		const embed = await birthday(user, birthdayDate);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const setOwnBirthday = async (user: IUser, birthdayToValidate: string) => {
+const birthday = async (user: IUser, birthdayToValidate: string) => {
 	const birthday = birthdayToValidate.replace(/\[|\]/g, "");
 	const birthdaySplit = birthday.split("-");
 	const [month, day] = birthdaySplit;

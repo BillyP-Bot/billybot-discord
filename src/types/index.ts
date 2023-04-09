@@ -4,10 +4,8 @@ import type {
 	ChatInputCommandInteraction,
 	GuildTextBasedChannel,
 	TextBasedChannel,
-	Message,
 	MessageReaction
 } from "discord.js";
-import { DisTube } from "distube";
 
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
 
@@ -39,15 +37,6 @@ export type BlackJackGameResponse = {
 };
 
 export type BetAggregate = [{ _id: string; bets: IBet[]; count: number }];
-
-export interface ICommand {
-	prefix: RegExp;
-	command?: string;
-	description: string;
-	handler: (msg: Message, distube?: DisTube) => Promise<any>;
-	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
-	slash?: ISlashCommand;
-}
 
 export interface ISlashCommand {
 	id?: string;

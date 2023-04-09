@@ -10,19 +10,19 @@ export const allowanceCommand: ISlashCommand = {
 	description: "Collect your weekly BillyBuck allowance (only available once a week)",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const embed = await allowance(int.user.id, int.guild.id);
+		const embed = await allowance(int.guild.id, int.user.id);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const allowance = async (user_id: string, server_id: string) => {
+const allowance = async (server_id: string, user_id: string) => {
 	const data = await Api.post("bucks/allowance", {
 		server_id,
 		user_id
 	});
-	const user = data[user_id] as IUser;
+	const { billy_bucks } = data[user_id] as IUser;
 	return Embed.success(
-		`Here's your allowance, <@${user_id}>! You now have ${user.billy_bucks} BillyBucks!`,
+		`Here's your allowance, <@${user_id}>! You now have ${billy_bucks} BillyBucks!`,
 		"+200"
 	);
 };

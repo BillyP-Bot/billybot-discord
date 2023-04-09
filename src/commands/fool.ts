@@ -27,17 +27,17 @@ export const foolCommand: ISlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
 		const user = getInteractionOptionValue<string>("user", int);
-		const embed = await fool(int.member as GuildMember, () =>
-			user ? getUserIdFromMentionOrUsername(user, int.guild) : int.user.id
+		const embed = await fool(
+			int.member as GuildMember,
+			getUserIdFromMentionOrUsername(user, int.guild)
 		);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const fool = async (member: GuildMember, getTargetUserId: () => string) => {
+const fool = async (member: GuildMember, targetUserId: string) => {
 	await assertMayor(member);
 	const { foolRole, currentFool } = await readFool(member.guild);
-	const targetUserId = getTargetUserId();
 	if (targetUserId === currentFool?.user.id) throw `<@${targetUserId}> is already the fool!`;
 	if (targetUserId === member.user.id) throw "You cannot set yourself as the fool!";
 	const server_id = member.guild.id;

@@ -11,12 +11,12 @@ export const birthdaysCommand: ISlashCommand = {
 	description: "Show all birthdays that have been set",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const embed = await getBirthdays(int.guild.id);
-		int.editReply({ embeds: [embed] });
+		const embed = await birthdays(int.guild.id);
+		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const getBirthdays = async (server_id: string) => {
+const birthdays = async (server_id: string) => {
 	const users = await Api.get<IUser[]>(`users/birthday/server/${server_id}`);
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);

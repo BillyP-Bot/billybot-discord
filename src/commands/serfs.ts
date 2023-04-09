@@ -5,6 +5,7 @@ import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
 import type { ISlashCommand } from "../types";
+
 export const serfsCommand: ISlashCommand = {
 	name: CommandNames.serfs,
 	description: "Get the 3 poorest users in the server",

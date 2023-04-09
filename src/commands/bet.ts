@@ -8,11 +8,11 @@ import type { ChatInputCommandInteraction } from "discord.js";
 import type { ISlashCommand } from "../types";
 export const betCommand: ISlashCommand = {
 	name: CommandNames.bet,
-	description: "Bet on a particpant of the current mayoral challenge",
+	description: "Bet on a participant of the current mayoral challenge",
 	options: [
 		{
 			name: "participant",
-			description: "The challenge participant (@mention/username) to place the bet on",
+			description: "The @mention or username of the challenge participant to bet on",
 			type: ApplicationCommandOptionType.String,
 			required: true
 		},
@@ -27,17 +27,24 @@ export const betCommand: ISlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
 		const participant = getInteractionOptionValue<string>("participant", int);
-		const amount = getInteractionOptionValue<string>("amount", int);
+		const amount = getInteractionOptionValue<number>("amount", int);
 		const participantId = getUserIdFromMentionOrUsername(participant, int.guild);
-		const res = await Api.post<{ bet: IBet & { billy_bucks: number } }>("/challenges/bet", {
-			server_id: int.guild.id,
-			user_id: int.user.id,
-			participant_id: participantId,
-			amount: amount
-		});
-		const embed = Embed.success(
-			`Bet ${amount} on <@${participantId}>\n\nYou now have ${res.billy_bucks} BillyBucks`
-		);
+		const embed = await bet(int.guild.id, int.user.id, participantId, amount);
 		await int.editReply({ embeds: [embed] });
 	}
+};
+
+const bet = async (server_id: string, user_id: string, participant_id: string, amount: number) => {
+	const { billy_bucks } = await Api.post<{ bet: IBet & { billy_bucks: number } }>(
+		"/challenges/bet",
+		{
+			server_id,
+			user_id,
+			participant_id,
+			amount
+		}
+	);
+	return Embed.success(
+		`Bet ${amount} on <@${participant_id}>\n\nYou now have ${billy_bucks} BillyBucks`
+	);
 };
