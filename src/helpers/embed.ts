@@ -4,10 +4,8 @@ import { EmbedBuilder } from "discord.js";
 import { Colors } from "../types/enums";
 import { PaginatedEmbed } from "./pagination";
 
-import type { ICommand } from "../types/index";
 import type { IOpenAiImage } from "btbot-types";
 
-import type { Message } from "discord.js";
 export class Embed {
 	static success(description?: string, title?: string) {
 		const embed = new EmbedBuilder();
@@ -24,23 +22,6 @@ export class Embed {
 		return embed;
 	}
 }
-
-export const sendPaginatedCommandList = async (commands: ICommand[], msg: Message) => {
-	const pagEmbed = new PaginatedEmbed({
-		itemsPerPage: 10,
-		paginationType: "field",
-		showFirstLastBtns: false,
-		origUser: msg.author.id
-	})
-		.setTitles(["Commands"])
-		.setFields(
-			commands.map((c) => {
-				return { name: c.command, value: c.description };
-			})
-		);
-
-	await pagEmbed.send({ options: { channel: msg.channel as TextChannel } });
-};
 
 export const sendPaginatedImageList = async (
 	images: IOpenAiImage[],
