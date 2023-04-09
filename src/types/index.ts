@@ -45,7 +45,6 @@ export interface ICommand {
 	description: string;
 	handler: (msg: Message) => Promise<any>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
-	slash?: ISlashCommand;
 }
 
 export interface ISlashCommand {

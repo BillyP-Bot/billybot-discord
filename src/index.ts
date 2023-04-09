@@ -5,7 +5,13 @@ import { DisTube } from "distube";
 import { announcementsCommand, commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
 import { clearVideoQueue } from "./commands/play-youtube-video";
-import { Embed, isBlackjackReact, isConnectFourReact, updateEngagementMetrics } from "./helpers";
+import {
+	Embed,
+	isBlackjackReact,
+	isConnectFourReact,
+	sendLegacyCommandDeprecationNotice,
+	updateEngagementMetrics
+} from "./helpers";
 import { config } from "./helpers/config";
 import { registerSlashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
@@ -47,6 +53,8 @@ client.on(Events.MessageCreate, async (msg: Message) => {
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
 				return await announcementsCommand.handler(msg);
+			case msg.content[0] === "!":
+				return await sendLegacyCommandDeprecationNotice(msg);
 			default:
 				return await updateEngagementMetrics(msg);
 		}
