@@ -19,7 +19,7 @@ export const payBucksCommand: ISlashCommand = {
 		},
 		{
 			name: "amount",
-			description: "The amount of BillyBucks to pay the other user",
+			description: "The number of BillyBucks to pay the other user",
 			type: ApplicationCommandOptionType.Integer,
 			required: true,
 			minValue: 1
