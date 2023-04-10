@@ -1,4 +1,5 @@
 import { create } from "apisauce";
+import { REST } from "discord.js";
 
 import { config } from "./config";
 
@@ -36,3 +37,5 @@ Api.client.axiosInstance.interceptors.request.use((config) => {
 	config.headers["x-api-timestamp"] = new Date().getTime();
 	return config;
 });
+
+export const DiscordApi = new REST({ version: "10" }).setToken(config.BOT_TOKEN);

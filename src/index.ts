@@ -44,6 +44,23 @@ client.once(Events.ClientReady, async () => {
 	}
 });
 
+client.on(Events.InteractionCreate, async (int) => {
+	try {
+		if (!int.isChatInputCommand()) return;
+		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
+		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
+		const command = commandsLookup[int.commandName];
+		if (command) await command.handler(int);
+	} catch (error) {
+		console.error({ error });
+		if (int.isRepliable()) {
+			const embed = { embeds: [Embed.error(error)] };
+			if (int.deferred || int.replied) await int.editReply(embed);
+			else await int.reply(embed);
+		}
+	}
+});
+
 client.on(Events.MessageCreate, async (msg: Message) => {
 	try {
 		if (msg.channel.type === ChannelType.DM) return;
@@ -107,24 +124,5 @@ client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 		console.error({ error });
 	}
 });
-
-client.on(Events.InteractionCreate, async (int) => {
-	try {
-		if (!int.isChatInputCommand()) return;
-		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
-		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
-		const command = commandsLookup[int.commandName];
-		if (command) await command.handler(int);
-	} catch (error) {
-		console.error({ error });
-		if (int.isRepliable()) {
-			const embed = { embeds: [Embed.error(error)] };
-			if (int.deferred || int.replied) await int.editReply(embed);
-			else await int.reply(embed);
-		}
-	}
-});
-
-client.on("unhandledRejection", console.error);
 
 client.login(config.BOT_TOKEN).catch(console.error);
