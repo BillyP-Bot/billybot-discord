@@ -1,16 +1,16 @@
 import type { ChatInputCommandInteraction, TextChannel, VoiceBasedChannel } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { Events } from "distube";
+import { Events, SearchResultVideo } from "distube";
 
 import { distube } from "../";
-import { getInteractionOptionValue, VideoQueue } from "../helpers";
+import { getInteractionOptionValue, Queue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { ISlashCommand } from "../types";
 
 const INACTIVITY_SEC = 60;
 
-const queue = new VideoQueue();
+const queue = new Queue<SearchResultVideo>();
 
 export const playYoutubeCommand: ISlashCommand = {
 	name: CommandNames.p,
@@ -61,6 +61,18 @@ const play = async (
 	}
 };
 
+const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: VoiceBasedChannel) => {
+	const video = queue.front();
+	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
+	await distube.play(voiceChannel, video);
+	await textChannel.send(getNowPlayingAndNextUp());
+	distube.removeAllListeners();
+	distube.on(Events.FINISH_SONG, async () => {
+		queue.dequeue();
+		await playNextVideoInQueue(textChannel, voiceChannel);
+	});
+};
+
 export const skipCommand: ISlashCommand = {
 	name: CommandNames.skip,
 	description: "Skip the track that is currently playing",
@@ -94,23 +106,13 @@ export const clearVideoQueue = () => {
 	queue.clear();
 };
 
-const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: VoiceBasedChannel) => {
-	const video = queue.front();
-	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
-	await distube.play(voiceChannel, video);
-	await textChannel.send(getNowPlayingAndNextUp());
-	distube.removeAllListeners();
-	distube.on(Events.FINISH_SONG, async () => {
-		queue.dequeue();
-		await playNextVideoInQueue(textChannel, voiceChannel);
-	});
-};
-
 const getNowPlayingAndNextUp = () => {
 	let text = `▶️ Now Playing:\n\`${queue.front().name}\`\n\n`;
 	if (queue.length() > 1) {
 		text += "🎶 Next Up:\n";
-		text += queue.list();
+		text += queue.list().reduce((acc, { name }, i) => {
+			return acc + (i > 0 ? `**${i}.** \`${name}\`\n` : "");
+		}, "");
 	}
 	return text;
 };
