@@ -1,7 +1,7 @@
 import type { ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
-import { Api, Embed, getInteractionOptionValue, getUserIdFromMentionOrUsername } from "../helpers";
+import { Api, Embed, getInteractionOptionValue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
@@ -27,10 +27,9 @@ export const payBucksCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const user = getInteractionOptionValue<string>("user", int);
-		const recipient_id = getUserIdFromMentionOrUsername(user, int.guild);
+		const recipientId = getInteractionOptionValue<string>("user", int);
 		const amount = getInteractionOptionValue<number>("amount", int);
-		const embed = await payBucks(int.guild.id, int.user.id, recipient_id, amount);
+		const embed = await payBucks(int.guild.id, int.user.id, recipientId, amount);
 		await int.editReply({ embeds: [embed] });
 	}
 };

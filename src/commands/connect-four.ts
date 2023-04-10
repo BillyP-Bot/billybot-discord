@@ -6,8 +6,7 @@ import {
 	Api,
 	buildConnectFourChallengeResponse,
 	buildConnectFourMoveResponse,
-	getInteractionOptionValue,
-	getUserIdFromMentionOrUsername
+	getInteractionOptionValue
 } from "../helpers";
 import { CommandNames } from "../types/enums";
 
@@ -34,8 +33,7 @@ export const connectFourCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const user = getInteractionOptionValue<string>("user", int);
-		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
+		const targetUserId = getInteractionOptionValue<string>("user", int);
 		const bet = getInteractionOptionValue<number>("bet", int);
 		const { response, data } = await connectFour(int.guild.id, int.user.id, targetUserId, bet);
 		await sendConnectFourResponse(int, response, data);

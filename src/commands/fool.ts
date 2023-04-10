@@ -1,14 +1,7 @@
 import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
-import {
-	Api,
-	assertMayor,
-	Embed,
-	getInteractionOptionValue,
-	getUserIdFromMentionOrUsername,
-	readFool
-} from "../helpers";
+import { Api, assertMayor, Embed, getInteractionOptionValue, readFool } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { ISlashCommand } from "../types";
@@ -26,11 +19,8 @@ export const foolCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const user = getInteractionOptionValue<string>("user", int);
-		const embed = await fool(
-			int.member as GuildMember,
-			getUserIdFromMentionOrUsername(user, int.guild)
-		);
+		const targetUserId = getInteractionOptionValue<string>("user", int);
+		const embed = await fool(int.member as GuildMember, targetUserId);
 		await int.editReply({ embeds: [embed] });
 	}
 };

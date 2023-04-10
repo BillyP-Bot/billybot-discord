@@ -7,7 +7,6 @@ import {
 	buildCongratsMessage,
 	Embed,
 	getInteractionOptionValue,
-	getUserIdFromMentionOrUsername,
 	readFool
 } from "../helpers";
 import { CommandNames } from "../types/enums";
@@ -29,8 +28,7 @@ export const concedeCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const user = getInteractionOptionValue<string>("user", int);
-		const targetUserId = getUserIdFromMentionOrUsername(user, int.guild);
+		const targetUserId = getInteractionOptionValue<string>("user", int);
 		const embed = await concede(targetUserId, int.member as GuildMember, int.guild);
 		await int.editReply({ embeds: [embed] });
 	}

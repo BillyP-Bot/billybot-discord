@@ -1,7 +1,7 @@
 import { IBet } from "btbot-types";
 import { ApplicationCommandOptionType } from "discord.js";
 
-import { Api, Embed, getInteractionOptionValue, getUserIdFromMentionOrUsername } from "../helpers";
+import { Api, Embed, getInteractionOptionValue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { ChatInputCommandInteraction } from "discord.js";
@@ -26,9 +26,8 @@ export const betCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const participant = getInteractionOptionValue<string>("participant", int);
+		const participantId = getInteractionOptionValue<string>("participant", int);
 		const amount = getInteractionOptionValue<number>("amount", int);
-		const participantId = getUserIdFromMentionOrUsername(participant, int.guild);
 		const embed = await bet(int.guild.id, int.user.id, participantId, amount);
 		await int.editReply({ embeds: [embed] });
 	}

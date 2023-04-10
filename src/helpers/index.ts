@@ -391,9 +391,10 @@ export const getUserIdFromMentionOrUsernameWithDefault = (
 
 export const getInteractionOptionValue = <T>(
 	optionName: string,
-	int: ChatInputCommandInteraction
+	int: ChatInputCommandInteraction,
+	defaultValue?: T
 ) => {
-	return int.options.get(optionName)?.value as T;
+	return (int.options.get(optionName)?.value ?? defaultValue) as T;
 };
 
 export const mentionCommand = (name: string) => {

@@ -20,7 +20,7 @@ export const albumCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const userId = getInteractionOptionValue<string>("user", int) ?? int.user.id;
+		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
 		const isSelf = int.user.id === userId;
 		const res = await album(userId, int.guild.id);
 		if (!res || res.length === 0) {

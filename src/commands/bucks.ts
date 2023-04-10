@@ -21,7 +21,7 @@ export const bucksCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const userId = getInteractionOptionValue<string>("user", int) ?? int.user.id;
+		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
 		const embed = await bucks(int.guild.id, userId);
 		await int.editReply({ embeds: [embed] });
 	}
