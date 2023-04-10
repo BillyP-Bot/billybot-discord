@@ -60,7 +60,7 @@ client.on(Events.MessageCreate, async (msg: Message) => {
 		}
 	} catch (error) {
 		console.error({ error });
-		msg.channel.send({ embeds: [Embed.error(error)] });
+		await msg.channel.send({ embeds: [Embed.error(error)] });
 	}
 });
 

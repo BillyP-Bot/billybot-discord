@@ -358,7 +358,7 @@ export const isUserMention = (toCheck: string) => {
 };
 
 export const getUserIdFromMention = (mention: string) => {
-	if (!isUserMention(mention)) throw "Provided string is not an @mention";
+	if (!isUserMention(mention)) throw "Provided string is not a user mention";
 	return mention.replace("<@", "").replace(">", "");
 };
 

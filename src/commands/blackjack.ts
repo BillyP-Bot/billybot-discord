@@ -7,7 +7,7 @@ import { CommandNames } from "../types/enums";
 import type { BlackJackGameResponse, ISlashCommand } from "../types";
 export const blackjackCommand: ISlashCommand = {
 	name: CommandNames.blackjack,
-	description: "Let's play blackjack",
+	description: "Play a hand of blackjack",
 	options: [
 		{
 			name: "bet",

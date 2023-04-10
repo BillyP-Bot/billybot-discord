@@ -49,7 +49,7 @@ const play = async (
 			);
 		}
 	} catch (error) {
-		console.log(error);
+		console.error({ error });
 		switch (error.errorCode) {
 			case "NO_RESULT":
 				throw "No results found!";

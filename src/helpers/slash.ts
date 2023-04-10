@@ -1,4 +1,4 @@
-import { ApplicationCommand, Client, Collection, REST, Routes } from "discord.js";
+import { Client, REST, Routes } from "discord.js";
 
 import { commands, commandsLookup } from "../commands";
 import { config } from "../helpers/config";
@@ -13,14 +13,10 @@ export const registerSlashCommands = async (client: Client) => {
 		const _guild = (await client.guilds.fetch()).find((a) => a.id === config.SERVER_ID);
 		const guild = await _guild.fetch();
 		const guildCommands = await guild.commands.fetch();
-		setCommandIds(guildCommands);
+		guildCommands.forEach(({ name, id }) => {
+			commandsLookup[name].id = id;
+		});
 	} catch (error) {
 		throw `Error registering slash commands: ${error}`;
 	}
-};
-
-const setCommandIds = (commands: Collection<string, ApplicationCommand>) => {
-	commands.forEach(({ name, id }) => {
-		commandsLookup[name].id = id;
-	});
 };
