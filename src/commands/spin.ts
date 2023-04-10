@@ -21,7 +21,7 @@ export const spinCommand: ISlashCommand = {
 		},
 		{
 			name: "color",
-			description: "The color to bet on",
+			description: "🟥/⬛: 18/38 chance, 2:1 payout. 🟩: 2/38 chance, 17:1 payout.",
 			type: ApplicationCommandOptionType.String,
 			required: true,
 			choices: [
