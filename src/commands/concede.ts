@@ -22,8 +22,8 @@ export const concedeCommand: ISlashCommand = {
 	options: [
 		{
 			name: "user",
-			description: "The @mention or username of the user to make mayor",
-			type: ApplicationCommandOptionType.String,
+			description: "The user to make mayor (can be called on self)",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		}
 	],

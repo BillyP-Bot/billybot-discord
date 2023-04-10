@@ -1,12 +1,7 @@
 import type { ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
-import {
-	Api,
-	Embed,
-	getInteractionOptionValue,
-	getUserIdFromMentionOrUsernameWithDefault
-} from "../helpers";
+import { Api, Embed, getInteractionOptionValue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
@@ -19,14 +14,14 @@ export const bucksCommand: ISlashCommand = {
 	options: [
 		{
 			name: "user",
-			description: "The @mention or username of the user (runs on self if omitted)",
-			type: ApplicationCommandOptionType.String
+			description:
+				"The user whose BillyBucks balance you want to view (runs on self if omitted)",
+			type: ApplicationCommandOptionType.User
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const user = getInteractionOptionValue<string>("user", int);
-		const userId = getUserIdFromMentionOrUsernameWithDefault(user, int.guild, int.user.id);
+		const userId = getInteractionOptionValue<string>("user", int) ?? int.user.id;
 		const embed = await bucks(int.guild.id, userId);
 		await int.editReply({ embeds: [embed] });
 	}

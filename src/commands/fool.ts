@@ -19,8 +19,8 @@ export const foolCommand: ISlashCommand = {
 	options: [
 		{
 			name: "user",
-			description: "The @mention or username of the user to make the new fool",
-			type: ApplicationCommandOptionType.String,
+			description: "The user to make the new fool",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		}
 	],

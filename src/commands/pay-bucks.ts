@@ -13,8 +13,8 @@ export const payBucksCommand: ISlashCommand = {
 	options: [
 		{
 			name: "user",
-			description: "The @mention or username of the user to pay BillyBucks to",
-			type: ApplicationCommandOptionType.String,
+			description: "The user to pay BillyBucks to",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		},
 		{

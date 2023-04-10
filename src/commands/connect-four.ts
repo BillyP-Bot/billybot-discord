@@ -20,8 +20,9 @@ export const connectFourCommand: ISlashCommand = {
 	options: [
 		{
 			name: "user",
-			description: "The @mention or username of the user to challenge",
-			type: ApplicationCommandOptionType.String,
+			description:
+				"The user you want to send a new challenge to or accept an existing challenge from",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		},
 		{

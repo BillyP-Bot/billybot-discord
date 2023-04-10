@@ -1,6 +1,6 @@
 import type { ChatInputCommandInteraction } from "discord.js";
 
-import { Api, Embed, formatDateMMDD } from "../helpers";
+import { Api, Embed, formatDateMMDD, mentionCommand } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { IUser } from "btbot-types";
@@ -36,8 +36,13 @@ const birthdays = async (server_id: string) => {
 		{ diff: Number.MAX_VALUE, nextBdayIndex: 0 }
 	);
 	const sortedUsers = users.slice(nextBdayIndex).concat(users.slice(0, nextBdayIndex));
-	const output = sortedUsers.reduce((acc, user) => {
-		return user.birthday ? acc + `${user.username}: ${formatDateMMDD(user.birthday)}\n` : acc;
-	}, "");
-	return Embed.success(output ?? "No birthdays registered!", "Upcoming Birthdays");
+	const output =
+		sortedUsers.reduce((acc, user) => {
+			return user.birthday
+				? acc + `<@${user.user_id}>: ${formatDateMMDD(user.birthday)}\n`
+				: acc;
+		}, "") || "No birthdays registered!\n";
+	const fullOutput =
+		output + `\nRun ${mentionCommand(CommandNames.birthday)} to set your own birthday!`;
+	return Embed.success(fullOutput, "Upcoming Birthdays");
 };

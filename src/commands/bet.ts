@@ -12,8 +12,8 @@ export const betCommand: ISlashCommand = {
 	options: [
 		{
 			name: "participant",
-			description: "The @mention or username of the challenge participant to bet on",
-			type: ApplicationCommandOptionType.String,
+			description: "The challenge participant to bet on",
+			type: ApplicationCommandOptionType.User,
 			required: true
 		},
 		{
