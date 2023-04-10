@@ -11,7 +11,7 @@ import type { ISlashCommand } from "../types";
 
 export const featuresCommand: ISlashCommand = {
 	name: CommandNames.feature,
-	description: "Use your BillyBucks to submit a new idea for the BillyBot to the developers",
+	description: "Use your BillyBucks to submit a new idea for the BillyP Bot to the developers",
 	options: [
 		{
 			name: "title",
