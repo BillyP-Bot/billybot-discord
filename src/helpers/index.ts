@@ -1,4 +1,10 @@
-import type { Message, MessageReaction } from "discord.js";
+import type {
+	ChatInputCommandInteraction,
+	Guild,
+	GuildMember,
+	Message,
+	MessageReaction
+} from "discord.js";
 
 import type { ICard, IConnectFour, IUser } from "btbot-types";
 import {
@@ -8,15 +14,14 @@ import {
 	ConnectFourReacts,
 	ISOTimestamp
 } from "btbot-types";
-import { SearchResultVideo } from "distube";
 
+import { commandsLookup } from "../commands";
 import { BetAggregate } from "../types";
-import { Roles } from "../types/enums";
+import { CommandNames, Roles } from "../types/enums";
 import { Api } from "./api";
 import { Embed } from "./embed";
 
 import type { BlackJackGameResponse, IChallengeResponse } from "../types";
-
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",
@@ -74,11 +79,7 @@ export function getFirstMentionOrSelf(msg: Message, skip?: number) {
 	const params = msg.content.slice(_skip).trim().split(" ");
 	// no valid plain text mentions
 	if (params[0] === "") return msg.author.id;
-	const found = msg.guild.members.cache.find(
-		(a) => a.user.username.toUpperCase().trim() === params[0].toUpperCase().trim()
-	);
-	if (!found) throw `could not find ${params[0]} in this server`;
-	return found.user.id;
+	return getUserIdFromUsername(params[0], msg.guild);
 }
 
 export function getServerDisplayName(msg: Message, id?: string) {
@@ -100,30 +101,30 @@ export async function mapToDisplayName(msg: Message, users: IUser[]) {
 	return lookup;
 }
 
-export async function assertMayor(msg: Message) {
-	await msg.member.fetch();
-	const mayorRole = msg.member.roles.cache.find((a) => a.id == Roles.mayor);
+export async function assertMayor(member: GuildMember) {
+	await member.fetch();
+	const mayorRole = member.roles.cache.find((a) => a.id == Roles.mayor);
 	if (!mayorRole) throw "only the mayor can run this command!";
 	return mayorRole;
 }
 
-export async function readMayor(msg: Message) {
-	await msg.guild.members.fetch();
-	const mayorRole = msg.guild.roles.cache.find((a) => a.id == Roles.mayor);
-	const currentMayor = msg.guild.members.cache.find((a) => a.roles.cache.has(mayorRole.id));
+export async function readMayor(guild: Guild) {
+	await guild.members.fetch();
+	const mayorRole = guild.roles.cache.find((a) => a.id == Roles.mayor);
+	const currentMayor = guild.members.cache.find((a) => a.roles.cache.has(mayorRole.id));
 	return { mayorRole, currentMayor };
 }
 
-export async function readFool(msg: Message) {
-	await msg.guild.members.fetch();
-	const foolRole = msg.guild.roles.cache.find((a) => a.id == Roles.fool);
-	const currentFool = msg.guild.members.cache.find((a) => a.roles.cache.has(foolRole.id));
+export async function readFool(guild: Guild) {
+	await guild.members.fetch();
+	const foolRole = guild.roles.cache.find((a) => a.id == Roles.fool);
+	const currentFool = guild.members.cache.find((a) => a.roles.cache.has(foolRole.id));
 	return { foolRole, currentFool };
 }
 
-export async function assertDeveloper(msg: Message) {
-	await msg.member.fetch();
-	const devRole = msg.member.roles.cache.find((a) => a.id == Roles.developer);
+export async function assertDeveloper(member: GuildMember) {
+	await member.fetch();
+	const devRole = member.roles.cache.find((a) => a.id == Roles.developer);
 	if (!devRole) throw "unauthorized";
 }
 
@@ -132,17 +133,31 @@ export function buildReadableHand(hand: ICard[]) {
 }
 
 export function buildBlackjackResponse(data: BlackJackGameResponse, userId: string) {
-	const { player_hand, dealer_hand } = data;
-	let response = `<@${userId}>: ${data.player_count}\n`;
+	const {
+		player_hand,
+		dealer_hand,
+		player_count,
+		is_complete,
+		dealer_count,
+		wager,
+		status,
+		billy_bucks
+	} = data;
+	let response = `<@${userId}>: ${player_count}\n`;
 	const readablePlayer = buildReadableHand(player_hand);
 	const readableDealer = buildReadableHand(dealer_hand);
+	const defaultStatus = `${BlackjackReacts.hit} ${mentionCommand(CommandNames.hit)}\n${
+		BlackjackReacts.stand
+	} ${mentionCommand(CommandNames.stand)}\n${BlackjackReacts.doubleDown} ${mentionCommand(
+		CommandNames.doubledown
+	)}`;
 	response += `${readablePlayer.join("  ")}\n\n`;
-	response += `Dealer: ${data.is_complete ? data.dealer_count : ""}\n`;
-	response += `${readableDealer.join("  ")} ${data.is_complete ? "" : "🎴"}\n\n`;
-	response += `Bet: ${data.wager}\n\n`;
-	response += `${data.status}`;
-	if (data.is_complete) {
-		response += `\n\nYou now have ${data.billy_bucks} BillyBucks!`;
+	response += `Dealer: ${is_complete ? dealer_count : ""}\n`;
+	response += `${readableDealer.join("  ")} ${is_complete ? "" : "🎴"}\n\n`;
+	response += `Bet: ${wager}\n\n`;
+	response += `${status || defaultStatus}`;
+	if (is_complete) {
+		response += `\n\nYou now have ${billy_bucks} BillyBucks!`;
 	}
 	return response;
 }
@@ -153,13 +168,13 @@ export function isBlackjackReact(react: MessageReaction) {
 	).includes(react.emoji.toString());
 }
 
-export function buildConnectFourChallengeResponse(data: IConnectFour, msg: Message) {
+export function buildConnectFourChallengeResponse(data: IConnectFour) {
 	const { red_user_id, yellow_user_id, wager } = data;
 	return `<@${red_user_id}> has challenged <@${yellow_user_id}> to a game of Connect Four${
 		wager > 0 ? ` for ${wager} BillyBuck${pluralIfNotOne(wager)}` : ""
-	}!\n\n<@${yellow_user_id}>: Run...\`\`\`!connectfour @${
-		msg.author.username
-	}\`\`\`...to accept the challenge!`;
+	}!\n\n<@${yellow_user_id}>: Run ${mentionCommand(
+		CommandNames.connectfour
+	)} to accept the challenge!`;
 }
 
 export function buildConnectFourMoveResponse(data: IConnectFour) {
@@ -246,22 +261,20 @@ export const plusSignIfNotNegative = (amount: number) => (amount >= 0 ? "+" : ""
 
 export const pluralIfNotOne = (amount: number) => (amount === 1 ? "" : "s");
 
-export async function getCurrentChallenge(msg: Message) {
+export async function getCurrentChallenge(server_id: string) {
 	const response = await Api.get<IChallengeResponse>(
-		`challenges/server/${msg.guild.id}?is_active=true`
+		`challenges/server/${server_id}?is_active=true`
 	);
 	return response.challenges[0];
 }
 
-export async function postCurrentChallenge(msg: Message) {
-	const challenge = await getCurrentChallenge(msg);
+export async function postCurrentChallenge(server_id: string) {
+	const challenge = await getCurrentChallenge(server_id);
 	if (!challenge) throw "There is no current challenge!";
 	const { participants } = challenge;
 	const mayor = participants[0].is_mayor ? participants[0] : participants[1];
 	const challenger = participants[0].is_mayor ? participants[1] : participants[0];
-	const { name: mayorName } = getServerDisplayName(msg, mayor.user_id);
-	const { name: challengerName } = getServerDisplayName(msg, challenger.user_id);
-	let content = `\`${challengerName}\` has challenged mayor \`${mayorName}\`!\n`;
+	let content = `<@${challenger.user_id}> has challenged mayor <@${mayor.user_id}>!\n`;
 	content += "Use Command\n\n";
 	const mentions = participants.map(({ user_id }) => {
 		return `\`!bet\` <@${user_id}>`;
@@ -273,34 +286,30 @@ export async function postCurrentChallenge(msg: Message) {
 	return embed;
 }
 
-export function buildCongratsMessage(msg: Message, results: IUser[]) {
+export function buildCongratsMessage(results: IUser[]) {
 	if (results.length <= 0) return "No one bet correctly!";
 	let content = "Congratulations to:\n";
-	const usernames = results.map(({ user_id }) => {
-		const { name } = getServerDisplayName(msg, user_id);
-		return name;
+	results.forEach(({ user_id }) => {
+		content += `<@${user_id}>\n`;
 	});
-	content += usernames.join(", \n");
 	return (content += "\nfor their wise bets!");
 }
 
-export function buildCurrentBetsMessage(msg: Message, results: BetAggregate) {
+export function buildCurrentBetsMessage(results: BetAggregate) {
 	if (results.length <= 0) return "No one placed any bets!";
 	let content = "The current bets are:\n\n";
-	const participants = results.map(({ _id, bets }) => {
-		const { name: partName } = getServerDisplayName(msg, _id);
+	const participants = results.map(({ bets }) => {
 		const userBets = bets.map(({ user_id, amount }) => {
-			const { name } = getServerDisplayName(msg, user_id);
-			return `• ${name}:\t${amount}`;
+			return `• <@${user_id}>:\t${amount}`;
 		});
-		return `**${partName}**\n` + userBets.join("\n");
+		return `<@${bets[0].user_id}>\n` + userBets.join("\n");
 	});
 	content += participants.join("\n\n");
 	return content;
 }
 
-export class VideoQueue {
-	private items: SearchResultVideo[];
+export class Queue<T = any> {
+	private items: T[];
 
 	constructor() {
 		this.clear();
@@ -310,8 +319,8 @@ export class VideoQueue {
 		this.items = [];
 	}
 
-	public enqueue(video: SearchResultVideo) {
-		this.items.push(video);
+	public enqueue(item: T) {
+		this.items.push(item);
 	}
 
 	public dequeue() {
@@ -327,9 +336,7 @@ export class VideoQueue {
 	}
 
 	public list() {
-		return this.items.reduce((acc, video, i) => {
-			return acc + (i > 0 ? `${i}. \`${video.name}\`\n` : "");
-		}, "");
+		return this.items;
 	}
 }
 
@@ -339,3 +346,66 @@ export const formatDateMMDD = (birthday: ISOTimestamp) => {
 
 export { Api } from "./api";
 export { Embed } from "./embed";
+
+export const isUserMention = (toCheck: string) => {
+	const lengthCheck = toCheck.length === 21;
+	const frontCheck = toCheck.slice(0, 2) === "<@";
+	const backCheck = toCheck[20] === ">";
+	return lengthCheck && frontCheck && backCheck;
+};
+
+export const getUserIdFromMention = (mention: string) => {
+	if (!isUserMention(mention)) throw "Provided string is not a user mention";
+	return mention.replace("<@", "").replace(">", "");
+};
+
+export const getUserIdFromUsername = (username: string, guild: Guild) => {
+	const found = guild.members.cache.find(
+		(a) =>
+			a.user.username.toUpperCase().trim() === username.toUpperCase().trim() ||
+			a.displayName.toUpperCase().trim() === username.toUpperCase().trim()
+	);
+	if (!found) throw `Could not find ${username} in this server`;
+	return found.id;
+};
+
+export const getUserIdFromMentionOrUsername = (mentionOrUsername: string, guild: Guild) => {
+	if (isUserMention(mentionOrUsername)) return getUserIdFromMention(mentionOrUsername);
+	return getUserIdFromUsername(mentionOrUsername, guild);
+};
+
+export const getUserIdFromMentionOrUsernameWithDefault = (
+	mentionOrUsername: string,
+	guild: Guild,
+	defaultUserId: string
+) => {
+	try {
+		return getUserIdFromMentionOrUsername(mentionOrUsername, guild);
+	} catch (error) {
+		return defaultUserId;
+	}
+};
+
+export const getInteractionOptionValue = <T>(
+	optionName: string,
+	int: ChatInputCommandInteraction,
+	defaultValue?: T
+) => {
+	return (int.options.get(optionName)?.value ?? defaultValue) as T;
+};
+
+export const mentionCommand = (name: string) => {
+	const id = commandsLookup[name].id;
+	if (!id) return `\`/${name}\``;
+	return `</${name}:${id}>`;
+};
+
+export const sendLegacyCommandDeprecationNotice = async (msg: Message) => {
+	const commandName = msg.content.split(" ")[0].replace("!", "");
+	if (!commandsLookup[commandName]) return;
+	const description = `Did you mean ${mentionCommand(
+		commandName
+	)}?\n\nCommands prefixed with \`!\` are no longer supported!\n\nTry prefixing the command with \`/\` instead.`;
+	const embed = Embed.error(description, "Oops!");
+	await msg.channel.send({ embeds: [embed] });
+};

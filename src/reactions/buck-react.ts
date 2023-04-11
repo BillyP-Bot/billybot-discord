@@ -11,6 +11,6 @@ export async function buckReact(react: MessageReaction, sender_id: string) {
 			sender_id
 		});
 	} catch (error) {
-		console.log(error);
+		console.error({ error });
 	}
 }

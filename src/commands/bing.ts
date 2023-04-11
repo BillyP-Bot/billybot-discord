@@ -1,12 +1,12 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
-import type { ICommand } from "../types";
+import type { ISlashCommand } from "../types";
+import { CommandNames } from "../types/enums";
 
-export const bingCommand: ICommand = {
-	prefix: /.*!bing.*/gim,
-	command: "!bing",
+export const bingCommand: ISlashCommand = {
+	name: CommandNames.bing,
 	description: "bong?",
-	handler: async (msg: Message) => {
-		await msg.reply("bong");
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.reply("bong");
 	}
 };

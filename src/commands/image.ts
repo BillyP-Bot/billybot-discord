@@ -1,27 +1,38 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import type { ICommand } from "../types";
-import { Api, Embed } from "../helpers";
+import { Api, Embed, getInteractionOptionValue } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const imageCommand: ICommand = {
-	prefix: /.*!image.*/gim,
-	command: "!image",
-	description: "Get an AI-generated image based on your input! Usage: `!image [prompt]`",
-	handler: async (msg: Message) => {
-		const prompt = msg.content.slice("!image".length).trim();
-		if (!prompt) throw "Must enter a valid prompt! Usage: `!image [prompt]`";
-		if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
-		const [waitMsg, res] = await Promise.all([
-			msg.channel.send("Generating your image..."),
-			Api.post<{ permalink: string }>("images", {
-				prompt,
-				user_id: msg.author.id,
-				server_id: msg.guild.id
-			})
-		]);
-		const embed = Embed.success(null).setImage(res.permalink);
-		waitMsg.delete();
-		msg.channel.send({ embeds: [embed] });
-		return;
+import type { ISlashCommand } from "../types";
+
+export const imageCommand: ISlashCommand = {
+	name: CommandNames.image,
+	description: "Get an AI-generated image based on your input",
+	options: [
+		{
+			name: "prompt",
+			description: "The word or phrase to generate the image based on",
+			type: ApplicationCommandOptionType.String,
+			max_length: 950,
+			required: true
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const waitMsg = await int.channel.send("Generating your image...");
+		const prompt = getInteractionOptionValue<string>("prompt", int);
+		const embed = await image(int.guild.id, int.user.id, prompt);
+		await Promise.all([int.editReply({ embeds: [embed] }), waitMsg.delete()]);
 	}
+};
+
+const image = async (server_id: string, user_id: string, prompt: string) => {
+	if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
+	const res = await Api.post<{ permalink: string }>("images", {
+		prompt,
+		user_id,
+		server_id
+	});
+	return Embed.success(null, prompt).setImage(res.permalink);
 };

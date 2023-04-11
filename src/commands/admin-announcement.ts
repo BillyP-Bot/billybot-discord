@@ -2,16 +2,17 @@ import type { Message, TextChannel } from "discord.js";
 
 import type { ICommand } from "../types";
 import { Api, assertDeveloper } from "../helpers";
+import { Channels } from "../types/enums";
 
 export const announcementsCommand: ICommand = {
 	prefix: null,
 	command: null,
 	description: null,
 	handler: async (msg: Message) => {
-		await assertDeveloper(msg);
+		await assertDeveloper(msg.member);
 		await msg.guild.fetch();
 		const general = msg.guild.channels.cache.find(
-			(channel: TextChannel) => channel.name === "general"
+			(channel: TextChannel) => channel.id === Channels.general
 		) as TextChannel;
 		if (!general) throw "channel not found";
 		// post webhook announcement
@@ -21,6 +22,5 @@ export const announcementsCommand: ICommand = {
 			text: msg.content,
 			channel_name: general.name
 		});
-		return;
 	}
 };

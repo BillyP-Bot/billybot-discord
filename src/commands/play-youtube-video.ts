@@ -1,73 +1,104 @@
-import { DisTube, Events } from "distube";
+import type { ChatInputCommandInteraction, TextChannel, VoiceBasedChannel } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
+import { Events, SearchResultVideo } from "distube";
 
-import { VideoQueue } from "../helpers";
+import { distube } from "../";
+import { getInteractionOptionValue, Queue } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-import type { Message } from "discord.js";
+import type { ISlashCommand } from "../types";
 
 const INACTIVITY_SEC = 60;
 
-const queue = new VideoQueue();
+const queue = new Queue<SearchResultVideo>();
 
-export const playYoutubeCommand = {
-	prefix: /.*!p .*/gim,
-	command: "!p",
-	description: "Play a YouTube video in current voice channel. Usage: `!p [url/text]`",
-	handler: async (msg: Message, distube: DisTube) => {
-		try {
-			const searchTerm = msg.content.split("!p ")[1];
-			const video = (await distube.search(searchTerm, { limit: 1 }))[0];
-			if (!video) throw "No results found!";
-			queue.enqueue(video);
-			if (queue.length() === 1) {
-				await playNextVideoInQueue(msg, distube);
-			} else {
-				msg.channel.send(
-					`✅ Queued Video:\n\`${video.name}\`\n\n` + getNowPlayingAndNextUp()
-				);
-			}
-		} catch (error) {
-			console.log(error);
-			switch (error.errorCode) {
-				case "NO_RESULT":
-					throw "No results found!";
-				case "INVALID_TYPE":
-					throw "User must be in a voice channel!";
-				default:
-					throw "Unexpected error occurred!";
-			}
+export const playYoutubeCommand: ISlashCommand = {
+	name: CommandNames.p,
+	description: "Play a YouTube video in the current voice channel",
+	options: [
+		{
+			name: "search_text",
+			description: "Text to search YouTube for (plays first result)",
+			type: ApplicationCommandOptionType.String,
+			required: true
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		const searchText = getInteractionOptionValue<string>("search_text", int);
+		const member = int.guild.members.cache.get(int.member.user.id);
+		const voiceChannel = member.voice.channel;
+		await int.reply(`Searching YouTube for \`${searchText}\`...`);
+		await play(searchText, int.channel as TextChannel, voiceChannel);
+	}
+};
+
+const play = async (
+	searchText: string,
+	textChannel: TextChannel,
+	voiceChannel: VoiceBasedChannel
+) => {
+	try {
+		const video = (await distube.search(searchText, { limit: 1 }))[0];
+		if (!video) throw "No results found!";
+		queue.enqueue(video);
+		if (queue.length() === 1) {
+			await playNextVideoInQueue(textChannel, voiceChannel);
+		} else {
+			await textChannel.send(
+				`✅ Queued Video:\n\`${video.name}\`\n\n` + getNowPlayingAndNextUp()
+			);
+		}
+	} catch (error) {
+		console.error({ error });
+		switch (error.errorCode) {
+			case "NO_RESULT":
+				throw "No results found!";
+			case "INVALID_TYPE":
+				throw "User must be in a voice channel!";
+			default:
+				throw "Unexpected error occurred!";
 		}
 	}
 };
 
-export const skipCommand = {
-	prefix: /.*!skip.*/gim,
-	command: "!skip",
-	description: "Skip the track that is currently playing.",
-	handler: async (msg: Message, distube: DisTube) => {
+const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: VoiceBasedChannel) => {
+	const video = queue.front();
+	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
+	await distube.play(voiceChannel, video);
+	await textChannel.send(getNowPlayingAndNextUp());
+	distube.removeAllListeners();
+	distube.on(Events.FINISH_SONG, async () => {
+		queue.dequeue();
+		await playNextVideoInQueue(textChannel, voiceChannel);
+	});
+};
+
+export const skipCommand: ISlashCommand = {
+	name: CommandNames.skip,
+	description: "Skip the track that is currently playing",
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (!queue.front()) throw "No track is currently playing!";
-		msg.channel.send("⏭️ Skipping track...");
-		distube.seek(msg.guildId, queue.front().duration);
+		await int.reply("⏭️ Skipping track...");
+		distube.seek(int.guild.id, queue.front().duration);
 	}
 };
 
-export const queueCommand = {
-	prefix: /.*!queue.*/gim,
-	command: "!queue",
-	description: "List the track currently playing along with the upcoming tracks in the queue.",
-	handler: async (msg: Message) => {
+export const queueCommand: ISlashCommand = {
+	name: CommandNames.queue,
+	description: "List the track currently playing along with the upcoming tracks in the queue",
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (queue.length() === 0) throw "No tracks in the queue!";
-		msg.channel.send(getNowPlayingAndNextUp());
+		await int.reply(getNowPlayingAndNextUp());
 	}
 };
 
-export const clearQueueCommand = {
-	prefix: /.*!clearqueue.*/gim,
-	command: "!clearqueue",
-	description: "Clears all tracks from the YouTube queue.",
-	handler: async (msg: Message) => {
+export const clearQueueCommand: ISlashCommand = {
+	name: CommandNames.clearqueue,
+	description: "Clears all tracks from the YouTube queue",
+	handler: async (int: ChatInputCommandInteraction) => {
 		if (queue.length() === 0) throw "No tracks in the queue!";
 		clearVideoQueue();
-		await msg.channel.send("Queue cleared!");
+		await int.reply("Queue cleared!");
 	}
 };
 
@@ -75,29 +106,19 @@ export const clearVideoQueue = () => {
 	queue.clear();
 };
 
-const playNextVideoInQueue = async (msg: Message, distube: DisTube) => {
-	const video = queue.front();
-	if (!video) return exitAfterTimeoutIfNothingInQueue(msg, distube);
-	await distube.play(msg.member.voice.channel, video);
-	msg.channel.send(getNowPlayingAndNextUp());
-	distube.removeAllListeners();
-	distube.on(Events.FINISH_SONG, () => {
-		queue.dequeue();
-		playNextVideoInQueue(msg, distube);
-	});
-};
-
 const getNowPlayingAndNextUp = () => {
 	let text = `▶️ Now Playing:\n\`${queue.front().name}\`\n\n`;
 	if (queue.length() > 1) {
 		text += "🎶 Next Up:\n";
-		text += queue.list();
+		text += queue.list().reduce((acc, { name }, i) => {
+			return acc + (i > 0 ? `**${i}.** \`${name}\`\n` : "");
+		}, "");
 	}
 	return text;
 };
 
-const exitAfterTimeoutIfNothingInQueue = (msg: Message, distube: DisTube) => {
+const exitAfterTimeoutIfNothingInQueue = (guild_id: string) => {
 	setTimeout(() => {
-		if (!queue.front()) distube.voices.leave(msg.guildId);
+		if (!queue.front()) distube.voices.leave(guild_id);
 	}, INACTIVITY_SEC * 1000);
 };

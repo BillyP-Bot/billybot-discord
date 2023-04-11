@@ -1,36 +1,49 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import type { ICommand } from "../types";
-import { Api, assertMayor, Embed, getFirstMentionOrSelf, readFool } from "../helpers";
+import { Api, assertMayor, Embed, getInteractionOptionValue, readFool } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const foolCommand: ICommand = {
-	prefix: /.*!fool .*/gim,
-	command: "!fool",
-	description: "The Current mayor makes another user the fool! Usage: `!fool [username/@user]`",
-	handler: async (msg: Message) => {
-		await assertMayor(msg);
-		const { foolRole, currentFool } = await readFool(msg);
-		const targetUserId = getFirstMentionOrSelf(msg);
-		if (targetUserId === currentFool.user.id) throw `<@${targetUserId}> is already the fool!`;
-		const server_id = msg.guild.id;
-		const body = [
-			{
-				server_id,
-				user_id: targetUserId,
-				is_fool: true
-			},
-			{
-				server_id,
-				user_id: currentFool.user.id,
-				is_fool: false
-			}
-		];
-		await Api.put("users", body);
-		const mention = await msg.guild.members.fetch(targetUserId);
-		mention.roles.add(foolRole);
-		currentFool.roles.remove(foolRole);
-		const embed = Embed.success(`<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
-		msg.channel.send({ embeds: [embed] });
-		return;
+import type { ISlashCommand } from "../types";
+
+export const foolCommand: ISlashCommand = {
+	name: CommandNames.fool,
+	description: "Run by the current mayor to make another user the fool",
+	options: [
+		{
+			name: "user",
+			description: "The user to make the new fool",
+			type: ApplicationCommandOptionType.User,
+			required: true
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const targetUserId = getInteractionOptionValue<string>("user", int);
+		const embed = await fool(int.member as GuildMember, targetUserId);
+		await int.editReply({ embeds: [embed] });
 	}
+};
+
+const fool = async (member: GuildMember, targetUserId: string) => {
+	await assertMayor(member);
+	const { foolRole, currentFool } = await readFool(member.guild);
+	if (targetUserId === currentFool?.user.id) throw `<@${targetUserId}> is already the fool!`;
+	if (targetUserId === member.user.id) throw "You cannot set yourself as the fool!";
+	const server_id = member.guild.id;
+	await Api.put("users", [
+		{
+			server_id,
+			user_id: targetUserId,
+			is_fool: true
+		},
+		{
+			server_id,
+			user_id: currentFool?.user.id,
+			is_fool: false
+		}
+	]);
+	const targetUser = await member.guild.members.fetch(targetUserId);
+	await Promise.all([targetUser.roles.add(foolRole), currentFool?.roles.remove(foolRole)]);
+	return Embed.success(`<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
 };

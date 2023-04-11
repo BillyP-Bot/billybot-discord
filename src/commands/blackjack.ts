@@ -1,24 +1,40 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import type { BlackJackGameResponse, ICommand } from "../types";
-import { Api, buildBlackjackResponse } from "../helpers";
+import { Api, buildBlackjackResponse, getInteractionOptionValue } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const blackjackCommand: ICommand = {
-	prefix: /.*!blackjack [0-9].*/gim,
-	command: "!blackjack",
-	description: "Let's play Blackjack! Usage: `!blackjack [betAmount]`",
-	handler: async (msg: Message) => {
-		const wager = msg.content.substring(msg.content.lastIndexOf(" ")).trim();
-		if (typeof parseInt(wager) !== "number") throw "amount must be a number";
-		const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
-			server_id: msg.guild.id,
-			user_id: msg.author.id,
-			wager: parseInt(wager)
-		});
-		const response = buildBlackjackResponse(data, msg.author.id);
-		const message = await msg.channel.send(response);
-		if (!data.is_complete)
-			await Promise.all([message.react("🟩"), message.react("🟨"), message.react("🟦")]);
-		return;
+import type { BlackJackGameResponse, ISlashCommand } from "../types";
+export const blackjackCommand: ISlashCommand = {
+	name: CommandNames.blackjack,
+	description: "Play a hand of blackjack",
+	options: [
+		{
+			name: "bet",
+			description: "The number of BillyBucks to bet",
+			type: ApplicationCommandOptionType.Integer,
+			required: true,
+			min_value: 10
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const bet = getInteractionOptionValue<number>("bet", int);
+		if (bet < 10) throw "Bet amount must be at least 10 BillyBucks!";
+		const { response, is_complete } = await blackjack(int.guild.id, int.user.id, bet);
+		const replyInt = await int.editReply(response);
+		if (!is_complete) {
+			const replyMsg = await replyInt.fetch();
+			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨"), replyMsg.react("🟦")]);
+		}
 	}
+};
+
+const blackjack = async (server_id: string, user_id: string, wager: number) => {
+	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
+		server_id,
+		user_id,
+		wager
+	});
+	return { response: buildBlackjackResponse(data, user_id), is_complete: data.is_complete };
 };

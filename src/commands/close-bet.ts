@@ -1,30 +1,28 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
-import type { ICommand, BetAggregate } from "../types";
+import type { ISlashCommand, BetAggregate } from "../types";
 import { IParticipant } from "btbot-types";
 
-import { Api, buildCurrentBetsMessage, Embed, getServerDisplayName } from "../helpers";
+import { Api, buildCurrentBetsMessage, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const closeBetCommand: ICommand = {
-	prefix: /.*!closebet .*/gim,
-	command: "!closebet",
-	description: "Close Betting on current mayoral challenge. Usage: `!closebet`",
-	handler: async (msg: Message) => {
-		const server_id = msg.guild.id;
-		const result = await Api.put<{
-			server_id: string;
-			participants: IParticipant[];
-			bets_aggregate: BetAggregate;
-		}>("/challenges/close", { server_id, author_id: msg.author.id });
-		const usernames = result.participants.map(({ user_id }) => {
-			const { name } = getServerDisplayName(msg, user_id);
-			return name;
-		});
-		const betsMessage = buildCurrentBetsMessage(msg, result.bets_aggregate);
-		const embed = Embed.success(
-			`Closed betting on current challenge between ${usernames[0]} and ${usernames[1]}\n\n${betsMessage}`
-		);
-		msg.channel.send({ embeds: [embed] });
-		return;
+export const closeBetCommand: ISlashCommand = {
+	name: CommandNames.closebet,
+	description: "Close betting on the current mayoral challenge",
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const embed = await closeBet(int.guild.id, int.user.id);
+		await int.editReply({ embeds: [embed] });
 	}
+};
+
+const closeBet = async (server_id: string, author_id: string) => {
+	const { participants, bets_aggregate } = await Api.put<{
+		participants: IParticipant[];
+		bets_aggregate: BetAggregate;
+	}>("/challenges/close", { server_id, author_id });
+	const betsMessage = buildCurrentBetsMessage(bets_aggregate);
+	return Embed.success(
+		`Closed betting on the current challenge between <@${participants[0].user_id}> and <@${participants[1].user_id}>\n\n${betsMessage}`
+	);
 };

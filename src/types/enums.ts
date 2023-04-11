@@ -26,5 +26,46 @@ export enum Activities {
 export enum Channels {
 	adminAnnouncements = "811639445514092564",
 	bot = "738194989917536317",
-	botTesting = "975795297257136189"
+	botTesting = "975795297257136189",
+	general = "689463685571149933"
+}
+
+export enum CommandNames {
+	album = "album",
+	allowance = "allowance",
+	ama = "ama",
+	bet = "bet",
+	bing = "bing",
+	birthday = "birthday",
+	birthdays = "birthdays",
+	blackjack = "blackjack",
+	bucks = "bucks",
+	buystock = "buystock",
+	challenge = "challenge",
+	clearqueue = "clearqueue",
+	closebet = "closebet",
+	concede = "concede",
+	configure = "configure",
+	connectfour = "connectfour",
+	doubledown = "doubledown",
+	factcheck = "factcheck",
+	feature = "feature",
+	fool = "fool",
+	hit = "hit",
+	image = "image",
+	lotto = "lotto",
+	noblemen = "noblemen",
+	p = "p",
+	pay = "pay",
+	portfolio = "portfolio",
+	queue = "queue",
+	sellstock = "sellstock",
+	serfs = "serfs",
+	sheesh = "sheesh",
+	skip = "skip",
+	spin = "spin",
+	stand = "stand",
+	stock = "stock",
+	taxes = "taxes",
+	ticket = "ticket"
 }

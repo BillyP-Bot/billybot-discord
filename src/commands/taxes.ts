@@ -1,33 +1,33 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 
 import type { IUser } from "btbot-types";
-import type { ICommand } from "../types";
-import { Api, assertMayor, Embed, getServerDisplayName } from "../helpers";
+import type { ISlashCommand } from "../types";
+import { Api, assertMayor, Embed } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const taxesCommand: ICommand = {
-	prefix: /.*!taxes.*/gim,
-	command: "!taxes",
-	description:
-		"The Current mayor collects taxes from all middle and upper-class citizens! Resets every Friday.",
-	handler: async (msg: Message) => {
-		await assertMayor(msg);
-		const server_id = msg.guild.id;
-		const body = {
-			server_id,
-			user_id: msg.author.id
-		};
-		const data = await Api.post<{
-			payout: number;
-			tax_rate: number;
-			charged_users: number;
-			user: IUser;
-		}>("bucks/taxes", body);
-		const { name } = getServerDisplayName(msg, msg.author.id);
-		let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
-		text += `Collection Payout: +${data.payout}\n`;
-		text += `Mayor ${name} now has ${data.user.billy_bucks} BillyBucks!`;
-		const embed = Embed.success(text, "Tax Time!");
-		msg.channel.send({ embeds: [embed] });
-		return;
+export const taxesCommand: ISlashCommand = {
+	name: CommandNames.taxes,
+	description: "The current mayor collects taxes from all middle and upper-class citizens",
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const embed = await taxes(int.member as GuildMember);
+		await int.editReply({ embeds: [embed] });
 	}
+};
+
+const taxes = async (member: GuildMember) => {
+	await assertMayor(member);
+	const data = await Api.post<{
+		payout: number;
+		tax_rate: number;
+		charged_users: number;
+		user: IUser;
+	}>("bucks/taxes", {
+		server_id: member.guild.id,
+		user_id: member.user.id
+	});
+	let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
+	text += `Collection Payout: +${data.payout}\n`;
+	text += `Mayor <@${member.user.id}> now has ${data.user.billy_bucks} BillyBucks!`;
+	return Embed.success(text, "Tax Time!");
 };

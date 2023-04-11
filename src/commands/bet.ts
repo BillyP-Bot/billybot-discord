@@ -1,35 +1,49 @@
-import type { Message } from "discord.js";
-
-import type { ICommand } from "../types";
 import { IBet } from "btbot-types";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import { Api, Embed, getFirstMentionOrSelf, getServerDisplayName } from "../helpers";
+import { Api, Embed, getInteractionOptionValue } from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const betCommand: ICommand = {
-	prefix: /.*!bet .*/gim,
-	command: "!bet",
-	description:
-		"Bet on a particpant of the current mayoral challenge! Usage: `!bet [username/@user] [amount]`",
-	handler: async (msg: Message) => {
-		const args = msg.content.slice("!bet".length).trim().split(" ");
-		const amount = parseInt(args[1]);
-		const participant_id = getFirstMentionOrSelf(msg, "!bet".length);
-		const server_id = msg.guild.id;
-		const body = {
+import type { ChatInputCommandInteraction } from "discord.js";
+import type { ISlashCommand } from "../types";
+export const betCommand: ISlashCommand = {
+	name: CommandNames.bet,
+	description: "Bet on a participant of the current mayoral challenge",
+	options: [
+		{
+			name: "participant",
+			description: "The challenge participant to bet on",
+			type: ApplicationCommandOptionType.User,
+			required: true
+		},
+		{
+			name: "amount",
+			description: "The number of BillyBucks to bet",
+			type: ApplicationCommandOptionType.Integer,
+			required: true,
+			min_value: 1
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const participantId = getInteractionOptionValue<string>("participant", int);
+		const amount = getInteractionOptionValue<number>("amount", int);
+		const embed = await bet(int.guild.id, int.user.id, participantId, amount);
+		await int.editReply({ embeds: [embed] });
+	}
+};
+
+const bet = async (server_id: string, user_id: string, participant_id: string, amount: number) => {
+	const { billy_bucks } = await Api.post<{ bet: IBet & { billy_bucks: number } }>(
+		"/challenges/bet",
+		{
 			server_id,
-			user_id: msg.author.id,
+			user_id,
 			participant_id,
 			amount
-		};
-		const result = await Api.post<{ bet: IBet & { billy_bucks: number } }>(
-			"/challenges/bet",
-			body
-		);
-		const { name } = getServerDisplayName(msg, participant_id);
-		const embed = Embed.success(
-			`Bet ${amount} on ${name}\n\nYou now have ${result.billy_bucks} BillyBucks`
-		);
-		msg.channel.send({ embeds: [embed] });
-		return;
-	}
+		}
+	);
+	return Embed.success(
+		`Bet ${amount} on <@${participant_id}>!\n\nYou now have ${billy_bucks} BillyBucks.`
+	);
 };

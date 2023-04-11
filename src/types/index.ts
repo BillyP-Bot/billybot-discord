@@ -1,8 +1,17 @@
 /* eslint-disable no-unused-vars */
-import type { GuildTextBasedChannel, TextBasedChannel, Message, MessageReaction } from "discord.js";
-import { DisTube } from "distube";
+import type {
+	ApplicationCommandOption,
+	ChatInputCommandInteraction,
+	GuildTextBasedChannel,
+	TextBasedChannel,
+	MessageReaction,
+	Message,
+	ApplicationCommandType,
+	Permissions
+} from "discord.js";
 
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
+import { type } from "os";
 
 export type ApiError = {
 	status?: number;
@@ -37,9 +46,30 @@ export interface ICommand {
 	prefix: RegExp;
 	command?: string;
 	description: string;
-	handler: (msg: Message, distube?: DisTube) => Promise<any>;
+	handler: (msg: Message) => Promise<any>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
+
+export interface ISlashCommand {
+	id?: string;
+	name: string;
+	description: string;
+	options?: ISlashCommandOption[];
+	type?: ApplicationCommandType;
+	default_member_permissions?: Permissions;
+	default_permission?: boolean;
+	nsfw?: boolean;
+	handler: (int: ChatInputCommandInteraction) => Promise<void>;
+	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
+}
+
+// use these instead of minValue, maxValue, etc.
+export type ISlashCommandOption = ApplicationCommandOption & {
+	min_value?: number;
+	max_value?: number;
+	min_length?: number;
+	max_length?: number;
+};
 
 export interface IChallengeResponse {
 	pages: number;

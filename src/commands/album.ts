@@ -1,29 +1,39 @@
-import type { Message } from "discord.js";
+import type { ChatInputCommandInteraction, TextChannel } from "discord.js";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import type { ICommand } from "../types";
+import { Api, getInteractionOptionValue } from "../helpers";
+import { sendPaginatedImageList } from "../helpers/embed";
+import { CommandNames } from "../types/enums";
+
+import type { ISlashCommand } from "../types";
 import type { IOpenAiImage } from "btbot-types";
 
-import { Api, getServerDisplayName } from "../helpers";
-import { sendPaginatedImageList } from "../helpers/embed";
-
-export const albumCommand: ICommand = {
-	prefix: /.*!album.*/gim,
-	command: "!album",
-	description:
-		"View an album of your (or another user's) previously generated images. Usage: `!album` / `!album [username/@user]`",
-	handler: async (msg: Message) => {
-		const { name, id } = getServerDisplayName(msg);
-		const isSelf = msg.author.id === id;
-		const res = await Api.get<IOpenAiImage[]>(`images?server_id=${msg.guild.id}&user_id=${id}`);
+export const albumCommand: ISlashCommand = {
+	name: CommandNames.album,
+	description: "View an album of your (or another user's) previously generated images",
+	options: [
+		{
+			name: "user",
+			description: "The user whose album you want to view (runs on self if omitted)",
+			type: ApplicationCommandOptionType.User
+		}
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
+		const isSelf = int.user.id === userId;
+		const res = await album(int.guild.id, userId);
 		if (!res || res.length === 0) {
-			msg.channel.send(
-				`${isSelf ? "You have" : `${name} has`} not generated any images yet! ${
-					isSelf ? "Run `!image [prompt]` to generate an image." : ""
-				}`
+			await int.editReply(
+				`${isSelf ? "You have" : `<@${userId}> has`} not generated any images yet!`
 			);
 			return;
 		}
-		await sendPaginatedImageList(res, msg, name);
-		return;
+		await int.editReply(`${isSelf ? "Your" : `<@${userId}>'s`} Images:`);
+		await sendPaginatedImageList(res, int.user.id, int.channel as TextChannel);
 	}
+};
+
+const album = async (server_id: string, user_id: string) => {
+	return Api.get<IOpenAiImage[]>(`images?server_id=${server_id}&user_id=${user_id}`);
 };

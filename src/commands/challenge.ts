@@ -1,41 +1,56 @@
-import type { Message } from "discord.js";
-
-import type { ICommand } from "../types";
+import type { ChatInputCommandInteraction, Guild } from "discord.js";
 import { IChallenge } from "btbot-types";
+import { ApplicationCommandOptionType } from "discord.js";
 
-import { Api, Embed, getServerDisplayName, postCurrentChallenge, readMayor } from "../helpers";
+import {
+	Api,
+	Embed,
+	getInteractionOptionValue,
+	mentionCommand,
+	postCurrentChallenge,
+	readMayor
+} from "../helpers";
+import { CommandNames } from "../types/enums";
 
-export const challengeCommand: ICommand = {
-	prefix: /.*!challenge .*/gim,
-	command: "!challenge",
-	description:
-		"Challenge for the current Mayor for the highest seat in the land! Usage: `!challenge [details]`",
-	handler: async (msg: Message) => {
-		const server_id = msg.guild.id;
-		const details = msg.content.slice("!challenge".length).trim();
-		if (!details) {
-			const embed = await postCurrentChallenge(msg);
-			msg.channel.send({ embeds: [embed] });
-			return;
+import type { ISlashCommand } from "../types";
+export const challengeCommand: ISlashCommand = {
+	name: CommandNames.challenge,
+	description: "Challenge the current mayor for the highest seat in the land",
+	options: [
+		{
+			name: "details",
+			description: "The details of the challenge",
+			type: ApplicationCommandOptionType.String
 		}
-		const author = getServerDisplayName(msg, msg.author.id);
-		const { currentMayor } = await readMayor(msg);
-		if (currentMayor.user.id === author.id) throw "mayor cannot challenge themselves";
-		const body = {
-			server_id,
-			user_id: author.id,
-			details
-		};
-		await Api.post<IChallenge>("challenges", body);
-		const reply = `<@${currentMayor.id}>, <@${author.id}> has challenged you!`;
-		const embed = Embed.success(
-			`${author.name} has challenged mayor ${currentMayor.displayName}!\n\n` +
-				`Use the "!bet <@${author.id}>" or "!bet <@${currentMayor.user.id}>" to bet on a winner.\n\n` +
-				`>>> ${details}`,
-			"Challenger Approaches!"
-		);
-		msg.channel.send(reply);
-		msg.channel.send({ embeds: [embed] });
-		return;
+	],
+	handler: async (int: ChatInputCommandInteraction) => {
+		await int.deferReply();
+		const details = getInteractionOptionValue<string>("details", int);
+
+		const { reply, embed } = await challenge(details, int.user.id, int.guild);
+		if (reply) await int.editReply(reply);
+		await int.channel.send({ embeds: [embed] });
 	}
+};
+
+const challenge = async (details: string, user_id: string, guild: Guild) => {
+	if (!details) {
+		const embed = await postCurrentChallenge(guild.id);
+		return { reply: null, embed };
+	}
+	const { currentMayor } = await readMayor(guild);
+	if (currentMayor.user.id === user_id) throw "mayor cannot challenge themselves";
+	await Api.post<IChallenge>("challenges", {
+		server_id: guild.id,
+		user_id,
+		details
+	});
+	const reply = `<@${currentMayor.id}>, <@${user_id}> has challenged you!`;
+	const embed = Embed.success(
+		`<@${user_id}> has challenged mayor <@${currentMayor.id}>!\n\n` +
+			`Use ${mentionCommand(CommandNames.bet)} to bet on a winner.\n\n` +
+			`>>> ${details}`,
+		"A Challenger Approaches!"
+	);
+	return { reply, embed };
 };
