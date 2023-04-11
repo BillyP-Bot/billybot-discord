@@ -17,7 +17,7 @@ export const spinCommand: ISlashCommand = {
 			description: "The number of BillyBucks to bet",
 			type: ApplicationCommandOptionType.Integer,
 			required: true,
-			minValue: 1
+			min_value: 1
 		},
 		{
 			name: "color",

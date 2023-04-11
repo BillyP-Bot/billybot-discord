@@ -22,7 +22,7 @@ export const payBucksCommand: ISlashCommand = {
 			description: "The number of BillyBucks to pay the other user",
 			type: ApplicationCommandOptionType.Integer,
 			required: true,
-			minValue: 1
+			min_value: 1
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {

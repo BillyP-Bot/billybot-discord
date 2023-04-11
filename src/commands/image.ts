@@ -14,6 +14,7 @@ export const imageCommand: ISlashCommand = {
 			name: "prompt",
 			description: "The word or phrase to generate the image based on",
 			type: ApplicationCommandOptionType.String,
+			max_length: 950,
 			required: true
 		}
 	],

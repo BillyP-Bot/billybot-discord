@@ -14,7 +14,7 @@ export const blackjackCommand: ISlashCommand = {
 			description: "The number of BillyBucks to bet",
 			type: ApplicationCommandOptionType.Integer,
 			required: true,
-			minValue: 10
+			min_value: 10
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {

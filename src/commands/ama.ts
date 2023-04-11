@@ -13,7 +13,7 @@ export const amaCommand: ISlashCommand = {
 			name: "prompt",
 			description: "What would you like to ask BillyP?",
 			type: ApplicationCommandOptionType.String,
-			maxLength: 950,
+			max_length: 950,
 			required: true
 		}
 	],

@@ -15,6 +15,8 @@ export const birthdayCommand: ISlashCommand = {
 			name: "date",
 			description: "Your birthday in MM-DD format",
 			type: ApplicationCommandOptionType.String,
+			min_length: 5,
+			max_length: 5,
 			required: true
 		}
 	],

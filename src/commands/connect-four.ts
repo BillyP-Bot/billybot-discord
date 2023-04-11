@@ -28,7 +28,7 @@ export const connectFourCommand: ISlashCommand = {
 			name: "bet",
 			description: "The number of BillyBucks to bet on the game",
 			type: ApplicationCommandOptionType.Integer,
-			minValue: 1
+			min_value: 1
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
