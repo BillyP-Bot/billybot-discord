@@ -5,7 +5,9 @@ import type {
 	GuildTextBasedChannel,
 	TextBasedChannel,
 	MessageReaction,
-	Message
+	Message,
+	ApplicationCommandType,
+	Permissions
 } from "discord.js";
 
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
@@ -52,6 +54,10 @@ export interface ISlashCommand {
 	name: string;
 	description: string;
 	options?: ApplicationCommandOption[];
+	type?: ApplicationCommandType;
+	default_member_permissions?: Permissions;
+	default_permission?: boolean;
+	nsfw?: boolean;
 	handler: (int: ChatInputCommandInteraction) => Promise<void>;
 	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
 }
