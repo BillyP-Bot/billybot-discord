@@ -22,17 +22,18 @@ export const albumCommand: ISlashCommand = {
 		await int.deferReply();
 		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
 		const isSelf = int.user.id === userId;
-		const res = await album(userId, int.guild.id);
+		const res = await album(int.guild.id, userId);
 		if (!res || res.length === 0) {
-			int.editReply(
+			await int.editReply(
 				`${isSelf ? "You have" : `<@${userId}> has`} not generated any images yet!`
 			);
+			return;
 		}
 		await int.editReply(`${isSelf ? "Your" : `<@${userId}>'s`} Images:`);
 		await sendPaginatedImageList(res, int.user.id, int.channel as TextChannel);
 	}
 };
 
-const album = async (user_id: string, server_id: string) => {
+const album = async (server_id: string, user_id: string) => {
 	return Api.get<IOpenAiImage[]>(`images?server_id=${server_id}&user_id=${user_id}`);
 };

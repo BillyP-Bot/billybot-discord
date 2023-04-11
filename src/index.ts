@@ -125,4 +125,10 @@ client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
 	}
 });
 
-client.login(config.BOT_TOKEN).catch(console.error);
+process.on("unhandledRejection", (error) => {
+	console.error({ error });
+});
+
+client.login(config.BOT_TOKEN).catch((error) => {
+	console.error({ error });
+});

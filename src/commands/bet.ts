@@ -44,6 +44,6 @@ const bet = async (server_id: string, user_id: string, participant_id: string, a
 		}
 	);
 	return Embed.success(
-		`Bet ${amount} on <@${participant_id}>\n\nYou now have ${billy_bucks} BillyBucks`
+		`Bet ${amount} on <@${participant_id}>!\n\nYou now have ${billy_bucks} BillyBucks.`
 	);
 };

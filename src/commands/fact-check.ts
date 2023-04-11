@@ -15,7 +15,7 @@ export const factCheckCommand: ISlashCommand = {
 		const waitMsg = await int.channel.send(
 			`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`
 		);
-		const output = await factCheck(int.user.id, int.guild.id, prompt);
+		const { output } = await factCheck(int.guild.id, int.user.id, prompt);
 		await Promise.all([int.editReply(`> *${fact}*\n${output}`), waitMsg.delete()]);
 	}
 };
@@ -27,11 +27,9 @@ const buildPrompt = async () => {
 	return { prompt, fact };
 };
 
-const factCheck = async (user_id: string, server_id: string, prompt: string) => {
-	const { output } = await Api.post<{ output: string }>("completions", {
+const factCheck = async (server_id: string, user_id: string, prompt: string) =>
+	Api.post<{ output: string }>("completions", {
 		prompt,
 		user_id,
 		server_id
 	});
-	return output;
-};

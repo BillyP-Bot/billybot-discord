@@ -40,7 +40,7 @@ export const sheeshCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		const intensity = getInteractionOptionValue<number>("intensity", int);
-		int.reply(sheesh(intensity));
+		await int.reply(sheesh(intensity));
 	}
 };
 

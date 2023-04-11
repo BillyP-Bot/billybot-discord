@@ -15,7 +15,7 @@ export const featuresCommand: ISlashCommand = {
 	options: [
 		{
 			name: "title",
-			description: "The main idea of the new feature you are requesting",
+			description: "The title of the new feature you are requesting",
 			type: ApplicationCommandOptionType.String,
 			required: true
 		},
