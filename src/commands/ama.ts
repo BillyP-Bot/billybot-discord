@@ -21,7 +21,7 @@ export const amaCommand: ISlashCommand = {
 		await int.deferReply();
 		const prompt = getInteractionOptionValue<string>("prompt", int);
 		const output = await ama(int.guild.id, int.user.id, prompt);
-		await int.editReply(output);
+		await int.editReply(`> *${prompt}*\n\n${output}`);
 	}
 };
 

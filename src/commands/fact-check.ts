@@ -16,7 +16,7 @@ export const factCheckCommand: ISlashCommand = {
 			`Fact-checking the latest Fun Factoid of the Day...\n> *${fact}*`
 		);
 		const { output } = await factCheck(int.guild.id, int.user.id, prompt);
-		await Promise.all([int.editReply(`> *${fact}*\n${output}`), waitMsg.delete()]);
+		await Promise.all([int.editReply(`> *${fact}*\n\n${output}`), waitMsg.delete()]);
 	}
 };
 

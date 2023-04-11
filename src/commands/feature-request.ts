@@ -43,7 +43,7 @@ const feature = async (server_id: string, user_id: string, title: string, body: 
 		body: body.trim()
 	});
 	return Embed.success(
-		`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${server_id})! \n\nYou now have ${result.billy_bucks} BillyBucks`,
+		`\`${result.feature.title}\` has been posted to the [Dashboard](${config.DASHBOARD_URL}/${server_id})!\n\n> *${result.feature.body}*\n\nYou now have ${result.billy_bucks} BillyBucks.`,
 		"Feature Posted"
 	);
 };
