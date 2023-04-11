@@ -11,7 +11,6 @@ import type {
 } from "discord.js";
 
 import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
-import { type } from "os";
 
 export type ApiError = {
 	status?: number;
@@ -75,4 +74,5 @@ export interface IChallengeResponse {
 	pages: number;
 	challenges: IChallenge[];
 }
+
 export type DiscordChannel = GuildTextBasedChannel | TextBasedChannel;

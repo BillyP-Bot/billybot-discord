@@ -22,12 +22,13 @@ export const bucksCommand: ISlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
 		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
-		const embed = await bucks(int.guild.id, userId);
+		const onSelf = userId === int.user.id;
+		const embed = await bucks(int.guild.id, userId, onSelf);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const bucks = async (server_id: string, user_id: string) => {
+const bucks = async (server_id: string, user_id: string, onSelf?: boolean) => {
 	const { billy_bucks } = await Api.get<IUser>(`users?user_id=${user_id}&server_id=${server_id}`);
-	return Embed.success(`<@${user_id}> has ${billy_bucks} BillyBucks!`);
+	return Embed.success(`${onSelf ? "You have" : `<@${user_id}> has`} ${billy_bucks} BillyBucks!`);
 };
