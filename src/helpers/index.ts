@@ -141,16 +141,19 @@ export function buildBlackjackResponse(data: BlackJackGameResponse, userId: stri
 		dealer_count,
 		wager,
 		status,
-		billy_bucks
+		billy_bucks,
+		turn
 	} = data;
 	let response = `<@${userId}>: ${player_count}\n`;
 	const readablePlayer = buildReadableHand(player_hand);
 	const readableDealer = buildReadableHand(dealer_hand);
 	const defaultStatus = `${BlackjackReacts.hit} ${mentionCommand(CommandNames.hit)}\n${
 		BlackjackReacts.stand
-	} ${mentionCommand(CommandNames.stand)}\n${BlackjackReacts.doubleDown} ${mentionCommand(
-		CommandNames.doubledown
-	)}`;
+	} ${mentionCommand(CommandNames.stand)}${
+		turn === 0
+			? `\n${BlackjackReacts.doubleDown} ${mentionCommand(CommandNames.doubledown)}`
+			: ""
+	}`;
 	response += `${readablePlayer.join("  ")}\n\n`;
 	response += `Dealer: ${is_complete ? dealer_count : ""}\n`;
 	response += `${readableDealer.join("  ")} ${is_complete ? "" : "🎴"}\n\n`;
