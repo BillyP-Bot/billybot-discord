@@ -5,6 +5,7 @@ import { DisTube } from "distube";
 import { announcementsCommand, commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
 import { clearVideoQueue } from "./commands/play-youtube-video";
+import { postFeature } from "./commands/feature-request";
 import {
 	Embed,
 	isBlackjackReact,
@@ -16,7 +17,6 @@ import { config } from "./helpers/config";
 import { registerSlashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
-import { postFeature } from "./commands/feature-request";
 
 const client = new Client({
 	intents: [
