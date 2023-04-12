@@ -38,7 +38,6 @@ export const featuresCommand: ISlashCommand = {
 				featureDetailsInput
 			);
 		modal.addComponents(firstActionRow, secondActionRow);
-		//const embed = await feature(int.guild.id, int.user.id, title, details);
 		await int.showModal(modal);
 	}
 };
