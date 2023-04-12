@@ -5,6 +5,7 @@ import { DisTube } from "distube";
 import { announcementsCommand, commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
 import { clearVideoQueue } from "./commands/play-youtube-video";
+import { postFeature } from "./commands/feature-request";
 import {
 	Embed,
 	isBlackjackReact,
@@ -45,11 +46,16 @@ client.once(Events.ClientReady, async () => {
 
 client.on(Events.InteractionCreate, async (int) => {
 	try {
-		if (!int.isChatInputCommand()) return;
 		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
-		const command = commandsLookup[int.commandName];
-		if (command) await command.handler(int);
+		if (int.isChatInputCommand()) {
+			const command = commandsLookup[int.commandName];
+			if (command) await command.handler(int);
+		} else if (int.isModalSubmit()) {
+			if (int.customId === "featureModal") {
+				await postFeature(int);
+			}
+		}
 	} catch (error) {
 		console.error({ error });
 		if (int.isRepliable()) {
