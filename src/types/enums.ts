@@ -51,6 +51,7 @@ export enum CommandNames {
 	factcheck = "factcheck",
 	feature = "feature",
 	fool = "fool",
+	help = "help",
 	hit = "hit",
 	image = "image",
 	lotto = "lotto",

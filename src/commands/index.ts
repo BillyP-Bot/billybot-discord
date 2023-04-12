@@ -20,6 +20,7 @@ import { connectFourCommand } from "./connect-four";
 import { factCheckCommand } from "./fact-check";
 import { featuresCommand } from "./feature-request";
 import { foolCommand } from "./fool";
+import { helpCommand } from "./help";
 import { imageCommand } from "./image";
 import { lottoCommand } from "./lotto";
 import { noblemenCommand } from "./noblemen";
@@ -77,7 +78,8 @@ export const commands: ISlashCommand[] = [
 	imageCommand,
 	albumCommand,
 	amaCommand,
-	factCheckCommand
+	factCheckCommand,
+	helpCommand
 ];
 
 export const commandsLookup = commands.reduce((acc, command) => {
@@ -122,3 +124,4 @@ export { imageCommand };
 export { albumCommand };
 export { amaCommand };
 export { factCheckCommand };
+export { helpCommand };
