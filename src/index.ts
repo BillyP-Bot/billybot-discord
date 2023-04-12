@@ -4,8 +4,8 @@ import { DisTube } from "distube";
 
 import { announcementsCommand, commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
-import { clearVideoQueue } from "./commands/play-youtube-video";
 import { postFeature } from "./commands/feature-request";
+import { clearVideoQueue } from "./commands/play-youtube-video";
 import {
 	Embed,
 	isBlackjackReact,
@@ -50,19 +50,17 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (int.isChatInputCommand()) {
 			const command = commandsLookup[int.commandName];
-			if (command) await command.handler(int);
-		} else if (int.isModalSubmit()) {
-			if (int.customId === "featureModal") {
-				await postFeature(int);
-			}
+			if (command) return await command.handler(int);
+		}
+		if (int.isModalSubmit()) {
+			if (int.customId === "featureModal") return await postFeature(int);
 		}
 	} catch (error) {
 		console.error({ error });
-		if (int.isRepliable()) {
-			const embed = { embeds: [Embed.error(error)] };
-			if (int.deferred || int.replied) await int.editReply(embed);
-			else await int.reply(embed);
-		}
+		if (!int.isRepliable()) return;
+		const embed = { embeds: [Embed.error(error)] };
+		if (int.deferred || int.replied) await int.editReply(embed);
+		else await int.reply(embed);
 	}
 });
 
