@@ -16,6 +16,7 @@ import { config } from "./helpers/config";
 import { registerSlashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
+import { postFeature } from "./commands/feature-request";
 
 const client = new Client({
 	intents: [
@@ -45,11 +46,16 @@ client.once(Events.ClientReady, async () => {
 
 client.on(Events.InteractionCreate, async (int) => {
 	try {
-		if (!int.isChatInputCommand()) return;
-		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
-		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
-		const command = commandsLookup[int.commandName];
-		if (command) await command.handler(int);
+		if (int.isChatInputCommand()) {
+			if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
+			if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
+			const command = commandsLookup[int.commandName];
+			if (command) await command.handler(int);
+		} else if (int.isModalSubmit()) {
+			if (int.customId === "featureModal") {
+				postFeature(int);
+			}
+		}
 	} catch (error) {
 		console.error({ error });
 		if (int.isRepliable()) {
