@@ -30,7 +30,7 @@ export const albumCommand: ISlashCommand = {
 			return;
 		}
 		await int.editReply(`${onSelf ? "Your" : `<@${userId}>'s`} Images:`);
-		await sendPaginatedImageList(res, int.user.id, int.channel as TextChannel);
+		await sendPaginatedImageList(res, int.channel as TextChannel);
 	}
 };
 

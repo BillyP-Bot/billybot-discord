@@ -20,10 +20,9 @@ export const imageCommand: ISlashCommand = {
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const waitMsg = await int.channel.send("Generating your image...");
 		const prompt = getInteractionOptionValue<string>("prompt", int);
 		const embed = await image(int.guild.id, int.user.id, prompt);
-		await Promise.all([int.editReply({ embeds: [embed] }), waitMsg.delete()]);
+		await int.editReply({ embeds: [embed] });
 	}
 };
 
