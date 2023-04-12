@@ -46,14 +46,14 @@ client.once(Events.ClientReady, async () => {
 
 client.on(Events.InteractionCreate, async (int) => {
 	try {
+		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
+		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (int.isChatInputCommand()) {
-			if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
-			if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 			const command = commandsLookup[int.commandName];
 			if (command) await command.handler(int);
 		} else if (int.isModalSubmit()) {
 			if (int.customId === "featureModal") {
-				postFeature(int);
+				await postFeature(int);
 			}
 		}
 	} catch (error) {
