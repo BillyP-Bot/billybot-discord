@@ -37,7 +37,6 @@ client.once(Events.ClientReady, async () => {
 			await client.user.setAvatar(Images.billyMad);
 			client.user.setActivity(Activities.farmville);
 		}
-		await client.channels.fetch(Channels.bot);
 		console.log(`Logged in as ${client.user.tag}!`);
 	} catch (error) {
 		console.error({ error });

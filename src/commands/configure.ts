@@ -10,15 +10,15 @@ export const configureCommand: ISlashCommand = {
 	description: "Command for admins to prep the server",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const users = await configureGuildUsers(int.member as GuildMember);
+		const users = await configureGuildUsers(int.member as GuildMember, true);
 		await int.editReply(`${users.length} user(s) configured`);
 	}
 };
 
-export const configureGuildUsers = async (member: GuildMember) => {
-	await assertDeveloper(member);
-	await member.guild.fetch();
-	const users = member.guild.members.cache.reduce((acc, { user }) => {
+export const configureGuildUsers = async (member: GuildMember, doAuthCheck?: boolean) => {
+	if (doAuthCheck) await assertDeveloper(member);
+	const guildMembers = await member.guild.members.fetch();
+	const users = guildMembers.reduce((acc, { user }) => {
 		if (user.bot) return acc;
 		acc.push({
 			server_id: member.guild.id,
