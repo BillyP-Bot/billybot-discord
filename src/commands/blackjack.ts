@@ -1,7 +1,7 @@
 import type { ChatInputCommandInteraction } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
 
-import { Api, buildBlackjackResponse, getInteractionOptionValue } from "../helpers";
+import { Api, buildBlackjackResponse, Embed, getInteractionOptionValue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { BlackJackGameResponse, ISlashCommand } from "../types";
@@ -20,9 +20,8 @@ export const blackjackCommand: ISlashCommand = {
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
 		const bet = getInteractionOptionValue<number>("bet", int);
-		if (bet < 10) throw "Bet amount must be at least 10 BillyBucks!";
-		const { response, is_complete } = await blackjack(int.guild.id, int.user.id, bet);
-		const replyInt = await int.editReply(response);
+		const { embed, is_complete } = await blackjack(int.guild.id, int.user.id, bet);
+		const replyInt = await int.editReply({ embeds: [embed] });
 		if (!is_complete) {
 			const replyMsg = await replyInt.fetch();
 			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨"), replyMsg.react("🟦")]);
@@ -36,5 +35,6 @@ const blackjack = async (server_id: string, user_id: string, wager: number) => {
 		user_id,
 		wager
 	});
-	return { response: buildBlackjackResponse(data, user_id), is_complete: data.is_complete };
+	const response = buildBlackjackResponse(data, user_id);
+	return { embed: Embed.success(response), is_complete: data.is_complete };
 };

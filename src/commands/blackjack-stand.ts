@@ -1,7 +1,7 @@
 import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
 import type { BlackJackGameResponse, ISlashCommand } from "../types";
-import { Api, buildBlackjackResponse } from "../helpers";
+import { Api, buildBlackjackResponse, Embed } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 export const blackjackStandCommand: ISlashCommand = {
@@ -9,12 +9,12 @@ export const blackjackStandCommand: ISlashCommand = {
 	description: "Stand in your current blackjack hand",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const response = await stand(int.guild.id, int.user.id);
-		await int.editReply(response);
+		const embed = await stand(int.guild.id, int.user.id);
+		await int.editReply({ embeds: [embed] });
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
-		const response = await stand(react.message.guild.id, sender_id);
-		await react.message.channel.send(response);
+		const embed = await stand(react.message.guild.id, sender_id);
+		await react.message.channel.send({ embeds: [embed] });
 	}
 };
 
@@ -23,5 +23,6 @@ const stand = async (server_id: string, user_id: string) => {
 		server_id,
 		user_id
 	});
-	return buildBlackjackResponse(data, user_id);
+	const response = buildBlackjackResponse(data, user_id);
+	return Embed.success(response);
 };
