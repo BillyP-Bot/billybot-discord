@@ -1,4 +1,4 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction, Guild } from "discord.js";
 
 import { Api, Embed, formatDateMMDD, mentionCommand } from "../helpers";
 import { CommandNames } from "../types/enums";
@@ -11,13 +11,16 @@ export const birthdaysCommand: ISlashCommand = {
 	description: "Show all birthdays that have been set",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const embed = await birthdays(int.guild.id);
+		const embed = await birthdays(int.guild);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const birthdays = async (server_id: string) => {
-	const users = await Api.get<IUser[]>(`users/birthday/server/${server_id}`);
+const birthdays = async (guild: Guild) => {
+	const [users, guildMemberLookup] = await Promise.all([
+		Api.get<IUser[]>(`users/birthday/server/${guild.id}`),
+		guild.members.fetch()
+	]);
 	const today = new Date();
 	today.setHours(0, 0, 0, 0);
 	const todayTime = today.getTime();
@@ -39,7 +42,10 @@ const birthdays = async (server_id: string) => {
 	const output =
 		sortedUsers.reduce((acc, user) => {
 			return user.birthday
-				? acc + `<@${user.user_id}>: ${formatDateMMDD(user.birthday)}\n`
+				? acc +
+						`${guildMemberLookup.get(user.user_id).displayName}: ${formatDateMMDD(
+							user.birthday
+						)}\n`
 				: acc;
 		}, "") || "No birthdays registered!\n";
 	const fullOutput =
