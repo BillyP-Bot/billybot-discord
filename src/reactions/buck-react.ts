@@ -4,7 +4,7 @@ import { Api } from "../helpers";
 
 export async function buckReact(react: MessageReaction, sender_id: string) {
 	try {
-		return await Api.post("bucks/pay", {
+		await Api.post("bucks/pay", {
 			server_id: react.message.guild.id,
 			amount: 1,
 			recipient_id: react.message.author.id,

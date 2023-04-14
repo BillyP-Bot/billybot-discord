@@ -1,7 +1,7 @@
 import { Client, Routes } from "discord.js";
 
 import { commands, commandsLookup } from "../commands";
-import { config } from "../helpers/config";
+import { config } from "../helpers";
 import { DiscordApi } from "./api";
 
 export const registerSlashCommands = async (client: Client) => {

@@ -40,7 +40,6 @@ import { portfolioCommand } from "./stock-portfolio";
 import { sellStockCommand } from "./stock-sell";
 import { taxesCommand } from "./taxes";
 
-export { announcementsCommand } from "./admin-announcement";
 export const commands: ISlashCommand[] = [
 	bingCommand,
 	betCommand,

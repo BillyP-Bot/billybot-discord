@@ -1,23 +1,16 @@
 # BT-Bots
 
-Discord Bots written in JS
+Discord bot repo for the one and only BillyP Bot of Boy Town.
 
-# Discord.js library:
-
-https://discord.js.org/#/docs/main/11.1.0/general/welcome
-
-# Develop & Test:
+## Develop & Test:
 
 -   Clone repo
--   Fill .env file with proper credentials
-    -   `NODE_ENV`=development
-    -   `BOT_TOKEN` token found on discord dev portal
-    -   `BILLY_BACKEND` API endpoint for the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend)
-    -   `BILLY_BACKEND_TOKEN` auth token for the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend)
-    -   Necessary to run functions with Google API calls:
-        -   `GOOGLE_API_KEY`
-        -   `GOOGLE_CX_KEY`
--   Download and install [Node.js](https://nodejs.org/en/download/)
+-   Fill .env file with proper credentials:
+    -   `NODE_ENV=development`
+    -   `BOT_TOKEN=` Token found on Discord dev portal
+    -   `BILLY_BACKEND=` API endpoint for the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend)
+    -   `BILLY_BACKEND_TOKEN=` Auth token for the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend)
+-   Download and install [Node.js](https://nodejs.org/en/download/) (latest LTS version recommended)
 -   Set up the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend) to run locally
--   Run `npm install` to ensure that the local project has all packages installed
--   Run `npm run dev` to start project (will restart everytime a file is saved)
+-   Run `npm install` to install package dependencies
+-   Run `npm run dev` or press `F5` to start project (will restart when a file is saved)

@@ -1,12 +1,11 @@
 {
   "name": "billypbot",
-  "description": "billypbot",
+  "description": "The one and only BillyP Bot of Boy Town",
   "version": "1.0.0",
   "main": "build/index.js",
   "scripts": {
     "prepare": "husky install",
     "build": "tsc",
-    "postinstall": "npm run build",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx . && prettier --check .",
     "format": "eslint --fix --ext .js,.jsx,.ts,.tsx . && prettier --write .",
     "watch": "tsc --watch",

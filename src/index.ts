@@ -1,20 +1,21 @@
-import type { GuildMember, Message, MessageReaction, User, VoiceState } from "discord.js";
+import type { MessageReaction } from "discord.js";
 import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
 import { DisTube } from "distube";
 
-import { announcementsCommand, commandsLookup } from "./commands";
+import { commandsLookup } from "./commands";
 import { configureGuildUsers } from "./commands/configure";
 import { postFeature } from "./commands/feature-request";
 import { clearVideoQueue } from "./commands/play-youtube-video";
 import {
+	config,
 	Embed,
 	isBlackjackReact,
 	isConnectFourReact,
+	postAdminAnnouncement,
+	registerSlashCommands,
 	sendLegacyCommandDeprecationNotice,
 	updateEngagementMetrics
 } from "./helpers";
-import { config } from "./helpers/config";
-import { registerSlashCommands } from "./helpers/slash";
 import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
 import { Activities, Channels, Emotes, Images } from "./types/enums";
 
@@ -64,7 +65,7 @@ client.on(Events.InteractionCreate, async (int) => {
 	}
 });
 
-client.on(Events.MessageCreate, async (msg: Message) => {
+client.on(Events.MessageCreate, async (msg) => {
 	try {
 		if (msg.channel.type === ChannelType.DM) return;
 		if (msg.channel.id === Channels.botTesting && config.IS_PROD) return;
@@ -72,7 +73,7 @@ client.on(Events.MessageCreate, async (msg: Message) => {
 		if (msg.author.bot) return;
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
-				return await announcementsCommand.handler(msg);
+				return await postAdminAnnouncement(msg);
 			case msg.content[0] === "!":
 				return await sendLegacyCommandDeprecationNotice(msg);
 			default:
@@ -84,8 +85,9 @@ client.on(Events.MessageCreate, async (msg: Message) => {
 	}
 });
 
-client.on(Events.MessageReactionAdd, async (react: MessageReaction, user: User) => {
+client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 	try {
+		const react = msgReact as MessageReaction;
 		if (react.message.author.id === user.id) return;
 		if (react.message.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (react.message.channel.id !== Channels.botTesting && !config.IS_PROD) return;
@@ -97,18 +99,19 @@ client.on(Events.MessageReactionAdd, async (react: MessageReaction, user: User) 
 		}
 		await updateEmoteMetrics(react, user.id);
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
-			return await react.message.channel.send(`<@${user.id}> 🖕`);
+			await react.message.channel.send(`<@${user.id}> 🖕`);
+			return;
 		}
 		if (react.emoji.name === Emotes.billy_buck && !react.message.author.bot) {
 			return await buckReact(react, user.id);
 		}
 	} catch (error) {
 		console.error({ error });
-		await react.message.channel.send({ embeds: [Embed.error(error)] });
+		await msgReact.message.channel.send({ embeds: [Embed.error(error)] });
 	}
 });
 
-client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
+client.on(Events.GuildMemberAdd, async (member) => {
 	try {
 		await configureGuildUsers(member);
 	} catch (error) {
@@ -116,7 +119,7 @@ client.on(Events.GuildMemberAdd, async (member: GuildMember) => {
 	}
 });
 
-client.on(Events.VoiceStateUpdate, (oldState: VoiceState) => {
+client.on(Events.VoiceStateUpdate, (oldState) => {
 	try {
 		// when bot leaves voice channel
 		if (oldState.member.user.bot && oldState.channelId) {

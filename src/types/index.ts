@@ -1,11 +1,9 @@
-/* eslint-disable no-unused-vars */
 import type {
 	ApplicationCommandOption,
 	ChatInputCommandInteraction,
 	GuildTextBasedChannel,
 	TextBasedChannel,
 	MessageReaction,
-	Message,
 	ApplicationCommandType,
 	Permissions
 } from "discord.js";
@@ -41,14 +39,6 @@ export type BlackJackGameResponse = {
 
 export type BetAggregate = [{ _id: string; bets: IBet[]; count: number }];
 
-export interface ICommand {
-	prefix: RegExp;
-	command?: string;
-	description: string;
-	handler: (msg: Message) => Promise<any>;
-	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
-}
-
 export interface ISlashCommand {
 	id?: string;
 	name: string;
@@ -59,7 +49,7 @@ export interface ISlashCommand {
 	default_permission?: boolean;
 	nsfw?: boolean;
 	handler: (int: ChatInputCommandInteraction) => Promise<void>;
-	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<any>;
+	reactHandler?: (react: MessageReaction, sender_id: string) => Promise<void>;
 }
 
 // use these instead of minValue, maxValue, etc.

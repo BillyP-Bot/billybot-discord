@@ -22,6 +22,12 @@ import { Api } from "./api";
 import { Embed } from "./embed";
 
 import type { BlackJackGameResponse, IChallengeResponse } from "../types";
+export { Api } from "./api";
+export { config } from "./config";
+export { Embed } from "./embed";
+export { postAdminAnnouncement } from "./announcement";
+export { registerSlashCommands } from "./slash";
+
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",
 	[CardSuit.hearts]: "♥️",
@@ -68,37 +74,7 @@ export async function updateEngagementMetrics(msg: Message) {
 		},
 		...(operations ? operations : [])
 	];
-	return Api.put("metrics/engagement", body);
-}
-
-export function getFirstMentionOrSelf(msg: Message, skip?: number) {
-	const mentions = msg.mentions.members;
-	if (mentions.size >= 1) return mentions.first().user.id;
-	// no mentions
-	const _skip = skip ? skip : msg.content.split(" ")[0].length;
-	const params = msg.content.slice(_skip).trim().split(" ");
-	// no valid plain text mentions
-	if (params[0] === "") return msg.author.id;
-	return getUserIdFromUsername(params[0], msg.guild);
-}
-
-export function getServerDisplayName(msg: Message, id?: string) {
-	const userId = id || getFirstMentionOrSelf(msg);
-	const found = msg.guild.members.cache.find((a) => a.user.id === userId);
-	return {
-		name: found.displayName,
-		id: found.id
-	};
-}
-
-export async function mapToDisplayName(msg: Message, users: IUser[]) {
-	const guildMembers = await msg.guild.members.fetch();
-	const lookup = users.reduce((acc, user) => {
-		const { displayName, id } = guildMembers.find((a) => a.user.id === user.user_id);
-		acc[id] = displayName;
-		return acc;
-	}, {} as { [key: string]: string });
-	return lookup;
+	await Api.put("metrics/engagement", body);
 }
 
 export async function assertMayor(member: GuildMember) {
@@ -182,7 +158,6 @@ export function buildConnectFourChallengeResponse(data: IConnectFour) {
 
 export function buildConnectFourMoveResponse(data: IConnectFour) {
 	const { board, red_user_id, yellow_user_id, to_move, is_complete, wager } = data;
-
 	let message =
 		ConnectFourReacts.one +
 		ConnectFourReacts.two +
@@ -192,7 +167,6 @@ export function buildConnectFourMoveResponse(data: IConnectFour) {
 		ConnectFourReacts.six +
 		ConnectFourReacts.seven +
 		"\n\n";
-
 	for (let i = 5; i >= 0; i--) {
 		for (let j = 0; j < 7; j++) {
 			const pos = board[j][i];
@@ -206,10 +180,8 @@ export function buildConnectFourMoveResponse(data: IConnectFour) {
 		message += "\n";
 	}
 	message += "\n";
-
 	message += `${ConnectFourColor.red}: <@${red_user_id}>\n`;
 	message += `${ConnectFourColor.yellow}: <@${yellow_user_id}>\n\n`;
-
 	if (is_complete) {
 		if (to_move) {
 			message += `Four in a row for ${
@@ -313,31 +285,24 @@ export function buildCurrentBetsMessage(results: BetAggregate) {
 
 export class Queue<T = any> {
 	private items: T[];
-
 	constructor() {
 		this.clear();
 	}
-
 	public clear() {
 		this.items = [];
 	}
-
 	public enqueue(item: T) {
 		this.items.push(item);
 	}
-
 	public dequeue() {
 		this.items.shift();
 	}
-
 	public front() {
 		return this.items[0];
 	}
-
 	public length() {
 		return this.items.length;
 	}
-
 	public list() {
 		return this.items;
 	}
@@ -345,48 +310,6 @@ export class Queue<T = any> {
 
 export const formatDateMMDD = (birthday: ISOTimestamp) => {
 	return new Date(birthday).toLocaleDateString().slice(0, -5);
-};
-
-export { Api } from "./api";
-export { Embed } from "./embed";
-
-export const isUserMention = (toCheck: string) => {
-	const lengthCheck = toCheck.length === 21;
-	const frontCheck = toCheck.slice(0, 2) === "<@";
-	const backCheck = toCheck[20] === ">";
-	return lengthCheck && frontCheck && backCheck;
-};
-
-export const getUserIdFromMention = (mention: string) => {
-	if (!isUserMention(mention)) throw "Provided string is not a user mention";
-	return mention.replace("<@", "").replace(">", "");
-};
-
-export const getUserIdFromUsername = (username: string, guild: Guild) => {
-	const found = guild.members.cache.find(
-		(a) =>
-			a.user.username.toUpperCase().trim() === username.toUpperCase().trim() ||
-			a.displayName.toUpperCase().trim() === username.toUpperCase().trim()
-	);
-	if (!found) throw `Could not find ${username} in this server`;
-	return found.id;
-};
-
-export const getUserIdFromMentionOrUsername = (mentionOrUsername: string, guild: Guild) => {
-	if (isUserMention(mentionOrUsername)) return getUserIdFromMention(mentionOrUsername);
-	return getUserIdFromUsername(mentionOrUsername, guild);
-};
-
-export const getUserIdFromMentionOrUsernameWithDefault = (
-	mentionOrUsername: string,
-	guild: Guild,
-	defaultUserId: string
-) => {
-	try {
-		return getUserIdFromMentionOrUsername(mentionOrUsername, guild);
-	} catch (error) {
-		return defaultUserId;
-	}
 };
 
 export const getInteractionOptionValue = <T>(

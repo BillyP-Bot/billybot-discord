@@ -8,8 +8,7 @@ import {
 	TextInputStyle
 } from "discord.js";
 
-import { Api, Embed } from "../helpers";
-import { config } from "../helpers/config";
+import { Api, config, Embed } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { IFeature } from "btbot-types";
