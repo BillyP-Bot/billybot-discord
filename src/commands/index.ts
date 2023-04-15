@@ -23,6 +23,7 @@ import { foolCommand } from "./fool";
 import { helpCommand } from "./help";
 import { imageCommand } from "./image";
 import { lottoCommand } from "./lotto";
+import { nbaCommand } from "./nba";
 import { noblemenCommand } from "./noblemen";
 import { payBucksCommand } from "./pay-bucks";
 import {
@@ -78,7 +79,8 @@ export const commands: ISlashCommand[] = [
 	albumCommand,
 	amaCommand,
 	factCheckCommand,
-	helpCommand
+	helpCommand,
+	nbaCommand
 ];
 
 export const commandsLookup = commands.reduce((acc, command) => {
@@ -124,3 +126,4 @@ export { albumCommand };
 export { amaCommand };
 export { factCheckCommand };
 export { helpCommand };
+export { nbaCommand };

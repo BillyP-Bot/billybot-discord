@@ -55,6 +55,7 @@ export enum CommandNames {
 	hit = "hit",
 	image = "image",
 	lotto = "lotto",
+	nba = "nba",
 	noblemen = "noblemen",
 	p = "p",
 	pay = "pay",
