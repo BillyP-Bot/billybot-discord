@@ -1,62 +1,64 @@
 import type { ChatInputCommandInteraction, TextChannel, VoiceBasedChannel } from "discord.js";
 import { ApplicationCommandOptionType } from "discord.js";
-import { Events, SearchResultVideo } from "distube";
+import { Events } from "distube";
+import YouTube, { Video } from "youtube-sr";
 
 import { distube } from "../";
-import { getInteractionOptionValue, Queue } from "../helpers";
+import { getInteractionOptionValue, isValidURL, Queue } from "../helpers";
 import { CommandNames } from "../types/enums";
 
 import type { ISlashCommand } from "../types";
 
 const INACTIVITY_SEC = 60;
 
-const queue = new Queue<SearchResultVideo>();
+const queue = new Queue<Video>();
 
 export const playYoutubeCommand: ISlashCommand = {
 	name: CommandNames.p,
 	description: "Play a YouTube video in the current voice channel",
 	options: [
 		{
-			name: "search_text",
-			description: "Text to search YouTube for (plays first result)",
+			name: "search",
+			description: "Video URL or text to search YouTube for (plays first result)",
 			type: ApplicationCommandOptionType.String,
 			required: true
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
-		const searchText = getInteractionOptionValue<string>("search_text", int);
+		const searchTextOrUrl = getInteractionOptionValue<string>("search", int);
 		const member = int.guild.members.cache.get(int.member.user.id);
 		const voiceChannel = member.voice.channel;
-		await int.reply(`Searching YouTube for \`${searchText}\`...`);
-		await play(searchText, int.channel as TextChannel, voiceChannel);
+		await int.reply(`Searching YouTube for \`${searchTextOrUrl}\`...`);
+		await play(searchTextOrUrl, int.channel as TextChannel, voiceChannel);
 	}
 };
 
 const play = async (
-	searchText: string,
+	searchTextOrUrl: string,
 	textChannel: TextChannel,
 	voiceChannel: VoiceBasedChannel
 ) => {
 	try {
-		const video = (await distube.search(searchText, { limit: 1 }))[0];
+		const video = isValidURL(searchTextOrUrl)
+			? await YouTube.getVideo(searchTextOrUrl)
+			: await YouTube.searchOne(searchTextOrUrl);
 		if (!video) throw "No results found!";
 		queue.enqueue(video);
 		if (queue.length() === 1) {
 			await playNextVideoInQueue(textChannel, voiceChannel);
 		} else {
 			await textChannel.send(
-				`✅ Queued Video:\n\`${video.name}\`\n\n` + getNowPlayingAndNextUp()
+				`✅ Queued Video:\n\`${video.title}\`\n\n` + getNowPlayingAndNextUp()
 			);
 		}
 	} catch (error) {
-		console.error({ error });
 		switch (error.errorCode) {
 			case "NO_RESULT":
 				throw "No results found!";
 			case "INVALID_TYPE":
 				throw "User must be in a voice channel!";
 			default:
-				throw "Unexpected error occurred!";
+				throw error;
 		}
 	}
 };
@@ -64,7 +66,7 @@ const play = async (
 const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: VoiceBasedChannel) => {
 	const video = queue.front();
 	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
-	await distube.play(voiceChannel, video);
+	await distube.play(voiceChannel, video.url);
 	await textChannel.send(getNowPlayingAndNextUp());
 	distube.removeAllListeners();
 	distube.on(Events.FINISH_SONG, async () => {
@@ -107,11 +109,11 @@ export const clearVideoQueue = () => {
 };
 
 const getNowPlayingAndNextUp = () => {
-	let text = `▶️ Now Playing:\n\`${queue.front().name}\`\n\n`;
+	let text = `▶️ Now Playing:\n\`${queue.front().title}\`\n\n`;
 	if (queue.length() > 1) {
 		text += "🎶 Next Up:\n";
-		text += queue.list().reduce((acc, { name }, i) => {
-			return acc + (i > 0 ? `**${i}.** \`${name}\`\n` : "");
+		text += queue.list().reduce((acc, { title }, i) => {
+			return acc + (i > 0 ? `**${i}.** \`${title}\`\n` : "");
 		}, "");
 	}
 	return text;
