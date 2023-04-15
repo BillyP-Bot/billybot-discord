@@ -12,6 +12,7 @@ import { blackjackHitCommand } from "./blackjack-hit";
 import { blackjackStandCommand } from "./blackjack-stand";
 import { bucksCommand } from "./bucks";
 import { buyTicketCommand } from "./buy-ticket";
+import { celticsCommand } from "./celtics";
 import { challengeCommand } from "./challenge";
 import { closeBetCommand } from "./close-bet";
 import { concedeCommand } from "./concede";
@@ -78,7 +79,8 @@ export const commands: ISlashCommand[] = [
 	albumCommand,
 	amaCommand,
 	factCheckCommand,
-	helpCommand
+	helpCommand,
+	celticsCommand
 ];
 
 export const commandsLookup = commands.reduce((acc, command) => {
@@ -124,3 +126,4 @@ export { albumCommand };
 export { amaCommand };
 export { factCheckCommand };
 export { helpCommand };
+export { celticsCommand };

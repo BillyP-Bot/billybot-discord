@@ -41,6 +41,7 @@ export enum CommandNames {
 	blackjack = "blackjack",
 	bucks = "bucks",
 	buystock = "buystock",
+	celtics = "celtics",
 	challenge = "challenge",
 	clearqueue = "clearqueue",
 	closebet = "closebet",
