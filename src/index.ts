@@ -52,6 +52,7 @@ client.on(Events.InteractionCreate, async (int) => {
 		if (int.isChatInputCommand()) {
 			const command = commandsLookup[int.commandName];
 			if (command) return await command.handler(int);
+			else throw "Command not supported yet! Check back soon.";
 		}
 		if (int.isModalSubmit()) {
 			if (int.customId === "featureModal") return await postFeature(int);
