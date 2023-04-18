@@ -1,11 +1,8 @@
-import type { MessageReaction } from "discord.js";
-import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
+import { ChannelType, Client, Events, GatewayIntentBits, MessageReaction } from "discord.js";
 import { DisTube } from "distube";
 
-import { commandsLookup } from "./commands";
-import { configureGuildUsers } from "./commands/configure";
-import { postFeature } from "./commands/feature-request";
-import { clearVideoQueue } from "./commands/play-youtube-video";
+import { clearVideoQueue, commandsLookup, configureGuildUsers, postFeature } from "@commands";
+import { Activities, Channels, Emotes, Images } from "@enums";
 import {
 	config,
 	Embed,
@@ -15,9 +12,8 @@ import {
 	registerSlashCommands,
 	sendLegacyCommandDeprecationNotice,
 	updateEngagementMetrics
-} from "./helpers";
-import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "./reactions";
-import { Activities, Channels, Emotes, Images } from "./types/enums";
+} from "@helpers";
+import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "@reactions";
 
 const client = new Client({
 	intents: [

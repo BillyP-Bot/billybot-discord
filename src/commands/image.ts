@@ -1,10 +1,8 @@
-import type { ChatInputCommandInteraction } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 
-import { Api, Embed, getInteractionOptionValue } from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { ISlashCommand } from "../types";
+import { CommandNames } from "@enums";
+import { Api, Embed, getInteractionOptionValue } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const imageCommand: ISlashCommand = {
 	name: CommandNames.image,

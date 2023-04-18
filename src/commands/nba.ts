@@ -1,10 +1,9 @@
-import type { ChatInputCommandInteraction } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 
-import { Api, Embed, getInteractionOptionValue } from "../helpers";
-import { CommandNames } from "../types/enums";
+import { CommandNames } from "@enums";
+import { Api, Embed, getInteractionOptionValue } from "@helpers";
+import { ISlashCommand } from "@types";
 
-import type { ISlashCommand } from "../types";
 export const nbaCommand: ISlashCommand = {
 	name: CommandNames.nba,
 	description: "Check when the next game for any NBA team is",

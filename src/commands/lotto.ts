@@ -1,9 +1,9 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import { IUser } from "btbot-types";
+import { ChatInputCommandInteraction } from "discord.js";
 
-import type { IUser } from "btbot-types";
-import type { ISlashCommand } from "../types";
-import { Api, Embed, mentionCommand } from "../helpers";
-import { CommandNames } from "../types/enums";
+import { CommandNames } from "@enums";
+import { Api, Embed, mentionCommand } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const lottoCommand: ISlashCommand = {
 	name: CommandNames.lotto,

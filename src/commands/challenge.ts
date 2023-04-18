@@ -1,7 +1,7 @@
-import type { ChatInputCommandInteraction, Guild } from "discord.js";
 import { IChallenge } from "btbot-types";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, Guild } from "discord.js";
 
+import { CommandNames } from "@enums";
 import {
 	Api,
 	Embed,
@@ -9,10 +9,9 @@ import {
 	mentionCommand,
 	postCurrentChallenge,
 	readMayor
-} from "../helpers";
-import { CommandNames } from "../types/enums";
+} from "@helpers";
+import { ISlashCommand } from "@types";
 
-import type { ISlashCommand } from "../types";
 export const challengeCommand: ISlashCommand = {
 	name: CommandNames.challenge,
 	description: "Challenge the current mayor for the highest seat in the land",

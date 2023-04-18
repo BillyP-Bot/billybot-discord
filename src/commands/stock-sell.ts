@@ -1,6 +1,7 @@
-import type { ChatInputCommandInteraction } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { IStock } from "btbot-types";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 
+import { CommandNames } from "@enums";
 import {
 	Api,
 	Embed,
@@ -8,11 +9,8 @@ import {
 	getTrendEmoji,
 	pluralIfNotOne,
 	plusSignIfNotNegative
-} from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { IStock } from "btbot-types";
-import type { ISlashCommand } from "../types";
+} from "@helpers";
+import { ISlashCommand } from "@types";
 
 interface IStockSell extends IStock {
 	delta: number;

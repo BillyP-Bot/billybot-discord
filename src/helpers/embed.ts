@@ -1,10 +1,8 @@
-import type { TextChannel } from "discord.js";
-import { EmbedBuilder } from "discord.js";
+import { IOpenAiImage } from "btbot-types";
+import { EmbedBuilder, TextChannel } from "discord.js";
 import { PaginatedEmbed } from "embed-paginator";
 
-import { Colors } from "../types/enums";
-
-import type { IOpenAiImage } from "btbot-types";
+import { Colors } from "@enums";
 
 export class Embed {
 	static success(description?: string, title?: string) {

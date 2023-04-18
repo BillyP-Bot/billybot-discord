@@ -1,7 +1,7 @@
-import type { Message, TextChannel } from "discord.js";
+import { Message, TextChannel } from "discord.js";
 
-import { Api, assertDeveloper } from "../helpers";
-import { Channels } from "../types/enums";
+import { Channels } from "@enums";
+import { Api, assertDeveloper } from "@helpers";
 
 export const postAdminAnnouncement = async (msg: Message) => {
 	await assertDeveloper(msg.member);

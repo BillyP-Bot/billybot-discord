@@ -1,11 +1,10 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction } from "discord.js";
 import { PaginatedEmbed } from "embed-paginator";
 
-import { mentionCommand } from "../helpers";
-import { CommandNames } from "../types/enums";
-import { commands } from "./";
-
-import type { ISlashCommand } from "../types";
+import { commands } from "@commands";
+import { CommandNames } from "@enums";
+import { mentionCommand } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const helpCommand: ISlashCommand = {
 	name: CommandNames.help,

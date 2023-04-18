@@ -1,13 +1,17 @@
-import type { ChatInputCommandInteraction, TextChannel, VoiceBasedChannel } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import {
+	ApplicationCommandOptionType,
+	ChatInputCommandInteraction,
+	TextChannel,
+	VoiceBasedChannel
+} from "discord.js";
 import { Events } from "distube";
 import YouTube, { Video } from "youtube-sr";
 
-import { distube } from "../";
-import { getInteractionOptionValue, isValidURL, Queue } from "../helpers";
-import { CommandNames } from "../types/enums";
+import { CommandNames } from "@enums";
+import { getInteractionOptionValue, isValidURL, Queue } from "@helpers";
+import { ISlashCommand } from "@types";
 
-import type { ISlashCommand } from "../types";
+import { distube } from "../";
 
 const INACTIVITY_SEC = 60;
 

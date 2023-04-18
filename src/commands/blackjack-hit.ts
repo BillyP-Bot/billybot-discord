@@ -1,9 +1,8 @@
-import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
+import { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
-import { Api, buildBlackjackResponse, Embed } from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { BlackJackGameResponse, ISlashCommand } from "../types";
+import { CommandNames } from "@enums";
+import { Api, buildBlackjackResponse, Embed } from "@helpers";
+import { BlackJackGameResponse, ISlashCommand } from "@types";
 
 export const blackjackHitCommand: ISlashCommand = {
 	name: CommandNames.hit,

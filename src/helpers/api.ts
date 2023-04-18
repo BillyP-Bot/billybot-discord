@@ -1,9 +1,9 @@
 import { create } from "apisauce";
 import { REST } from "discord.js";
 
-import { config } from "./config";
+import { ApiResponse, UserLookup } from "@types";
 
-import type { ApiResponse, UserLookup } from "../types";
+import { config } from "./config";
 
 export class Api {
 	public static readonly client = create({

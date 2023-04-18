@@ -1,9 +1,8 @@
 import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 
-import { getInteractionOptionValue } from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { ISlashCommand } from "../types";
+import { CommandNames } from "@enums";
+import { getInteractionOptionValue } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const sheeshCommand: ISlashCommand = {
 	name: CommandNames.sheesh,

@@ -1,10 +1,9 @@
-import type { ChatInputCommandInteraction } from "discord.js";
-
-import type { ISlashCommand, BetAggregate } from "../types";
 import { IParticipant } from "btbot-types";
+import { ChatInputCommandInteraction } from "discord.js";
 
-import { Api, buildCurrentBetsMessage, Embed } from "../helpers";
-import { CommandNames } from "../types/enums";
+import { CommandNames } from "@enums";
+import { Api, buildCurrentBetsMessage, Embed } from "@helpers";
+import { BetAggregate, ISlashCommand } from "@types";
 
 export const closeBetCommand: ISlashCommand = {
 	name: CommandNames.closebet,

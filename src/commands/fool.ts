@@ -1,10 +1,8 @@
-import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, GuildMember } from "discord.js";
 
-import { Api, assertMayor, Embed, getInteractionOptionValue, readFool } from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { ISlashCommand } from "../types";
+import { CommandNames } from "@enums";
+import { Api, assertMayor, Embed, getInteractionOptionValue, readFool } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const foolCommand: ISlashCommand = {
 	name: CommandNames.fool,

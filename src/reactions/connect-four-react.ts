@@ -1,10 +1,8 @@
-import type { MessageReaction } from "discord.js";
+import { ConnectFourReacts, IConnectFour } from "btbot-types";
+import { MessageReaction } from "discord.js";
 
-import type { IConnectFour } from "btbot-types";
-import { ConnectFourReacts } from "btbot-types";
-
-import { sendConnectFourResponseMessage } from "../commands/connect-four";
-import { Api, buildConnectFourMoveResponse } from "../helpers";
+import { sendConnectFourResponseMessage } from "@commands";
+import { Api, buildConnectFourMoveResponse } from "@helpers";
 
 export async function connectFourReact(react: MessageReaction, sender_id: string) {
 	const game = await Api.get<IConnectFour>(

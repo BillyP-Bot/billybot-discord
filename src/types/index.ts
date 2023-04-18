@@ -1,14 +1,13 @@
-import type {
+import { IBet, ICard, IChallenge, IUser } from "btbot-types";
+import {
 	ApplicationCommandOption,
+	ApplicationCommandType,
 	ChatInputCommandInteraction,
 	GuildTextBasedChannel,
-	TextBasedChannel,
 	MessageReaction,
-	ApplicationCommandType,
-	Permissions
+	Permissions,
+	TextBasedChannel
 } from "discord.js";
-
-import type { ICard, IUser, IChallenge, IBet } from "btbot-types";
 
 export type ApiError = {
 	status?: number;

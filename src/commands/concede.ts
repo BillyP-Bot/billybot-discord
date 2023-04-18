@@ -1,6 +1,12 @@
-import type { ChatInputCommandInteraction, Guild, GuildMember } from "discord.js";
-import { ApplicationCommandOptionType } from "discord.js";
+import { IUser } from "btbot-types";
+import {
+	ApplicationCommandOptionType,
+	ChatInputCommandInteraction,
+	Guild,
+	GuildMember
+} from "discord.js";
 
+import { CommandNames } from "@enums";
 import {
 	Api,
 	assertMayor,
@@ -8,12 +14,8 @@ import {
 	Embed,
 	getInteractionOptionValue,
 	readFool
-} from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { IUser } from "btbot-types";
-
-import type { ISlashCommand } from "../types";
+} from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const concedeCommand: ISlashCommand = {
 	name: CommandNames.concede,

@@ -1,9 +1,9 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import { IStock } from "btbot-types";
+import { ChatInputCommandInteraction } from "discord.js";
 
-import type { IStock } from "btbot-types";
-import type { ISlashCommand } from "../types";
-import { Api, Embed, getTrendEmoji, pluralIfNotOne, plusSignIfNotNegative } from "../helpers";
-import { CommandNames } from "../types/enums";
+import { CommandNames } from "@enums";
+import { Api, Embed, getTrendEmoji, pluralIfNotOne, plusSignIfNotNegative } from "@helpers";
+import { ISlashCommand } from "@types";
 
 interface IPortfolio {
 	stocks: IPortfolioStock[];

@@ -1,6 +1,6 @@
-import type { MessageReaction } from "discord.js";
+import { MessageReaction } from "discord.js";
 
-import { Api } from "../helpers";
+import { Api } from "@helpers";
 
 export async function updateEmoteMetrics(react: MessageReaction, sender_id: string) {
 	try {

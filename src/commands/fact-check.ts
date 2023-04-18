@@ -1,10 +1,9 @@
-import type { ChatInputCommandInteraction } from "discord.js";
-import type { IFunFact } from "btbot-types";
+import { IFunFact } from "btbot-types";
+import { ChatInputCommandInteraction } from "discord.js";
 
-import { Api } from "../helpers";
-import { CommandNames } from "../types/enums";
-
-import type { ISlashCommand } from "../types";
+import { CommandNames } from "@enums";
+import { Api } from "@helpers";
+import { ISlashCommand } from "@types";
 
 export const factCheckCommand: ISlashCommand = {
 	name: CommandNames.factcheck,

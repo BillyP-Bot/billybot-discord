@@ -3,7 +3,7 @@
     "experimentalDecorators": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es5",
     "noImplicitAny": true,
     "moduleResolution": "node",
     "sourceMap": true,
@@ -14,7 +14,12 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "@commands": ["src/commands"],
+      "@helpers": ["src/helpers"],
+      "@reactions": ["src/reactions"],
+      "@types": ["src/types"],
+      "@enums": ["src/types/enums"]
     }
   },
   "include": ["src/**/*"]
