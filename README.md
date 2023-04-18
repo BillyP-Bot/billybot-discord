@@ -13,4 +13,4 @@ Discord bot repo for the one and only BillyP Bot of Boy Town.
 -   Download and install [Node.js](https://nodejs.org/en/download/) (latest LTS version recommended)
 -   Set up the [billybot-backend](https://github.com/BillyP-Bot/billybot-backend) to run locally
 -   Run `npm install` to install package dependencies
--   Run `npm run dev` or press `F5` to start project (will restart when a file is saved)
+-   Run `npm run dev` or press `F5` in VS Code to start project (will restart when a file is saved)

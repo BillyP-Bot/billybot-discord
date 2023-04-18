@@ -44,45 +44,45 @@ import { sellStockCommand } from "./stock-sell";
 import { taxesCommand } from "./taxes";
 
 export const commands: ISlashCommand[] = [
-	bingCommand,
-	betCommand,
-	bucksCommand,
-	lottoCommand,
-	buyTicketCommand,
-	payBucksCommand,
+	albumCommand,
 	allowanceCommand,
-	noblemenCommand,
-	serfsCommand,
-	spinCommand,
-	blackjackCommand,
-	blackjackHitCommand,
-	blackjackStandCommand,
-	blackjackDoubleDownCommand,
-	taxesCommand,
-	configureCommand,
-	concedeCommand,
-	challengeCommand,
-	closeBetCommand,
-	featuresCommand,
-	foolCommand,
-	playYoutubeCommand,
-	skipCommand,
-	queueCommand,
-	clearQueueCommand,
+	amaCommand,
+	betCommand,
+	bingCommand,
 	birthdayCommand,
 	birthdaysCommand,
-	sheeshCommand,
-	stockCommand,
+	blackjackCommand,
+	blackjackDoubleDownCommand,
+	blackjackHitCommand,
+	blackjackStandCommand,
+	bucksCommand,
 	buyStockCommand,
-	sellStockCommand,
-	portfolioCommand,
+	buyTicketCommand,
+	challengeCommand,
+	clearQueueCommand,
+	closeBetCommand,
+	concedeCommand,
+	configureCommand,
 	connectFourCommand,
-	imageCommand,
-	albumCommand,
-	amaCommand,
 	factCheckCommand,
+	featuresCommand,
+	foolCommand,
 	helpCommand,
-	nbaCommand
+	imageCommand,
+	lottoCommand,
+	nbaCommand,
+	noblemenCommand,
+	payBucksCommand,
+	playYoutubeCommand,
+	portfolioCommand,
+	queueCommand,
+	sellStockCommand,
+	serfsCommand,
+	sheeshCommand,
+	skipCommand,
+	spinCommand,
+	stockCommand,
+	taxesCommand
 ];
 
 export const commandsLookup = commands.reduce((acc, command) => {
@@ -90,46 +90,48 @@ export const commandsLookup = commands.reduce((acc, command) => {
 	return acc;
 }, {} as Record<string, ISlashCommand>);
 
-export { bingCommand };
-export { betCommand };
-export { bucksCommand };
-export { lottoCommand };
-export { buyTicketCommand };
-export { payBucksCommand };
-export { allowanceCommand };
-export { noblemenCommand };
-export { serfsCommand };
-export { spinCommand };
-export { blackjackCommand };
-export { blackjackHitCommand };
-export { blackjackStandCommand };
-export { blackjackDoubleDownCommand };
-export { taxesCommand };
-export { configureCommand };
-export { configureGuildUsers };
-export { concedeCommand };
-export { challengeCommand };
-export { closeBetCommand };
-export { featuresCommand };
-export { postFeature };
-export { foolCommand };
-export { playYoutubeCommand };
-export { skipCommand };
-export { queueCommand };
-export { clearQueueCommand };
-export { clearVideoQueue };
-export { birthdayCommand };
-export { birthdaysCommand };
-export { sheeshCommand };
-export { stockCommand };
-export { buyStockCommand };
-export { sellStockCommand };
-export { portfolioCommand };
-export { connectFourCommand };
-export { sendConnectFourResponseMessage };
-export { imageCommand };
-export { albumCommand };
-export { amaCommand };
-export { factCheckCommand };
-export { helpCommand };
-export { nbaCommand };
+export {
+	albumCommand,
+	allowanceCommand,
+	amaCommand,
+	betCommand,
+	bingCommand,
+	birthdayCommand,
+	birthdaysCommand,
+	blackjackCommand,
+	blackjackDoubleDownCommand,
+	blackjackHitCommand,
+	blackjackStandCommand,
+	bucksCommand,
+	buyStockCommand,
+	buyTicketCommand,
+	challengeCommand,
+	clearQueueCommand,
+	clearVideoQueue,
+	closeBetCommand,
+	concedeCommand,
+	configureCommand,
+	configureGuildUsers,
+	connectFourCommand,
+	factCheckCommand,
+	featuresCommand,
+	foolCommand,
+	helpCommand,
+	imageCommand,
+	lottoCommand,
+	nbaCommand,
+	noblemenCommand,
+	payBucksCommand,
+	playYoutubeCommand,
+	portfolioCommand,
+	postFeature,
+	queueCommand,
+	sellStockCommand,
+	sendConnectFourResponseMessage,
+	serfsCommand,
+	sheeshCommand,
+	skipCommand,
+	spinCommand,
+	stockCommand,
+	taxesCommand
+};

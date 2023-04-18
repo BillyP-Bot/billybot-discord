@@ -11,9 +11,10 @@ import {
 	postAdminAnnouncement,
 	registerSlashCommands,
 	sendLegacyCommandDeprecationNotice,
-	updateEngagementMetrics
+	updateMessageEngagementMetrics,
+	updateReactionEngagementMetrics
 } from "@helpers";
-import { blackjackReact, buckReact, connectFourReact, updateEmoteMetrics } from "@reactions";
+import { blackjackReact, buckReact, connectFourReact } from "@reactions";
 
 const client = new Client({
 	intents: [
@@ -74,7 +75,7 @@ client.on(Events.MessageCreate, async (msg) => {
 			case msg.content[0] === "!":
 				return await sendLegacyCommandDeprecationNotice(msg);
 			default:
-				return await updateEngagementMetrics(msg);
+				return await updateMessageEngagementMetrics(msg);
 		}
 	} catch (error) {
 		console.error({ error });
@@ -94,7 +95,7 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 		if (isConnectFourReact(react)) {
 			return await connectFourReact(react, user.id);
 		}
-		await updateEmoteMetrics(react, user.id);
+		await updateReactionEngagementMetrics(react, user.id);
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
 			await react.message.channel.send(`<@${user.id}> 🖕`);
 			return;

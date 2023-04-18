@@ -12,7 +12,7 @@ import { DiscordChannel, ISlashCommand } from "@types";
 
 export const connectFourCommand: ISlashCommand = {
 	name: CommandNames.connectfour,
-	description: "Let's play Connect Four!",
+	description: "Play a game of Connect Four against another user",
 	options: [
 		{
 			name: "user",
