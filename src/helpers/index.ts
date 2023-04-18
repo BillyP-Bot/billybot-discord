@@ -33,4 +33,4 @@ export { getTrendEmoji, plusSignIfNotNegative, pluralIfNotOne } from "./portfoli
 export { Queue, DisTube, initDisTubeClient } from "./play";
 export { assertMayor, readMayor, readFool, assertDeveloper } from "./role";
 export { registerSlashCommands } from "./slash";
-export { formatDateMMDD, isValidURL } from "./util";
+export { formatDateMMDD, isValidURL, sortArrayByField } from "./util";

@@ -16,3 +16,11 @@ export const isValidURL = (str: string) => {
 	);
 	return !!pattern.test(str);
 };
+
+export const sortArrayByField = <T>(arr: T[], field: keyof T) => {
+	return arr.sort((a, b) => {
+		if (a[field] < b[field]) return -1;
+		if (a[field] > b[field]) return 1;
+		return 0;
+	});
+};
