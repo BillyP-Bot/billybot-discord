@@ -65,11 +65,10 @@ const play = async (
 
 const playNextVideoInQueue = async (textChannel: TextChannel, voiceChannel: VoiceBasedChannel) => {
 	const video = DisTube.queue.front();
-	if (!video) return exitAfterTimeoutIfNothingInQueue(voiceChannel.guild.id);
+	if (!video) return exitAfterTimeoutIfQueueEmpty(voiceChannel.guild.id);
 	await DisTube.client.play(voiceChannel, video.url);
 	await textChannel.send(getNowPlayingAndNextUp());
-	DisTube.client.removeAllListeners();
-	DisTube.client.on(Events.FINISH_SONG, async () => {
+	DisTube.client.once(Events.FINISH_SONG, async () => {
 		DisTube.queue.dequeue();
 		await playNextVideoInQueue(textChannel, voiceChannel);
 	});
@@ -105,7 +104,6 @@ export const clearQueueCommand: ISlashCommand = {
 };
 
 export const clearVideoQueue = () => {
-	DisTube.client.removeAllListeners();
 	DisTube.queue.clear();
 };
 
@@ -120,7 +118,7 @@ const getNowPlayingAndNextUp = () => {
 	return text;
 };
 
-const exitAfterTimeoutIfNothingInQueue = (guild_id: string) => {
+const exitAfterTimeoutIfQueueEmpty = (guild_id: string) => {
 	setTimeout(() => {
 		if (!DisTube.queue.front()) DisTube.client.voices.leave(guild_id);
 	}, INACTIVITY_SEC * 1000);
