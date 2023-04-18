@@ -8,6 +8,10 @@ import {
 	Permissions,
 	TextBasedChannel
 } from "discord.js";
+import { DisTube } from "distube";
+import { Video } from "youtube-sr";
+
+import { Queue } from "@helpers";
 
 export type ApiError = {
 	status?: number;
@@ -65,3 +69,8 @@ export interface IChallengeResponse {
 }
 
 export type DiscordChannel = GuildTextBasedChannel | TextBasedChannel;
+
+export interface IDisTube {
+	client: DisTube;
+	queue: Queue<Video>;
+}

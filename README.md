@@ -1,6 +1,6 @@
 # billybot-discord
 
-Discord bot repo for the one and only BillyP Bot of Boy Town.
+The one and only BillyP Bot of Boy Town!
 
 ## Develop & Test:
 

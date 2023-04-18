@@ -1,11 +1,11 @@
 import { ChannelType, Client, Events, GatewayIntentBits, MessageReaction } from "discord.js";
-import { DisTube } from "distube";
 
 import { clearVideoQueue, commandsLookup, configureGuildUsers, postFeature } from "@commands";
 import { Activities, Channels, Emotes, Images } from "@enums";
 import {
 	config,
 	Embed,
+	initDisTubeClient,
 	isBlackjackReact,
 	isConnectFourReact,
 	postAdminAnnouncement,
@@ -15,6 +15,10 @@ import {
 	updateReactionEngagementMetrics
 } from "@helpers";
 import { blackjackReact, buckReact, connectFourReact } from "@reactions";
+
+process.on("unhandledRejection", (error) => {
+	console.error({ error });
+});
 
 const client = new Client({
 	intents: [
@@ -27,7 +31,7 @@ const client = new Client({
 	]
 });
 
-export const distube = new DisTube(client, { leaveOnStop: false });
+initDisTubeClient(client);
 
 client.once(Events.ClientReady, async () => {
 	try {
@@ -120,17 +124,10 @@ client.on(Events.GuildMemberAdd, async (member) => {
 client.on(Events.VoiceStateUpdate, (oldState) => {
 	try {
 		// when bot leaves voice channel
-		if (oldState.member.user.bot && oldState.channelId) {
-			distube.removeAllListeners();
-			clearVideoQueue();
-		}
+		if (oldState.member.user.bot && oldState.channelId) clearVideoQueue();
 	} catch (error) {
 		console.error({ error });
 	}
-});
-
-process.on("unhandledRejection", (error) => {
-	console.error({ error });
 });
 
 client.login(config.BOT_TOKEN).catch((error) => {
