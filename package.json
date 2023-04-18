@@ -1,5 +1,5 @@
 {
-  "name": "billypbot",
+  "name": "billybot-discord",
   "description": "The one and only BillyP Bot of Boy Town!",
   "version": "1.0.0",
   "main": "build/index.js",
