@@ -27,8 +27,12 @@ export const challengeCommand: ISlashCommand = {
 		const details = getInteractionOptionValue<string>("details", int);
 
 		const { reply, embed } = await challenge(details, int.user.id, int.guild);
-		if (reply) await int.editReply(reply);
-		await int.channel.send({ embeds: [embed] });
+		if (reply) {
+			await int.editReply(reply);
+			await int.channel.send({ embeds: [embed] });
+		} else {
+			await int.editReply({ embeds: [embed] });
+		}
 	}
 };
 

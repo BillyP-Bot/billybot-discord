@@ -1,6 +1,7 @@
 import { IUser } from "btbot-types";
 
-import { Api, Embed } from "@helpers";
+import { CommandNames } from "@enums";
+import { Api, Embed, mentionCommand } from "@helpers";
 import { BetAggregate, IChallengeResponse } from "@types";
 
 export const getCurrentChallenge = async (server_id: string) => {
@@ -16,13 +17,8 @@ export const postCurrentChallenge = async (server_id: string) => {
 	const { participants } = challenge;
 	const mayor = participants[0].is_mayor ? participants[0] : participants[1];
 	const challenger = participants[0].is_mayor ? participants[1] : participants[0];
-	let content = `<@${challenger.user_id}> has challenged mayor <@${mayor.user_id}>!\n`;
-	content += "Use Command\n\n";
-	const mentions = participants.map(({ user_id }) => {
-		return `\`!bet\` <@${user_id}>`;
-	});
-	content += mentions.join(" or \n");
-	content += "\nto bet on a winner\n\n";
+	let content = `<@${challenger.user_id}> has challenged mayor <@${mayor.user_id}>!\n\n`;
+	content += `Use ${mentionCommand(CommandNames.bet)} to bet on a participant!\n\n`;
 	content += `>>> ${challenge.details}`;
 	const embed = Embed.success(content, "Current Challenge");
 	return embed;
