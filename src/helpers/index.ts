@@ -30,7 +30,6 @@ export {
 	updateReactionEngagementMetrics
 } from "./engagement-metrics";
 export { getTrendEmoji, plusSignIfNotNegative, pluralIfNotOne } from "./portfolio";
-export { Queue, DisTube, initDisTubeClient } from "./play";
 export { assertMayor, readMayor, readFool, assertDeveloper } from "./role";
 export { registerSlashCommands } from "./slash";
 export { formatDateMMDD, isValidURL, sortArrayByField } from "./util";

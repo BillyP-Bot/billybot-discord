@@ -27,13 +27,6 @@ import { lottoCommand } from "./lotto";
 import { nbaCommand } from "./nba";
 import { noblemenCommand } from "./noblemen";
 import { payBucksCommand } from "./pay-bucks";
-import {
-	clearQueueCommand,
-	clearVideoQueue,
-	playYoutubeCommand,
-	queueCommand,
-	skipCommand
-} from "./play-youtube-video";
 import { serfsCommand } from "./serfs";
 import { sheeshCommand } from "./sheesh";
 import { spinCommand } from "./spin";
@@ -59,7 +52,6 @@ export const commands: ISlashCommand[] = [
 	buyStockCommand,
 	buyTicketCommand,
 	challengeCommand,
-	clearQueueCommand,
 	closeBetCommand,
 	concedeCommand,
 	configureCommand,
@@ -73,13 +65,10 @@ export const commands: ISlashCommand[] = [
 	nbaCommand,
 	noblemenCommand,
 	payBucksCommand,
-	playYoutubeCommand,
 	portfolioCommand,
-	queueCommand,
 	sellStockCommand,
 	serfsCommand,
 	sheeshCommand,
-	skipCommand,
 	spinCommand,
 	stockCommand,
 	taxesCommand
@@ -106,8 +95,6 @@ export {
 	buyStockCommand,
 	buyTicketCommand,
 	challengeCommand,
-	clearQueueCommand,
-	clearVideoQueue,
 	closeBetCommand,
 	concedeCommand,
 	configureCommand,
@@ -122,15 +109,12 @@ export {
 	nbaCommand,
 	noblemenCommand,
 	payBucksCommand,
-	playYoutubeCommand,
 	portfolioCommand,
 	postFeature,
-	queueCommand,
 	sellStockCommand,
 	sendConnectFourResponseMessage,
 	serfsCommand,
 	sheeshCommand,
-	skipCommand,
 	spinCommand,
 	stockCommand,
 	taxesCommand

@@ -1,11 +1,10 @@
 import { ChannelType, Client, Events, GatewayIntentBits, MessageReaction } from "discord.js";
 
-import { clearVideoQueue, commandsLookup, configureGuildUsers, postFeature } from "@commands";
+import { commandsLookup, configureGuildUsers, postFeature } from "@commands";
 import { Activities, Channels, Emotes, Images } from "@enums";
 import {
 	config,
 	Embed,
-	initDisTubeClient,
 	isBlackjackReact,
 	isConnectFourReact,
 	postAdminAnnouncement,
@@ -30,8 +29,6 @@ const client = new Client({
 		GatewayIntentBits.GuildVoiceStates
 	]
 });
-
-initDisTubeClient(client);
 
 client.once(Events.ClientReady, async () => {
 	try {
@@ -116,15 +113,6 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 client.on(Events.GuildMemberAdd, async (member) => {
 	try {
 		await configureGuildUsers(member);
-	} catch (error) {
-		console.error({ error });
-	}
-});
-
-client.on(Events.VoiceStateUpdate, (oldState) => {
-	try {
-		// when bot leaves voice channel
-		if (oldState.member.user.bot && oldState.channelId) clearVideoQueue();
 	} catch (error) {
 		console.error({ error });
 	}
