@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
-import { CommandNames } from "@enums";
+import { CommandNames, Colors } from "@enums";
 import { Api, buildBlackjackResponse, Embed } from "@helpers";
 import { BlackJackGameResponse, ISlashCommand } from "@types";
 
@@ -24,5 +24,6 @@ const stand = async (server_id: string, user_id: string) => {
 		user_id
 	});
 	const response = buildBlackjackResponse(data, user_id);
-	return Embed.success(response);
+	const color = !data.won && data.is_complete ? Colors.red : Colors.green;
+	return Embed.success(response, null, color);
 };

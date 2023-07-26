@@ -1,13 +1,13 @@
 import { IOpenAiImage } from "btbot-types";
-import { EmbedBuilder, TextChannel } from "discord.js";
+import { ColorResolvable, EmbedBuilder, TextChannel } from "discord.js";
 import { PaginatedEmbed } from "embed-paginator";
 
 import { Colors } from "@enums";
 
 export class Embed {
-	static success(description?: string, title?: string) {
+	static success(description?: string, title?: string, color?: ColorResolvable) {
 		const embed = new EmbedBuilder();
-		embed.setColor(Colors.green);
+		embed.setColor(color ?? Colors.green);
 		title && embed.setTitle(title);
 		embed.setDescription(description);
 		return embed;
