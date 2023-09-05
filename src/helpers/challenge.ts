@@ -40,7 +40,7 @@ export const buildCurrentBetsMessage = (results: BetAggregate) => {
 		const userBets = bets.map(({ user_id, amount }) => {
 			return `• <@${user_id}>:\t${amount}`;
 		});
-		return `<@${bets[0].user_id}>\n` + userBets.join("\n");
+		return `<@${bets[0].participant_id}>\n` + userBets.join("\n") + "\n";
 	});
 	content += participants.join("\n\n");
 	return content;
