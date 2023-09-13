@@ -1,13 +1,11 @@
-import "dotenv/config";
-
 export const config = {
 	SERVER_ID: "689463685566955566",
-	IS_PROD: process.env.NODE_ENV == "production" ? true : false,
-	BOT_TOKEN: process.env.BOT_TOKEN || undefined,
-	BILLY_BACKEND: process.env.BILLY_BACKEND,
-	BILLY_BACKEND_TOKEN: process.env.BILLY_BACKEND_TOKEN,
+	IS_PROD: Bun.env.NODE_ENV == "production" ? true : false,
+	BOT_TOKEN: Bun.env.BOT_TOKEN || undefined,
+	BILLY_BACKEND: Bun.env.BILLY_BACKEND,
+	BILLY_BACKEND_TOKEN: Bun.env.BILLY_BACKEND_TOKEN,
 	DASHBOARD_URL:
-		process.env.NODE_ENV == "production"
+		Bun.env.NODE_ENV == "production"
 			? "https://billybot.vercel.app/server"
 			: "http://localhost:3000/server"
 };

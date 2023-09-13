@@ -16,6 +16,5 @@
     "**/.DS_Store": true,
     "node_modules": true
   },
-  "eslint.validate": ["javascript", "typescript"],
-  "cSpell.words": ["audioonly", "doubledown", "ytdl"]
+  "eslint.validate": ["javascript", "typescript"]
 }

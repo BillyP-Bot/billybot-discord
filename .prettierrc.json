@@ -10,7 +10,7 @@
   "arrowParens": "always",
   "overrides": [
     {
-      "files": ["*.json", "*.yml"],
+      "files": ["*.json", "*.yml", "*.yaml", "*.toml"],
       "options": {
         "tabWidth": 2,
         "useTabs": false

@@ -1,26 +1,24 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "module": "commonjs",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "target": "esnext",
+    "types": ["bun-types"],
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "moduleDetection": "force",
+    "allowJs": true,
     "esModuleInterop": true,
-    "target": "es6",
-    "noImplicitAny": true,
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "build",
-    "baseUrl": ".",
-    "declaration": false,
-    "declarationMap": false,
-    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"],
       "@commands": ["src/commands"],
       "@helpers": ["src/helpers"],
       "@reactions": ["src/reactions"],
       "@types": ["src/types"],
       "@enums": ["src/types/enums"]
     }
-  },
-  "include": ["src/**/*"]
+  }
 }
