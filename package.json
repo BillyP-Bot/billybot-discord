@@ -9,7 +9,6 @@
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
-    "husky": "^8.0.3",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
@@ -21,7 +20,6 @@
     "embed-paginator": "^2.0.1"
   },
   "scripts": {
-    "prepare": "husky install",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx . && prettier --check .",
     "fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . && prettier --write .",
     "dev": "bun --watch src/index.ts",
