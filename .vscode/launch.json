@@ -5,7 +5,7 @@
       "type": "node-terminal",
       "request": "launch",
       "name": "Debug",
-      "command": "bun run dev"
+      "command": "bun dev"
     }
   ]
 }

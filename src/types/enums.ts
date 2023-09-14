@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 export enum Roles {
 	developer = "811639239501414420",
 	mayor = "692755096462950420",
