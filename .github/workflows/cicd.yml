@@ -7,8 +7,8 @@ on:
     branches: ["*"]
 
 jobs:
-  build:
-    name: build
+  lint:
+    name: lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
