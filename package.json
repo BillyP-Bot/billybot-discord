@@ -25,6 +25,6 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx . && prettier --check .",
     "fix": "eslint --fix --ext .js,.jsx,.ts,.tsx . && prettier --write .",
     "dev": "bun --watch src/index.ts",
-    "start": "bun run src/index.ts"
+    "start": "bun src/index.ts"
   }
 }
