@@ -16,5 +16,5 @@ jobs:
         with:
           version: 1.0.1
 
-      - run: bun install --frozen-lockfile
-      - run: bun run lint
+      - run: bun i --frozen-lockfile
+      - run: bun lint

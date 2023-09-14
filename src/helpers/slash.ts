@@ -1,17 +1,17 @@
-import { Client, Routes } from "discord.js";
+import { ApplicationCommand, Client, Routes } from "discord.js";
 
 import { commands, commandsLookup } from "@commands";
-import { config, DiscordApi } from "@helpers";
+import { DiscordApi } from "@helpers";
 
 export const registerSlashCommands = async (client: Client) => {
 	try {
-		await DiscordApi.put(Routes.applicationGuildCommands(client.user.id, config.SERVER_ID), {
+		await DiscordApi.put(Routes.applicationCommands(client.user.id), {
 			body: commands
 		});
-		const _guild = (await client.guilds.fetch()).find((a) => a.id === config.SERVER_ID);
-		const guild = await _guild.fetch();
-		const guildCommands = await guild.commands.fetch();
-		guildCommands.forEach(({ name, id }) => {
+		const applicationCommands = (await DiscordApi.get(
+			Routes.applicationCommands(client.user.id)
+		)) as ApplicationCommand[];
+		applicationCommands.forEach(({ name, id }) => {
 			commandsLookup[name].id = id;
 		});
 	} catch (error) {

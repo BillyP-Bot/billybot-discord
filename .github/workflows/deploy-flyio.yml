@@ -21,8 +21,8 @@ jobs:
         with:
           version: 1.0.1
 
-      - run: bun install
-      - run: bun run lint
+      - run: bun i --frozen-lockfile
+      - run: bun lint
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --detach --no-cache
