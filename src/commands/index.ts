@@ -74,10 +74,13 @@ export const commands: ISlashCommand[] = [
 	taxesCommand
 ];
 
-export const commandsLookup = commands.reduce((acc, command) => {
-	acc[command.name] = command;
-	return acc;
-}, {} as Record<string, ISlashCommand>);
+export const commandsLookup = commands.reduce(
+	(acc, command) => {
+		acc[command.name] = command;
+		return acc;
+	},
+	{} as Record<string, ISlashCommand>
+);
 
 export {
 	albumCommand,

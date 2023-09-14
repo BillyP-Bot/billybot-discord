@@ -9,12 +9,6 @@ LABEL fly_launch_runtime="Bun"
 # Bun app lives here
 WORKDIR /app
 
-# Set production environment
-ENV NODE_ENV="production"
-
-# Set port
-ENV PORT="8080"
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -32,7 +26,6 @@ COPY --link . .
 # Remove development dependencies
 RUN rm -rf node_modules && \
     bun install --ci
-
 
 # Final stage for app image
 FROM base

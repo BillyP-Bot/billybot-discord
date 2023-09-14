@@ -1,3 +1,3 @@
-export { blackjackReact } from "./blackjack-react";
-export { buckReact } from "./buck-react";
-export { connectFourReact } from "./connect-four-react";
+export * from "./blackjack-react";
+export * from "./buck-react";
+export * from "./connect-four-react";
