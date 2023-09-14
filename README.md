@@ -4,7 +4,7 @@ The one and only BillyP Bot of Boy Town!
 
 ## Local Setup:
 
-This project uses [bun](https://bun.sh) as a runtime and package manager, which currently fully supported on [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), MacOS, and Linux.
+This project uses [bun](https://bun.sh) as a runtime and package manager, which is currently fully supported on [WSL](https://learn.microsoft.com/en-us/windows/wsl/install), MacOS, and Linux.
 
 -   Clone repo
 -   Create and populate a `.env` file with proper credentials:
