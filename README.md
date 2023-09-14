@@ -21,7 +21,7 @@ If running both the Discord bot and the backend in WSL, enable the following Doc
 -   Settings -> General -> Use the WSL 2 based engine
 -   Settings -> Resources -> WSL integration -> Enable integration with my default WSL distro (or additional distros as needed)
 
-Then add/edit the following line to your `~/.bashrc` file in WSL:
+Then add/edit the following line in your `~/.bashrc` file in WSL:
 
 ```bash
 export DOCKER_HOST=unix:///var/run/docker.sock
