@@ -22,7 +22,7 @@ COPY --link . .
 
 # Install production dependencies only
 RUN rm -rf node_modules && \
-    bun install --frozen-lockfile --production
+    bun i --frozen-lockfile --production
 
 # Final stage for app image
 FROM base
@@ -32,4 +32,4 @@ COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 8080
-CMD [ "bun", "run", "start" ]
+CMD [ "bun", "start" ]
