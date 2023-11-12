@@ -1,6 +1,6 @@
 # billybot-discord
 
-The one and only BillyP Bot of Boy Town!
+The one and only BillyP Bot of Boy Town.
 
 ## Local Setup:
 
