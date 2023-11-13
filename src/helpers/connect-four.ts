@@ -31,8 +31,8 @@ export const buildConnectFourMoveResponse = (data: IConnectFour) => {
 				pos == ConnectFourColor.red
 					? ConnectFourColor.red
 					: pos == ConnectFourColor.yellow
-					? ConnectFourColor.yellow
-					: ConnectFourColor.empty;
+					  ? ConnectFourColor.yellow
+					  : ConnectFourColor.empty;
 		}
 		message += "\n";
 	}
