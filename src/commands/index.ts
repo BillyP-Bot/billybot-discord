@@ -18,7 +18,6 @@ import { closeBetCommand } from "./close-bet";
 import { concedeCommand } from "./concede";
 import { configureCommand, configureGuildUsers } from "./configure";
 import { connectFourCommand, sendConnectFourResponseMessage } from "./connect-four";
-import { factCheckCommand } from "./fact-check";
 import { featuresCommand, postFeature } from "./feature-request";
 import { foolCommand } from "./fool";
 import { helpCommand } from "./help";
@@ -56,7 +55,6 @@ export const commands: ISlashCommand[] = [
 	concedeCommand,
 	configureCommand,
 	connectFourCommand,
-	factCheckCommand,
 	featuresCommand,
 	foolCommand,
 	helpCommand,
@@ -103,7 +101,6 @@ export {
 	configureCommand,
 	configureGuildUsers,
 	connectFourCommand,
-	factCheckCommand,
 	featuresCommand,
 	foolCommand,
 	helpCommand,
