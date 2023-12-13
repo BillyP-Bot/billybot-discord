@@ -46,18 +46,23 @@ export const dealOrNoDealCommand: ISlashCommand = {
 		}
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
+		const is_deal = react.emoji.toString() === DealOrNoDealReacts.deal;
 		const game = await Api.put<IDealOrNoDeal>("dealornodeal/respond", {
 			server_id: react.message.guild.id,
 			user_id: sender_id,
-			is_deal: react.emoji.toString() === DealOrNoDealReacts.deal
+			is_deal
 		});
 		if (!game || game.user_id !== sender_id) return;
 		if (game.is_complete) {
 			const { billy_bucks } = await Api.get<IUser>(
 				`users?user_id=${game.user_id}&server_id=${game.server_id}`
 			);
+
+			const winnings = is_deal ? game.offer : game.cases[game.selected_case - 1].value;
 			const embed = Embed.success(
-				`DEAL! You accepted the bank's offer of ${game.offer} BillyBucks.\n\nYou now have ${billy_bucks} BillyBucks.`,
+				is_deal
+					? `<@${game.user_id}>\n\n**DEAL!** You accepted the bank's offer of ${winnings} BillyBucks.\n\nYou now have ${billy_bucks} BillyBucks.`
+					: `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${game.offer} BillyBucks\`.\n\nThere are only two unopened cases left, so you win the contents of your own case: \`${winnings} BillyBucks\`!\n\nYou now have ${billy_bucks} BillyBucks.`,
 				"Deal or No Deal"
 			);
 			await react.message.channel.send({ embeds: [embed] });
@@ -84,9 +89,9 @@ const buildStatusMessage = (game: IDealOrNoDeal, justRejectedOffer?: boolean) =>
 
 	let msg = "";
 	if (justRejectedOffer) {
-		msg += `NO DEAL! You stubbornly reject BillyP's generous offer of \`${offer} BillyBucks\`.\n\n`;
+		msg += `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${offer} BillyBucks\`.\n\n`;
 	} else {
-		const caseValue = cases[last_opened_case - 1].value;
+		const caseValue = last_opened_case > 0 ? cases[last_opened_case - 1].value : undefined;
 		msg +=
 			openedAmounts.length === 0
 				? `Welcome to Deal or No Deal! You selected case **${selected_case}**.\n\n`
