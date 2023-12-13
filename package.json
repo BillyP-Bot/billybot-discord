@@ -15,7 +15,7 @@
   "type": "module",
   "dependencies": {
     "apisauce": "^3.0.1",
-    "btbot-types": "^2.4.1",
+    "btbot-types": "^2.5.0",
     "discord.js": "^14.13.0",
     "embed-paginator": "^2.0.1"
   },
