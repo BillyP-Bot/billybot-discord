@@ -97,7 +97,7 @@ const buildStatusMessage = (game: IDealOrNoDeal, justRejectedOffer?: boolean) =>
 				? `Welcome to Deal or No Deal! You selected case **${selected_case}**.\n\n`
 				: `You opened case **${last_opened_case}** - it contains \`${caseValue} BillyBuck${
 						caseValue === 1 ? "" : "s"
-				  }\`!\n\n`;
+					}\`!\n\n`;
 	}
 
 	if (to_open > 0) {
