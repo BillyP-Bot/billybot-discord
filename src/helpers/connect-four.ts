@@ -31,8 +31,8 @@ export const buildConnectFourMoveResponse = (data: IConnectFour) => {
 				pos == ConnectFourColor.red
 					? ConnectFourColor.red
 					: pos == ConnectFourColor.yellow
-					  ? ConnectFourColor.yellow
-					  : ConnectFourColor.empty;
+						? ConnectFourColor.yellow
+						: ConnectFourColor.empty;
 		}
 		message += "\n";
 	}
@@ -51,7 +51,7 @@ export const buildConnectFourMoveResponse = (data: IConnectFour) => {
 				wager > 0
 					? ` The wager amount of ${wager} BillyBuck${pluralIfNotOne(
 							wager
-					  )} is returned to each player.`
+						)} is returned to each player.`
 					: ""
 			}`;
 		}

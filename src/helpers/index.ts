@@ -5,6 +5,7 @@ export * from "./challenge";
 export * from "./command";
 export * from "./config";
 export * from "./connect-four";
+export * from "./deal-or-no-deal";
 export * from "./embed";
 export * from "./engagement-metrics";
 export * from "./portfolio";

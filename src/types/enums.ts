@@ -46,6 +46,7 @@ export enum CommandNames {
 	concede = "concede",
 	configure = "configure",
 	connectfour = "connectfour",
+	dealornodeal = "dealornodeal",
 	doubledown = "doubledown",
 	feature = "feature",
 	fool = "fool",

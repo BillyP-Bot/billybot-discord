@@ -7,13 +7,14 @@ import {
 	Embed,
 	isBlackjackReact,
 	isConnectFourReact,
+	isDealOrNoDealReact,
 	postAdminAnnouncement,
 	registerSlashCommands,
 	sendLegacyCommandDeprecationNotice,
 	updateMessageEngagementMetrics,
 	updateReactionEngagementMetrics
 } from "@helpers";
-import { blackjackReact, buckReact, connectFourReact } from "@reactions";
+import { blackjackReact, buckReact, connectFourReact, dealOrNoDealReact } from "@reactions";
 
 process.on("unhandledRejection", (error) => {
 	console.error({ error });
@@ -95,6 +96,9 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 		}
 		if (isConnectFourReact(react)) {
 			return await connectFourReact(react, user.id);
+		}
+		if (isDealOrNoDealReact(react)) {
+			return await dealOrNoDealReact(react, user.id);
 		}
 		await updateReactionEngagementMetrics(react, user.id);
 		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
