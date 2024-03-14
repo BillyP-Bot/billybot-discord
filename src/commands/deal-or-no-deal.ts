@@ -61,8 +61,12 @@ export const dealOrNoDealCommand: ISlashCommand = {
 			const winnings = is_deal ? game.offer : game.cases[game.selected_case - 1].value;
 			const embed = Embed.success(
 				is_deal
-					? `<@${game.user_id}>\n\n**DEAL!** You accepted the bank's offer of ${winnings} BillyBucks.\n\nYou now have ${billy_bucks} BillyBucks.`
-					: `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${game.offer} BillyBucks\`.\n\nThere are only two unopened cases left, so you win the contents of your own case: \`${winnings} BillyBucks\`!\n\nYou now have ${billy_bucks} BillyBucks.`,
+					? `<@${
+							game.user_id
+						}>\n\n**DEAL!** You accepted the bank's offer of ${winnings} BillyBucks.\n\nYou now have ${billy_bucks} BillyBucks.\n\nYour case contained... \`${
+							game.cases[game.selected_case - 1].value
+						} BillyBucks\`!`
+					: `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${game.offer} BillyBucks\`.\n\nThere are only two unopened cases left, so you automatically win the contents of your own case: \`${winnings} BillyBucks\`!\n\nYou now have ${billy_bucks} BillyBucks.`,
 				"Deal or No Deal"
 			);
 			await react.message.channel.send({ embeds: [embed] });
