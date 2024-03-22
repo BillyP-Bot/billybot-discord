@@ -25,10 +25,26 @@ export const sortArrayByField = <T>(arr: T[], field: keyof T) => {
 	});
 };
 
-export const getLottoDrawTimeString = () => {
-	const drawTime = new Date(Date.UTC(0, 0, 0, 16));
-	return drawTime.toLocaleTimeString("en-US", {
+export const getNextDayOfWeek = (date: Date, dayOfWeek: number) => {
+	const resultDate = new Date(date.getTime());
+	resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay()) % 7));
+	return resultDate;
+};
+
+export const getLottoDrawDateString = () => {
+	const now = new Date(Date.now());
+	const drawDate = getNextDayOfWeek(now, 5);
+	if (drawDate.getDate() == now.getDate() && drawDate.getUTCHours() >= 16) {
+		drawDate.setDate(drawDate.getDate() + 7);
+	}
+	drawDate.setUTCHours(16);
+	drawDate.setMinutes(0);
+	return drawDate.toLocaleTimeString("en-US", {
 		timeZone: "America/New_York",
+		timeZoneName: "short",
+		weekday: "long",
+		month: "short",
+		day: "numeric",
 		hour: "2-digit",
 		minute: "2-digit"
 	});

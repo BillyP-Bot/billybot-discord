@@ -2,7 +2,7 @@ import { IUser } from "btbot-types";
 import { ChatInputCommandInteraction } from "discord.js";
 
 import { CommandNames } from "@enums";
-import { Api, Embed, getLottoDrawTimeString } from "@helpers";
+import { Api, Embed, getLottoDrawDateString } from "@helpers";
 import { ISlashCommand } from "@types";
 
 export const buyTicketCommand: ISlashCommand = {
@@ -22,6 +22,6 @@ const ticket = async (server_id: string, user_id: string) => {
 	});
 	const { billy_bucks } = data[user_id] as IUser;
 	let body = `You bought a lottery ticket for ${data.ticket_cost} BillyBucks!\n\n`;
-	body += `You now have ${billy_bucks} BillyBucks. A winner will be picked on Friday at ${getLottoDrawTimeString()} EST!`;
+	body += `You now have ${billy_bucks} BillyBucks. A winner will be picked on ${getLottoDrawDateString()}!`;
 	return Embed.success(body, "Lottery Ticket Purchased");
 };
