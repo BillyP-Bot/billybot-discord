@@ -28,7 +28,7 @@ export const sortArrayByField = <T>(arr: T[], field: keyof T) => {
 export const getLottoDrawTimeString = () => {
 	const drawTime = new Date(Date.UTC(0, 0, 0, 16));
 	return drawTime.toLocaleTimeString("en-US", {
-		timeZone: "EST",
+		timeZone: "America/New_York",
 		hour: "2-digit",
 		minute: "2-digit"
 	});
