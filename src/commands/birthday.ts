@@ -39,7 +39,7 @@ const birthday = async (user: IUser, birthdayToValidate: string) => {
 	const [month, day] = birthdaySplit;
 	if (birthdaySplit.length !== 2 || month.length !== 2 || day.length !== 2)
 		throw "Invalid format! Must use `MM-DD` date format.";
-	if (!isValidDate(month, day))
+	if (!isValidDate(+month, +day))
 		throw `Invalid date! \`${birthday}\` is in the required \`MM-DD\` format, but is not a valid calendar date!`;
 
 	const [updated] = (await Api.put<IUser>("users", [
@@ -56,20 +56,9 @@ const birthday = async (user: IUser, birthdayToValidate: string) => {
 	);
 };
 
-const isValidDate = (month: string, day: string) => {
-	return isValidMonth(month) && isValidDay(month, day);
-};
-
-const isValidMonth = (month: string) => {
-	const monthNum = +month;
-	return monthNum >= 1 && monthNum <= 12;
-};
-
-const isValidDay = (month: string, day: string) => {
-	const dayNum = +day;
-	return (
-		dayNum >= 1 &&
-		dayNum <= 31 &&
-		(dayNum <= 29 || (dayNum <= 30 && ["04", "06", "09", "11"].includes(month)))
-	);
+const isValidDate = (month: number, day: number) => {
+	const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > daysInMonth[month - 1]) return false;
+    return true;
 };
