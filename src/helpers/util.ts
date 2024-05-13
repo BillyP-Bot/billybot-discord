@@ -31,15 +31,8 @@ export const getNextDayOfWeek = (date: Date, dayOfWeek: number) => {
 	return resultDate;
 };
 
-export const getLottoDrawDateString = () => {
-	const now = new Date(Date.now());
-	const drawDate = getNextDayOfWeek(now, 5);
-	if (drawDate.getDate() == now.getDate() && drawDate.getUTCHours() >= 16) {
-		drawDate.setDate(drawDate.getDate() + 7);
-	}
-	drawDate.setUTCHours(16);
-	drawDate.setMinutes(0);
-	return drawDate.toLocaleTimeString("en-US", {
+export const formatDateET = (date: Date) =>
+	date.toLocaleTimeString("en-US", {
 		timeZone: "America/New_York",
 		timeZoneName: "short",
 		weekday: "long",
@@ -48,4 +41,14 @@ export const getLottoDrawDateString = () => {
 		hour: "2-digit",
 		minute: "2-digit"
 	});
+
+export const getLottoDrawDateString = () => {
+	const now = new Date(Date.now());
+	const drawDate = getNextDayOfWeek(now, 5);
+	if (drawDate.getDate() == now.getDate() && drawDate.getUTCHours() >= 16) {
+		drawDate.setDate(drawDate.getDate() + 7);
+	}
+	drawDate.setUTCHours(16);
+	drawDate.setMinutes(0);
+	return formatDateET(drawDate);
 };

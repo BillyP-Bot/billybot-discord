@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-duplicate-enum-values */
+
 export enum Roles {
 	developer = "811639239501414420",
 	mayor = "692755096462950420",
@@ -65,8 +67,18 @@ export enum CommandNames {
 	sheesh = "sheesh",
 	skip = "skip",
 	spin = "spin",
+	sportsbet = "sportsbet",
+	sportsbet_bet = "bet",
+	sportsbet_games = "games",
 	stand = "stand",
 	stock = "stock",
 	taxes = "taxes",
 	ticket = "ticket"
+}
+
+export enum SportEmoji {
+	NBA = "🏀",
+	NFL = "🏈",
+	NHL = "🏒",
+	MLB = "⚾"
 }

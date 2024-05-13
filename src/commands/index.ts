@@ -30,6 +30,7 @@ import { payBucksCommand } from "./pay-bucks";
 import { serfsCommand } from "./serfs";
 import { sheeshCommand } from "./sheesh";
 import { spinCommand } from "./spin";
+import { sportsBettingCommand } from "./sports-betting";
 import { stockCommand } from "./stock";
 import { buyStockCommand } from "./stock-buy";
 import { portfolioCommand } from "./stock-portfolio";
@@ -70,6 +71,7 @@ export const commands: ISlashCommand[] = [
 	serfsCommand,
 	sheeshCommand,
 	spinCommand,
+	sportsBettingCommand,
 	stockCommand,
 	taxesCommand
 ];
@@ -119,6 +121,7 @@ export {
 	serfsCommand,
 	sheeshCommand,
 	spinCommand,
+	sportsBettingCommand,
 	stockCommand,
 	taxesCommand
 };
