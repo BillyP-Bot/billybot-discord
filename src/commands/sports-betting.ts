@@ -98,7 +98,7 @@ export const sportsBettingCommand: ISlashCommand = {
 
 const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 	const upcomingGames = await Api.get<ISportsBetUpcomingGame[]>(
-		`/sportsbetting/upcoming?sport_key=${sport_key}`
+		`sportsbetting/upcoming?sport_key=${sport_key}`
 	);
 	let output = "";
 	upcomingGames.forEach((game) => {
@@ -128,7 +128,7 @@ const betOnGame = async (
 	bet_on_home_team: boolean,
 	amount: number
 ) => {
-	const { team, bet_amount, odds, bucks } = await Api.post<ISportsBet>(`/sportsbetting/bet`, {
+	const { team, bet_amount, odds, bucks } = await Api.post<ISportsBet>(`sportsbetting/bet`, {
 		server_id,
 		user_id,
 		sport_key,
