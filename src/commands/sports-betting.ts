@@ -108,8 +108,8 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 		const homeTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
 			(o) => o.name === game.home_team
 		).price;
-		output += `Away Team: **${game.away_team}** (${awayTeamOdds})\n`;
-		output += `Home Team: **${game.home_team}** (${homeTeamOdds})\n`;
+		output += `Away Team: **${game.away_team}** (${showPlusSignIfPositive(awayTeamOdds)})\n`;
+		output += `Home Team: **${game.home_team}** (${showPlusSignIfPositive(homeTeamOdds)})\n`;
 		output += `Start Time: **${formatDateET(new Date(game.commence_time))}**\n`;
 		output += `Game ID: \`${game.id}\`\n\n`;
 	});
@@ -137,7 +137,11 @@ const betOnGame = async (
 		bet_amount: amount
 	});
 	return Embed.success(
-		`You bet ${bet_amount} BillyBucks on the ${team} at ${odds}!\n\nYou now have ${bucks} BillyBucks.`,
+		`You bet ${bet_amount} BillyBucks on the ${team} at ${showPlusSignIfPositive(
+			odds
+		)}!\n\nYou now have ${bucks} BillyBucks.`,
 		"Bet Placed 💸"
 	);
 };
+
+const showPlusSignIfPositive = (num: number) => (num > 0 ? `+${num}` : `${num}`);
