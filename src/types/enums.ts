@@ -78,6 +78,7 @@ export enum CommandNames {
 
 export enum SportEmoji {
 	NBA = "🏀",
+	WNBA = "🏀",
 	NFL = "🏈",
 	NHL = "🏒",
 	MLB = "⚾"
