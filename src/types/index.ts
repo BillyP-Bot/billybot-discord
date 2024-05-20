@@ -13,7 +13,7 @@ export type ApiError = {
 	status?: number;
 	ok?: boolean;
 	error?: string;
-	[key: string]: any;
+	[key: string]: unknown;
 };
 
 export type UserLookup = Record<string, IUser>;

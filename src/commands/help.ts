@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
 import { PaginatedEmbed } from "embed-paginator";
 
 import { commands } from "@commands";
@@ -11,8 +11,17 @@ export const helpCommand: ISlashCommand = {
 	description: "Show a complete list of supported commands for this server",
 	handler: async (int: ChatInputCommandInteraction) => {
 		const sortedCommands = sortArrayByField(commands, "name");
-		const descriptions = sortedCommands.reduce((acc, { name, description }) => {
-			acc.push(`${mentionCommand(name)}\n${description}\n`);
+		const descriptions = sortedCommands.reduce((acc, command) => {
+			const { name, description, options } = command;
+			const subcommands =
+				options?.filter(
+					(option) => option.type === ApplicationCommandOptionType.Subcommand
+				) ?? [];
+			for (const subcommand of subcommands) {
+				const { name: subCommandName, description: subCommandDescription } = subcommand;
+				acc.push(`${mentionCommand(name, subCommandName)}\n${subCommandDescription}\n`);
+			}
+			if (subcommands.length === 0) acc.push(`${mentionCommand(name)}\n${description}\n`);
 			return acc;
 		}, [] as string[]);
 		const pagEmbed = new PaginatedEmbed({
@@ -23,6 +32,7 @@ export const helpCommand: ISlashCommand = {
 		})
 			.setDescriptions(descriptions)
 			.setTitles(["Commands"]);
+		// @ts-ignore
 		await pagEmbed.send({ options: { interaction: int } });
 	}
 };

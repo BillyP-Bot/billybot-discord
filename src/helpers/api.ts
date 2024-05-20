@@ -20,13 +20,13 @@ export class Api {
 		return data as T & UserLookup;
 	}
 
-	public static async post<T>(url: string, body?: any) {
+	public static async post<T>(url: string, body?: unknown) {
 		const { data, ok } = await Api.client.post<ApiResponse & T>(url, body);
 		if (!ok) throw data.error ?? "internal server error";
 		return data as T & UserLookup;
 	}
 
-	public static async put<T>(url: string, body?: any) {
+	public static async put<T>(url: string, body?: unknown) {
 		const { data, ok } = await Api.client.put<ApiResponse & T>(url, body);
 		if (!ok) throw data.error ?? "internal server error";
 		return data as T & UserLookup;
