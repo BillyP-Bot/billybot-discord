@@ -1,6 +1,5 @@
 {
   "name": "billybot-discord",
-  "main": "src/index.ts",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
@@ -17,7 +16,6 @@
     "typescript-eslint": "^7.9.0"
   },
   "dependencies": {
-    "apisauce": "^3.0.1",
     "btbot-types": "2.6.2",
     "discord.js": "^14.15.2",
     "embed-paginator": "^2.0.1"
