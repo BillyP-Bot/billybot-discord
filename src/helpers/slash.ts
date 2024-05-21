@@ -1,10 +1,11 @@
-import { ApplicationCommand, Client, Routes } from "discord.js";
+import { ApplicationCommand, Client, REST, Routes } from "discord.js";
 
 import { commands, commandsLookup } from "@commands";
-import { DiscordApi } from "@helpers";
+import { config } from "@helpers";
 
 export const registerSlashCommands = async (client: Client) => {
 	try {
+		const DiscordApi = new REST({ version: "10" }).setToken(config.BOT_TOKEN);
 		await DiscordApi.put(Routes.applicationCommands(client.user.id), {
 			body: commands
 		});

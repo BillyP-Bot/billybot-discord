@@ -1,8 +1,5 @@
-import { REST } from "discord.js";
-
+import { config } from "@helpers";
 import { ApiResponse, UserLookup } from "@types";
-
-import { config } from "./config";
 
 const request = async <T>(url: string, method: string, body?: unknown) => {
 	const res = await fetch(`${config.BILLY_BACKEND}/${url}`, {
@@ -24,5 +21,3 @@ export const Api = {
 	post: async <T>(url: string, body?: unknown) => request<T>(url, "POST", body),
 	put: async <T>(url: string, body?: unknown) => request<T>(url, "PUT", body)
 };
-
-export const DiscordApi = new REST({ version: "10" }).setToken(config.BOT_TOKEN);
