@@ -1,7 +1,14 @@
-import { ChannelType, Client, Events, GatewayIntentBits, MessageReaction } from "discord.js";
+import {
+	ActivityType,
+	ChannelType,
+	Client,
+	Events,
+	GatewayIntentBits,
+	MessageReaction
+} from "discord.js";
 
 import { commandsLookup, configureGuildUsers, postFeature } from "@commands";
-import { Activities, Channels, Emotes, Images } from "@enums";
+import { Channels, Emotes } from "@enums";
 import {
 	config,
 	Embed,
@@ -34,10 +41,10 @@ const client = new Client({
 client.once(Events.ClientReady, async () => {
 	try {
 		await registerSlashCommands(client);
-		if (config.IS_PROD) {
-			await client.user.setAvatar(Images.billyMad);
-			client.user.setActivity(Activities.farmville);
-		}
+		client.user.setActivity({
+			name: "It's-a-me, BillyP!",
+			type: ActivityType.Custom
+		});
 		console.log(`Logged in as ${client.user.tag}!`);
 	} catch (error) {
 		console.error({ error });
