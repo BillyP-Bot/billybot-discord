@@ -70,6 +70,7 @@ export enum CommandNames {
 	sportsbet = "sportsbet",
 	sportsbet_bet = "bet",
 	sportsbet_games = "games",
+	sportsbet_stats = "stats",
 	stand = "stand",
 	stock = "stock",
 	taxes = "taxes",

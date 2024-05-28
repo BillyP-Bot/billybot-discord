@@ -1,8 +1,8 @@
-import { ISportsBet, ISportsBetUpcomingGame, SportKey } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import { ISportsBet, ISportsBetUpcomingGame, IUser, SportKey } from "btbot-types";
+import { ApplicationCommandOptionType, ChatInputCommandInteraction, userMention } from "discord.js";
 
 import { CommandNames, SportEmoji } from "@enums";
-import { Api, Embed, formatDateET, mentionCommand } from "@helpers";
+import { Api, Embed, formatDateET, mentionCommand, pluralIfNotOne } from "@helpers";
 import { ISlashCommand } from "@types";
 
 export const sportsBettingCommand: ISlashCommand = {
@@ -69,6 +69,11 @@ export const sportsBettingCommand: ISlashCommand = {
 					min_value: 1
 				}
 			]
+		},
+		{
+			name: CommandNames.sportsbet_stats,
+			description: "See who the most winning and losing sports bettors are",
+			type: ApplicationCommandOptionType.Subcommand
 		}
 	],
 	handler: async (int: ChatInputCommandInteraction) => {
@@ -91,6 +96,9 @@ export const sportsBettingCommand: ISlashCommand = {
 				bet_on_home_team,
 				amount
 			);
+			await int.editReply({ embeds: [embed] });
+		} else if (subcommand === CommandNames.sportsbet_stats) {
+			const embed = await getStats(int.guildId);
 			await int.editReply({ embeds: [embed] });
 		}
 	}
@@ -142,6 +150,45 @@ const betOnGame = async (
 		)}!\n\nYou now have ${bucks} BillyBucks.`,
 		"Bet Placed 💸"
 	);
+};
+
+const getStats = async (server_id: string) => {
+	const users = await Api.get<IUser[]>(`sportsbetting/stats/${server_id}`);
+	const winners = users
+		.slice(0, 3)
+		.filter(
+			(user) =>
+				user.metrics.gambling.sports_betting.total_amount_won -
+					user.metrics.gambling.sports_betting.total_amount_bet >
+				0
+		);
+	const losers = users
+		.slice(-3)
+		.filter(
+			(user) =>
+				user.metrics.gambling.sports_betting.total_amount_bet -
+					user.metrics.gambling.sports_betting.total_amount_won >
+				0
+		);
+	let message = "**Chads**\n";
+	winners.forEach((user, index) => {
+		const net =
+			user.metrics.gambling.sports_betting.total_amount_won -
+			user.metrics.gambling.sports_betting.total_amount_bet;
+		const bets = user.metrics.gambling.sports_betting.bets;
+		message += `${index + 1}. ${userMention(user.user_id)}: ${showPlusSignIfPositive(net)} BillyBucks on ${bets} bet${pluralIfNotOne(bets)}\n`;
+	});
+	if (winners.length === 0) message += "None!\n";
+	message += "\n**Degens**\n";
+	losers.forEach((user, index) => {
+		const net =
+			user.metrics.gambling.sports_betting.total_amount_won -
+			user.metrics.gambling.sports_betting.total_amount_bet;
+		const bets = user.metrics.gambling.sports_betting.bets;
+		message += `${index + 1}. ${userMention(user.user_id)}: ${showPlusSignIfPositive(net)} BillyBucks on ${bets} bet${pluralIfNotOne(bets)}\n`;
+	});
+	if (losers.length === 0) message += "None!";
+	return Embed.success(message, "Sports Betting Stats");
 };
 
 const showPlusSignIfPositive = (num: number) => (num > 0 ? `+${num}` : `${num}`);
