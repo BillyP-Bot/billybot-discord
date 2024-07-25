@@ -121,10 +121,15 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 		output += `Start Time: **${formatDateET(new Date(game.commence_time))}**\n`;
 		output += `Game ID: \`${game.id}\`\n\n`;
 	});
-	output += `To bet on a game, copy its Game ID from above and run ${mentionCommand(
-		CommandNames.sportsbet,
-		CommandNames.sportsbet_bet
-	)}`;
+	if (upcomingGames.length > 0) {
+		output += `To bet on a game, copy its Game ID from above and run ${mentionCommand(
+			CommandNames.sportsbet,
+			CommandNames.sportsbet_bet
+		)}`;
+	} else {
+		output += "No upcoming games found!";
+	}
+
 	return Embed.success(output, `Upcoming ${sport} Games ${SportEmoji[sport]}`);
 };
 
