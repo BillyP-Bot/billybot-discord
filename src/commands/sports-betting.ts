@@ -85,13 +85,13 @@ export const sportsBettingCommand: ISlashCommand = {
 		if (subcommand === CommandNames.sportsbet_games) {
 			const pagEmbed = await getUpcomingGames(sport, sport_key);
 			// @ts-ignore
-			await pagEmbed.send({ options: { channel: int.channel } });
-			await int.channel.send(
-				`To bet on a game, copy its Game ID from above and run ${mentionCommand(
-					CommandNames.sportsbet,
-					CommandNames.sportsbet_bet
-				)}`
-			);
+			await pagEmbed.send({ options: { interaction: int, followUp: true } });
+			const reply = await int.fetchReply();
+			const newContent = `To bet on a game, copy its Game ID from below and run ${mentionCommand(
+				CommandNames.sportsbet,
+				CommandNames.sportsbet_bet
+			)}${reply.content}`;
+			await int.editReply({ content: newContent });
 		} else if (subcommand === CommandNames.sportsbet_bet) {
 			const game_id = int.options.getString("game_id");
 			const bet_on_home_team = int.options.getString("team") === "home";
