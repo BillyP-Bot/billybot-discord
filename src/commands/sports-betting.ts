@@ -1,5 +1,6 @@
 import { ISportsBet, ISportsBetUpcomingGame, IUser, SportKey } from "btbot-types";
 import { ApplicationCommandOptionType, ChatInputCommandInteraction, userMention } from "discord.js";
+import { PaginatedEmbed } from "embed-paginator";
 
 import { CommandNames, SportEmoji } from "@enums";
 import { Api, Embed, formatDateET, mentionCommand, pluralIfNotOne } from "@helpers";
@@ -82,8 +83,15 @@ export const sportsBettingCommand: ISlashCommand = {
 		const sport = int.options.getString("sport");
 		const sport_key = SportKey[sport as keyof typeof SportKey];
 		if (subcommand === CommandNames.sportsbet_games) {
-			const embed = await getUpcomingGames(sport, sport_key);
-			await int.editReply({ embeds: [embed] });
+			const pagEmbed = await getUpcomingGames(sport, sport_key);
+			// @ts-ignore
+			await pagEmbed.send({ options: { interaction: int, followUp: true } });
+			const reply = await int.fetchReply();
+			const newContent = `To bet on a game, copy its Game ID from below and run ${mentionCommand(
+				CommandNames.sportsbet,
+				CommandNames.sportsbet_bet
+			)}${reply.content}`;
+			await int.editReply({ content: newContent });
 		} else if (subcommand === CommandNames.sportsbet_bet) {
 			const game_id = int.options.getString("game_id");
 			const bet_on_home_team = int.options.getString("team") === "home";
@@ -105,10 +113,13 @@ export const sportsBettingCommand: ISlashCommand = {
 };
 
 const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
+	const maxLengthPerEmbed = 4096;
+	const breakMarker = "*break*";
 	const upcomingGames = await Api.get<ISportsBetUpcomingGame[]>(
 		`sportsbetting/upcoming?sport_key=${sport_key}`
 	);
 	let output = "";
+	let currentEmbedLength = 0;
 	upcomingGames.forEach((game) => {
 		const awayTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
 			(o) => o.name === game.away_team
@@ -116,16 +127,36 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 		const homeTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
 			(o) => o.name === game.home_team
 		).price;
-		output += `Away Team: **${game.away_team}** (${showPlusSignIfPositive(awayTeamOdds)})\n`;
-		output += `Home Team: **${game.home_team}** (${showPlusSignIfPositive(homeTeamOdds)})\n`;
-		output += `Start Time: **${formatDateET(new Date(game.commence_time))}**\n`;
-		output += `Game ID: \`${game.id}\`\n\n`;
+		let newOutput = `Away Team: **${game.away_team}** (${showPlusSignIfPositive(awayTeamOdds)})\n`;
+		newOutput += `Home Team: **${game.home_team}** (${showPlusSignIfPositive(homeTeamOdds)})\n`;
+		newOutput += `Start Time: **${formatDateET(new Date(game.commence_time))}**\n`;
+		newOutput += `Game ID: \`${game.id}\`\n\n`;
+		if (currentEmbedLength + newOutput.length > maxLengthPerEmbed) {
+			output += breakMarker;
+			currentEmbedLength = 0;
+		}
+		output += newOutput;
+		currentEmbedLength += newOutput.length;
 	});
-	output += `To bet on a game, copy its Game ID from above and run ${mentionCommand(
-		CommandNames.sportsbet,
-		CommandNames.sportsbet_bet
-	)}`;
-	return Embed.success(output, `Upcoming ${sport} Games ${SportEmoji[sport]}`);
+
+	if (upcomingGames.length === 0) {
+		output += "No upcoming games found!";
+	}
+
+	const splitOutput = output.split(breakMarker);
+	const pagEmbed = new PaginatedEmbed({
+		itemsPerPage: 1,
+		paginationType: "description",
+		showFirstLastBtns: true,
+		useEmoji: true
+	})
+		.setDescriptions(splitOutput)
+		.setTitles(
+			splitOutput.map((_o, i) => {
+				return i === 0 ? `Upcoming ${sport} Games ${SportEmoji[sport]}` : undefined;
+			})
+		);
+	return pagEmbed;
 };
 
 const betOnGame = async (
