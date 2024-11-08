@@ -1,4 +1,4 @@
-import type { IUser, IDealOrNoDeal } from "btbot-types";
+import type { IDealOrNoDeal, IUser } from "btbot-types";
 import { DealOrNoDealReacts } from "btbot-types";
 import {
 	ApplicationCommandOptionType,

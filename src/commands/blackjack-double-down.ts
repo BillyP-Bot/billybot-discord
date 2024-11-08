@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
-import { CommandNames, Colors } from "@enums";
+import { Colors, CommandNames } from "@enums";
 import { Api, buildBlackjackResponse, Embed } from "@helpers";
 import { BlackJackGameResponse, ISlashCommand } from "@types";
 

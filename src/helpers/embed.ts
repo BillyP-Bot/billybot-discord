@@ -8,7 +8,7 @@ export class Embed {
 	static success(description?: string, title?: string, color?: ColorResolvable) {
 		const embed = new EmbedBuilder();
 		embed.setColor(color ?? Colors.green);
-		title && embed.setTitle(title);
+		if (title) embed.setTitle(title);
 		embed.setDescription(description);
 		return embed;
 	}
@@ -31,5 +31,6 @@ export const sendPaginatedImageList = async (images: IOpenAiImage[], channel: Te
 		.setDescriptions(images.map(() => " "))
 		.setImages(images.map((i) => i.permalink))
 		.setTitles(images.map((i) => i.prompt));
+	// @ts-ignore
 	await pagEmbed.send({ options: { channel } });
 };
