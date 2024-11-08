@@ -1,0 +1,15 @@
+**/*.DS_Store
+**/*.env*
+**/*.git
+**/.github
+**/.vscode
+**/node_modules
+.editorconfig
+.gitattributes
+.gitignore
+.prettierignore
+.prettierrc.json
+eslint.config.js
+fly.toml
+import-sorter.json
+README.md
