@@ -40,6 +40,8 @@ const birthdays = async (guild: Guild) => {
 	const sortedUsers = users.slice(nextBdayIndex).concat(users.slice(0, nextBdayIndex));
 	const output =
 		sortedUsers.reduce((acc, user) => {
+			const guildMemberExists = guildMemberLookup.has(user.user_id);
+			if (!guildMemberExists) return acc;
 			return user.birthday
 				? acc +
 						`${guildMemberLookup.get(user.user_id).displayName}: ${formatDateMMDD(
