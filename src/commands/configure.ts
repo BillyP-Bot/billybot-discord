@@ -10,13 +10,25 @@ export const configureCommand: ISlashCommand = {
 	description: "Command for admins to prep the server",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const users = await configureGuildUsers(int.member as GuildMember, true);
-		await int.editReply(`${users.length} user(s) configured`);
+		await assertDeveloper(int.member as GuildMember);
+		let message = `Creating server record for ${int.guild.name}...\n`;
+		try {
+			await assertCreateNewServerRecord(int.guildId, int.guild.name, int.guild.icon);
+			message += "Server record created\n";
+		} catch (error) {
+			message += `${error}\n`;
+		}
+		const users = await configureGuildUsers(int.member as GuildMember);
+		message += `${users.length} user(s) configured`;
+		await int.editReply(message);
 	}
 };
 
-export const configureGuildUsers = async (member: GuildMember, doAuthCheck?: boolean) => {
-	if (doAuthCheck) await assertDeveloper(member);
+const assertCreateNewServerRecord = async (server_id: string, name: string, icon_hash: string) => {
+	return Api.post("server", { server_id, name, icon_hash });
+};
+
+export const configureGuildUsers = async (member: GuildMember) => {
 	const guildMembers = await member.guild.members.fetch();
 	const users = guildMembers.reduce((acc, { user }) => {
 		if (user.bot) return acc;
