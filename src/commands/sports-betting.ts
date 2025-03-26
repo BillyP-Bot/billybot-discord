@@ -1,9 +1,8 @@
 import { ISportsBet, ISportsBetUpcomingGame, IUser, SportKey } from "btbot-types";
 import { ApplicationCommandOptionType, ChatInputCommandInteraction, userMention } from "discord.js";
-import { PaginatedEmbed } from "embed-paginator";
 
 import { CommandNames, SportEmoji } from "@enums";
-import { Api, Embed, formatDateET, mentionCommand, pluralIfNotOne } from "@helpers";
+import { Api, Embed, formatDateET, mentionCommand, PaginatedEmbed, pluralIfNotOne } from "@helpers";
 import { ISlashCommand } from "@types";
 
 export const sportsBettingCommand: ISlashCommand = {
@@ -87,7 +86,7 @@ export const sportsBettingCommand: ISlashCommand = {
 			// @ts-ignore
 			await pagEmbed.send({ options: { interaction: int, followUp: true } });
 			const reply = await int.fetchReply();
-			const newContent = `To bet on a game, copy its Game ID from below and run ${mentionCommand(
+			const newContent = `To bet on a game, copy its Game ID and run ${mentionCommand(
 				CommandNames.sportsbet,
 				CommandNames.sportsbet_bet
 			)}${reply.content}`;

@@ -1,9 +1,8 @@
 import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
-import { PaginatedEmbed } from "embed-paginator";
 
 import { commands } from "@commands";
 import { CommandNames } from "@enums";
-import { mentionCommand, sortArrayByField } from "@helpers";
+import { mentionCommand, PaginatedEmbed, sortArrayByField } from "@helpers";
 import { ISlashCommand } from "@types";
 
 export const helpCommand: ISlashCommand = {

@@ -1,8 +1,8 @@
 import { IOpenAiImage } from "btbot-types";
 import { ColorResolvable, EmbedBuilder, TextChannel } from "discord.js";
-import { PaginatedEmbed } from "embed-paginator";
 
 import { Colors } from "@enums";
+import { PaginatedEmbed } from "@helpers";
 
 export class Embed {
 	static success(description?: string, title?: string, color?: ColorResolvable) {

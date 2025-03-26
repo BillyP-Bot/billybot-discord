@@ -8,6 +8,7 @@ export * from "./connect-four";
 export * from "./deal-or-no-deal";
 export * from "./embed";
 export * from "./engagement-metrics";
+export * from "./paginated-embed";
 export * from "./portfolio";
 export * from "./role";
 export * from "./slash";

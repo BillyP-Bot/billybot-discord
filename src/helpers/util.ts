@@ -52,3 +52,5 @@ export const getLottoDrawDateString = () => {
 	drawDate.setMinutes(0);
 	return formatDateET(drawDate);
 };
+
+export const mentionChannel = (channelId: string) => `<#${channelId}>`;

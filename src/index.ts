@@ -45,7 +45,9 @@ client.once(Events.ClientReady, async () => {
 			name: "It's-a-me, BillyP!",
 			type: ActivityType.Custom
 		});
-		console.log(`Logged in as ${client.user.tag}!`);
+		console.log(
+			`Logged in as ${client.user.tag} in ${config.IS_PROD ? "production" : "development"} mode!`
+		);
 	} catch (error) {
 		console.error({ error });
 	}
@@ -108,10 +110,6 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 			return await dealOrNoDealReact(react, user.id);
 		}
 		await updateReactionEngagementMetrics(react, user.id);
-		if (react.message.author.id === client.user.id && react.emoji.name === "🖕") {
-			await react.message.channel.send(`<@${user.id}> 🖕`);
-			return;
-		}
 		if (react.emoji.name === Emotes.billy_buck && !react.message.author.bot) {
 			return await buckReact(react, user.id);
 		}
