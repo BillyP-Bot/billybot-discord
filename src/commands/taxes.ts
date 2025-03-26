@@ -1,8 +1,8 @@
 import { IUser } from "btbot-types";
 import { ChatInputCommandInteraction, GuildMember } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, assertMayor, Embed } from "@helpers";
+import { Channels, CommandNames } from "@enums";
+import { Api, assertMayor, Embed, mentionChannel } from "@helpers";
 import { ISlashCommand } from "@types";
 
 export const taxesCommand: ISlashCommand = {
@@ -10,13 +10,15 @@ export const taxesCommand: ISlashCommand = {
 	description: "The current mayor collects taxes from all middle and upper-class citizens",
 	handler: async (int: ChatInputCommandInteraction) => {
 		await int.deferReply();
-		const embed = await taxes(int.member as GuildMember);
+		const embed = await taxes(int.member as GuildMember, int.channelId);
 		await int.editReply({ embeds: [embed] });
 	}
 };
 
-const taxes = async (member: GuildMember) => {
+const taxes = async (member: GuildMember, channelId: string) => {
 	await assertMayor(member);
+	if (channelId !== Channels.general)
+		throw `Taxes can only be collected in the ${mentionChannel(Channels.general)} channel, coward!`;
 	const data = await Api.post<{
 		payout: number;
 		tax_rate: number;
