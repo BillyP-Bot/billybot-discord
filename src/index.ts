@@ -17,7 +17,6 @@ import {
 	isDealOrNoDealReact,
 	postAdminAnnouncement,
 	registerSlashCommands,
-	sendLegacyCommandDeprecationNotice,
 	updateMessageEngagementMetrics,
 	updateReactionEngagementMetrics
 } from "@helpers";
@@ -83,8 +82,6 @@ client.on(Events.MessageCreate, async (msg) => {
 		switch (true) {
 			case msg.channel.id === Channels.adminAnnouncements:
 				return await postAdminAnnouncement(msg);
-			case msg.content[0] === "!":
-				return await sendLegacyCommandDeprecationNotice(msg);
 			default:
 				return await updateMessageEngagementMetrics(msg);
 		}
