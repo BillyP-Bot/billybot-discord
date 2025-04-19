@@ -5,10 +5,9 @@
 **/.vscode
 **/node_modules
 .dockerignore
-.editorconfig
 .gitattributes
 .gitignore
-biome.json
 Dockerfile
 fly.toml
+lefthook.yml
 README.md
