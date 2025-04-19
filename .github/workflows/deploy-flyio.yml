@@ -10,19 +10,9 @@ env:
 jobs:
   deploy:
     name: deploy production
-
     runs-on: ubuntu-latest
-
     environment: production
-
     steps:
       - uses: actions/checkout@v3
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - run: bun i --ignore-scripts
-      - run: bun lint
-
       - uses: superfly/flyctl-actions/setup-flyctl@master
       - run: flyctl deploy --remote-only --detach --no-cache
