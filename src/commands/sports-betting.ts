@@ -19,7 +19,7 @@ export const sportsBettingCommand: ISlashCommand = {
 					description: "The sport league to get upcoming games and odds for",
 					type: ApplicationCommandOptionType.String,
 					required: true,
-					choices: Object.keys(SportKey).map((key) => ({
+					choices: Object.keys(SportKey).map(key => ({
 						name: `${key} ${SportEmoji[key]}`,
 						value: key
 					}))
@@ -36,7 +36,7 @@ export const sportsBettingCommand: ISlashCommand = {
 					description: "The sport league of the game you want to bet on",
 					type: ApplicationCommandOptionType.String,
 					required: true,
-					choices: Object.keys(SportKey).map((key) => ({
+					choices: Object.keys(SportKey).map(key => ({
 						name: `${key} ${SportEmoji[key]}`,
 						value: key
 					}))
@@ -119,12 +119,12 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 	);
 	let output = "";
 	let currentEmbedLength = 0;
-	upcomingGames.forEach((game) => {
+	upcomingGames.forEach(game => {
 		const awayTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
-			(o) => o.name === game.away_team
+			o => o.name === game.away_team
 		).price;
 		const homeTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
-			(o) => o.name === game.home_team
+			o => o.name === game.home_team
 		).price;
 		let newOutput = `Away Team: **${game.away_team}** (${showPlusSignIfPositive(awayTeamOdds)})\n`;
 		newOutput += `Home Team: **${game.home_team}** (${showPlusSignIfPositive(homeTeamOdds)})\n`;
@@ -187,7 +187,7 @@ const getStats = async (server_id: string) => {
 	const winners = users
 		.slice(0, 3)
 		.filter(
-			(user) =>
+			user =>
 				user.metrics.gambling.sports_betting.total_amount_won -
 					user.metrics.gambling.sports_betting.total_amount_bet >
 				0
@@ -195,7 +195,7 @@ const getStats = async (server_id: string) => {
 	const losers = users
 		.slice(-3)
 		.filter(
-			(user) =>
+			user =>
 				user.metrics.gambling.sports_betting.total_amount_bet -
 					user.metrics.gambling.sports_betting.total_amount_won >
 				0

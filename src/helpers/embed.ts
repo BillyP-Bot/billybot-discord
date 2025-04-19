@@ -29,8 +29,8 @@ export const sendPaginatedImageList = async (images: IOpenAiImage[], channel: Te
 		useEmoji: true
 	})
 		.setDescriptions(images.map(() => " "))
-		.setImages(images.map((i) => i.permalink))
-		.setTitles(images.map((i) => i.prompt));
+		.setImages(images.map(i => i.permalink))
+		.setTitles(images.map(i => i.prompt));
 	// @ts-ignore
 	await pagEmbed.send({ options: { channel } });
 };

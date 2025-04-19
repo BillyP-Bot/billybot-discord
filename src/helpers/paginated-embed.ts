@@ -534,7 +534,7 @@ export class PaginatedEmbed {
 
 		collector.on("end", (i, reason) => {
 			if (reason === "messageDelete") return;
-			i.forEach((int) => int.editReply({ components: [] }));
+			i.forEach(int => int.editReply({ components: [] }));
 		});
 
 		this.embedMsg = msg;

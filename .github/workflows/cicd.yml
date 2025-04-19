@@ -16,5 +16,5 @@ jobs:
         with:
           bun-version: latest
 
-      - run: bun i --ignore-scripts
-      - run: bun lint
+      - run: bun install --ignore-scripts --frozen-lockfile
+      - run: bun run biome ci .

@@ -83,13 +83,13 @@ const buildStatusMessage = (game: IDealOrNoDeal, justRejectedOffer?: boolean) =>
 
 	const openedAmounts = cases
 		.filter((c, i) => c.is_open && selected_case - 1 !== i)
-		.map((c) => c.value);
-	const openedAmountsSorted = openedAmounts.sort((a, b) => a - b).map((value) => `\`$${value}\``);
+		.map(c => c.value);
+	const openedAmountsSorted = openedAmounts.sort((a, b) => a - b).map(value => `\`$${value}\``);
 
-	const remainingAmounts = cases.filter((c) => !c.is_open).map((c) => c.value);
+	const remainingAmounts = cases.filter(c => !c.is_open).map(c => c.value);
 	const remainingAmountsSorted = remainingAmounts
 		.sort((a, b) => a - b)
-		.map((value) => `\`$${value}\``);
+		.map(value => `\`$${value}\``);
 
 	let msg = "";
 	if (justRejectedOffer) {

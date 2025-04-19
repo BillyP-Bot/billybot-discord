@@ -14,7 +14,7 @@ export const helpCommand: ISlashCommand = {
 			const { name, description, options } = command;
 			const subcommands =
 				options?.filter(
-					(option) => option.type === ApplicationCommandOptionType.Subcommand
+					option => option.type === ApplicationCommandOptionType.Subcommand
 				) ?? [];
 			for (const subcommand of subcommands) {
 				const { name: subCommandName, description: subCommandDescription } = subcommand;

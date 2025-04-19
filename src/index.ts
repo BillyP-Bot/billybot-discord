@@ -22,7 +22,7 @@ import {
 } from "@helpers";
 import { blackjackReact, buckReact, connectFourReact, dealOrNoDealReact } from "@reactions";
 
-process.on("unhandledRejection", (error) => {
+process.on("unhandledRejection", error => {
 	console.error({ error });
 });
 
@@ -52,7 +52,7 @@ client.once(Events.ClientReady, async () => {
 	}
 });
 
-client.on(Events.InteractionCreate, async (int) => {
+client.on(Events.InteractionCreate, async int => {
 	try {
 		if (int.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
@@ -73,7 +73,7 @@ client.on(Events.InteractionCreate, async (int) => {
 	}
 });
 
-client.on(Events.MessageCreate, async (msg) => {
+client.on(Events.MessageCreate, async msg => {
 	try {
 		if (msg.channel.type === ChannelType.DM) return;
 		if (msg.channel.id === Channels.botTesting && config.IS_PROD) return;
@@ -116,7 +116,7 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 	}
 });
 
-client.on(Events.GuildMemberAdd, async (member) => {
+client.on(Events.GuildMemberAdd, async member => {
 	try {
 		await configureGuildUsers(member);
 	} catch (error) {
@@ -124,6 +124,6 @@ client.on(Events.GuildMemberAdd, async (member) => {
 	}
 });
 
-client.login(config.BOT_TOKEN).catch((error) => {
+client.login(config.BOT_TOKEN).catch(error => {
 	console.error({ error });
 });

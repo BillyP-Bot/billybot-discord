@@ -3,13 +3,16 @@
   "module": "src/index.ts",
   "type": "module",
   "scripts": {
+    "prepare": "lefthook install",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
+    "compile": "bun build --compile --minify --bytecode --sourcemap src/index.ts --outfile main",
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts"
   },
   "devDependencies": {
+    "@evilmartians/lefthook": "^1.11.10",
     "@types/bun": "latest",
     "typescript": "^5.8.3"
   },
