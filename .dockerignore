@@ -4,12 +4,11 @@
 **/.github
 **/.vscode
 **/node_modules
+.dockerignore
 .editorconfig
 .gitattributes
 .gitignore
-.prettierignore
-.prettierrc.json
-eslint.config.js
+biome.json
+Dockerfile
 fly.toml
-import-sorter.json
 README.md
