@@ -1,9 +1,9 @@
 pre-commit:
   parallel: false
   commands:
-    # lint-staged:
-    #   run: bunx biome lint --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
-    #   skip_empty: true
+    lint-staged:
+      run: bunx biome lint --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      skip_empty: true
     format-staged:
       run: bunx biome format --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       skip_empty: true
