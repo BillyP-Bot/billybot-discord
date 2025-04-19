@@ -15,7 +15,7 @@ COPY --link . .
 
 # install dependencies, lint project, build frontend, and compile backend
 RUN bun install --ignore-scripts --frozen-lockfile
-RUN bun run biome ci .
+RUN bunx biome ci .
 RUN bun run compile
 
 # minimalist final stage for app image
