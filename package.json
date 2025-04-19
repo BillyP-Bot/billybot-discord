@@ -12,6 +12,7 @@
     "start": "bun src/index.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@evilmartians/lefthook": "^1.11.10",
     "@types/bun": "latest",
     "typescript": "^5.8.3"
