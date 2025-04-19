@@ -87,7 +87,6 @@ export const sportsBettingCommand: ISlashCommand = {
 		const sport_key = SportKey[sport as keyof typeof SportKey];
 		if (subcommand === CommandNames.sportsbet_games) {
 			const pagEmbed = await getUpcomingGames(sport, sport_key);
-			// @ts-ignore
 			await pagEmbed.send({ options: { interaction: int, followUp: true } });
 			const reply = await int.fetchReply();
 			const newContent = `To bet on a game, copy its Game ID and run ${mentionCommand(

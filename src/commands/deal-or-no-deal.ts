@@ -7,7 +7,7 @@ import {
 } from "discord.js";
 
 import { CommandNames } from "@enums";
-import { Api, Embed, getInteractionOptionValue, mentionCommand } from "@helpers";
+import { Api, Embed, getInteractionOptionValue, mentionChannel, mentionCommand } from "@helpers";
 import type { ISlashCommand } from "@types";
 
 export const dealOrNoDealCommand: ISlashCommand = {
@@ -46,6 +46,8 @@ export const dealOrNoDealCommand: ISlashCommand = {
 		}
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
+		if (!react.message.channel.isSendable())
+			throw `${mentionChannel(react.message.channel.id)} is not sendable!`;
 		const is_deal = react.emoji.toString() === DealOrNoDealReacts.deal;
 		const game = await Api.put<IDealOrNoDeal>("dealornodeal/respond", {
 			server_id: react.message.guild.id,
@@ -69,13 +71,11 @@ export const dealOrNoDealCommand: ISlashCommand = {
 					: `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${game.offer} BillyBucks\`.\n\nThere are only two unopened cases left, so you automatically win the contents of your own case: \`${winnings} BillyBucks\`!\n\nYou now have ${billy_bucks} BillyBucks.`,
 				"Deal or No Deal"
 			);
-			// @ts-ignore
 			await react.message.channel.send({ embeds: [embed] });
 			return;
 		}
 		const msg = buildStatusMessage(game, true);
 		const embed = buildEmbed(game, msg);
-		// @ts-ignore
 		await react.message.channel.send({ embeds: [embed] });
 	}
 };

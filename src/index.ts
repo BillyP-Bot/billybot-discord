@@ -91,9 +91,8 @@ client.on(Events.MessageCreate, async msg => {
 	}
 });
 
-client.on(Events.MessageReactionAdd, async (msgReact, user) => {
+client.on(Events.MessageReactionAdd, async (react: MessageReaction, user) => {
 	try {
-		const react = msgReact as MessageReaction;
 		if (react.message.author.id === user.id) return;
 		if (react.message.channel.id === Channels.botTesting && config.IS_PROD) return;
 		if (react.message.channel.id !== Channels.botTesting && !config.IS_PROD) return;
@@ -112,8 +111,8 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 		}
 	} catch (error) {
 		console.error({ error });
-		// @ts-ignore
-		await msgReact.message.channel.send({ embeds: [Embed.error(error)] });
+		if (!react.message.channel.isSendable()) return;
+		await react.message.channel.send({ embeds: [Embed.error(error)] });
 	}
 });
 

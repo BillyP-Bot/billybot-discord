@@ -22,7 +22,7 @@ const allowance = async (server_id: string, user_id: string) => {
 	});
 	const { billy_bucks } = data[user_id] as IUser;
 	return Embed.success(
-		`Here's your allowance, <@${user_id}>! You now have ${billy_bucks} BillyBucks!`,
+		`Here's your allowance, <@${user_id}>! You now have ${billy_bucks} BillyBucks.`,
 		"+200"
 	);
 };

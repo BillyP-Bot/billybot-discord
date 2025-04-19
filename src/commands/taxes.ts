@@ -30,6 +30,6 @@ const taxes = async (member: GuildMember, channelId: string) => {
 	});
 	let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
 	text += `Collection Payout: +${data.payout}\n`;
-	text += `Mayor <@${member.user.id}> now has ${data.user.billy_bucks} BillyBucks!`;
+	text += `Mayor <@${member.user.id}> now has ${data.user.billy_bucks} BillyBucks.`;
 	return Embed.success(text, "Tax Time!");
 };

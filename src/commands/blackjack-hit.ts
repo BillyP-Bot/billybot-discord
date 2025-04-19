@@ -1,7 +1,7 @@
 import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
 
 import { Colors, CommandNames } from "@enums";
-import { Api, Embed, buildBlackjackResponse } from "@helpers";
+import { Api, Embed, buildBlackjackResponse, mentionChannel } from "@helpers";
 import type { BlackJackGameResponse, ISlashCommand } from "@types";
 
 export const blackjackHitCommand: ISlashCommand = {
@@ -18,7 +18,8 @@ export const blackjackHitCommand: ISlashCommand = {
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
 		const { embed, is_complete } = await hit(react.message.guild.id, sender_id);
-		// @ts-ignore
+		if (!react.message.channel.isSendable())
+			throw `${mentionChannel(react.message.channel.id)} is not sendable!`;
 		const replyMsg = await react.message.channel.send({ embeds: [embed] });
 		if (!is_complete) await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨")]);
 	}

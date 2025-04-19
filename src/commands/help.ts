@@ -31,7 +31,6 @@ export const helpCommand: ISlashCommand = {
 		})
 			.setDescriptions(descriptions)
 			.setTitles(["Commands"]);
-		// @ts-ignore
 		await pagEmbed.send({ options: { interaction: int } });
 	}
 };

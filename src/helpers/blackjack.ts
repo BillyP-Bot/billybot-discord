@@ -60,7 +60,7 @@ export const buildBlackjackResponse = (data: BlackJackGameResponse, userId: stri
 	response += `Bet: ${wager}\n\n`;
 	response += `${status || defaultStatus}`;
 	if (is_complete) {
-		response += `\n\nYou now have ${billy_bucks} BillyBucks!`;
+		response += `\n\nYou now have ${billy_bucks} BillyBucks.`;
 	}
 	return response;
 };

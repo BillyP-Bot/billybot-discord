@@ -10,7 +10,8 @@ import {
 	Api,
 	buildConnectFourChallengeResponse,
 	buildConnectFourMoveResponse,
-	getInteractionOptionValue
+	getInteractionOptionValue,
+	mentionChannel
 } from "@helpers";
 import type { DiscordChannel, ISlashCommand } from "@types";
 
@@ -67,7 +68,7 @@ export const sendConnectFourResponseMessage = async (
 	response: string,
 	data: IConnectFour
 ) => {
-	// @ts-ignore
+	if (!channel.isSendable()) throw `${mentionChannel(channel.id)} is not sendable!`;
 	const message = await channel.send(response);
 	if (data.is_accepted && !data.is_complete) await reactWithConnectFourMoves(message);
 };
