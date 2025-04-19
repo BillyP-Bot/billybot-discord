@@ -1,12 +1,9 @@
 **/*.DS_Store
 **/*.env*
-**/*.git
-**/.github
+**/*.git*
 **/.vscode
 **/node_modules
 .dockerignore
-.gitattributes
-.gitignore
 Dockerfile
 fly.toml
 lefthook.yml
