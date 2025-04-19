@@ -1,5 +1,5 @@
-import { ConnectFourReacts, IConnectFour } from "btbot-types";
-import { MessageReaction } from "discord.js";
+import { ConnectFourReacts, type IConnectFour } from "btbot-types";
+import type { MessageReaction } from "discord.js";
 
 import { sendConnectFourResponseMessage } from "@commands";
 import { Api, buildConnectFourMoveResponse } from "@helpers";

@@ -1,5 +1,9 @@
-import { ConnectFourReacts, IConnectFour } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, Message } from "discord.js";
+import { ConnectFourReacts, type IConnectFour } from "btbot-types";
+import {
+	ApplicationCommandOptionType,
+	type ChatInputCommandInteraction,
+	type Message
+} from "discord.js";
 
 import { CommandNames } from "@enums";
 import {
@@ -8,7 +12,7 @@ import {
 	buildConnectFourMoveResponse,
 	getInteractionOptionValue
 } from "@helpers";
-import { DiscordChannel, ISlashCommand } from "@types";
+import type { DiscordChannel, ISlashCommand } from "@types";
 
 export const connectFourCommand: ISlashCommand = {
 	name: CommandNames.connectfour,

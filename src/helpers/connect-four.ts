@@ -1,5 +1,5 @@
-import { ConnectFourColor, ConnectFourReacts, IConnectFour } from "btbot-types";
-import { MessageReaction } from "discord.js";
+import { ConnectFourColor, ConnectFourReacts, type IConnectFour } from "btbot-types";
+import type { MessageReaction } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { mentionCommand, pluralIfNotOne } from "@helpers";

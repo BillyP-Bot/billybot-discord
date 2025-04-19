@@ -1,9 +1,13 @@
-import { IOpenAiImage } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, TextChannel } from "discord.js";
+import type { IOpenAiImage } from "btbot-types";
+import {
+	ApplicationCommandOptionType,
+	type ChatInputCommandInteraction,
+	type TextChannel
+} from "discord.js";
 
 import { CommandNames } from "@enums";
 import { Api, getInteractionOptionValue, sendPaginatedImageList } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const albumCommand: ISlashCommand = {
 	name: CommandNames.album,

@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import type { ChatInputCommandInteraction } from "discord.js";
 
 import { CommandNames } from "@enums";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const bingCommand: ISlashCommand = {
 	name: CommandNames.bing,

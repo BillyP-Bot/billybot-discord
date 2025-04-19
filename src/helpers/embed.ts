@@ -1,5 +1,5 @@
-import { IOpenAiImage } from "btbot-types";
-import { ColorResolvable, EmbedBuilder, TextChannel } from "discord.js";
+import type { IOpenAiImage } from "btbot-types";
+import { type ColorResolvable, EmbedBuilder, type TextChannel } from "discord.js";
 
 import { Colors } from "@enums";
 import { PaginatedEmbed } from "@helpers";

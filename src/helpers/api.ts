@@ -1,5 +1,5 @@
 import { config } from "@helpers";
-import { ApiResponse, UserLookup } from "@types";
+import type { ApiResponse, UserLookup } from "@types";
 
 const request = async <T>(url: string, method: string, body?: unknown) => {
 	const res = await fetch(`${config.BILLY_BACKEND}/${url}`, {

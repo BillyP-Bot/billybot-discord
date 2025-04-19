@@ -1,17 +1,17 @@
-import { IFeature } from "btbot-types";
+import type { IFeature } from "btbot-types";
 import {
 	ActionRowBuilder,
-	ChatInputCommandInteraction,
-	ModalActionRowComponentBuilder,
+	type ChatInputCommandInteraction,
+	type ModalActionRowComponentBuilder,
 	ModalBuilder,
-	ModalSubmitInteraction,
+	type ModalSubmitInteraction,
 	TextInputBuilder,
 	TextInputStyle
 } from "discord.js";
 
 import { CommandNames } from "@enums";
-import { Api, config, Embed } from "@helpers";
-import { ISlashCommand } from "@types";
+import { Api, Embed, config } from "@helpers";
+import type { ISlashCommand } from "@types";
 
 export const featuresCommand: ISlashCommand = {
 	name: CommandNames.feature,

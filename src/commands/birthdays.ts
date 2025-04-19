@@ -1,9 +1,9 @@
-import { IUser } from "btbot-types";
-import { ChatInputCommandInteraction, Guild } from "discord.js";
+import type { IUser } from "btbot-types";
+import type { ChatInputCommandInteraction, Guild } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { Api, Embed, formatDateMMDD, mentionCommand } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const birthdaysCommand: ISlashCommand = {
 	name: CommandNames.birthdays,

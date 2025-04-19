@@ -1,5 +1,9 @@
-import { IChallenge } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, Guild } from "discord.js";
+import type { IChallenge } from "btbot-types";
+import {
+	ApplicationCommandOptionType,
+	type ChatInputCommandInteraction,
+	type Guild
+} from "discord.js";
 
 import { CommandNames } from "@enums";
 import {
@@ -10,7 +14,7 @@ import {
 	postCurrentChallenge,
 	readMayor
 } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const challengeCommand: ISlashCommand = {
 	name: CommandNames.challenge,

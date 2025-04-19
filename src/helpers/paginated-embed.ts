@@ -1,24 +1,24 @@
 import {
+	type APIActionRowComponent,
+	type APIEmbedField,
+	type APIMessageActionRowComponent,
 	ActionRowBuilder,
-	ActionRowData,
-	APIActionRowComponent,
-	APIEmbedField,
-	APIMessageActionRowComponent,
+	type ActionRowData,
 	ButtonBuilder,
-	ButtonInteraction,
+	type ButtonInteraction,
 	ButtonStyle,
-	ColorResolvable,
+	type ColorResolvable,
 	ComponentType,
-	EmbedAuthorOptions,
+	type EmbedAuthorOptions,
 	EmbedBuilder,
-	EmbedFooterOptions,
-	Interaction,
-	InteractionCollector,
-	JSONEncodable,
-	Message,
-	MessageActionRowComponentBuilder,
-	MessageActionRowComponentData,
-	TextChannel
+	type EmbedFooterOptions,
+	type Interaction,
+	type InteractionCollector,
+	type JSONEncodable,
+	type Message,
+	type MessageActionRowComponentBuilder,
+	type MessageActionRowComponentData,
+	type TextChannel
 } from "discord.js";
 
 const paginationTypeList = ["description", "field", "both"] as const;
@@ -68,8 +68,8 @@ export class PaginatedEmbed {
 	private messageEmbed: EmbedBuilder;
 	private pages: EmbedItems[] = [];
 
-	private currentPage: number = 1;
-	private paginate: boolean = true;
+	private currentPage = 1;
+	private paginate = true;
 
 	private embedMsg: Message;
 

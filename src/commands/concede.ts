@@ -1,21 +1,21 @@
-import { IUser } from "btbot-types";
+import type { IUser } from "btbot-types";
 import {
 	ApplicationCommandOptionType,
-	ChatInputCommandInteraction,
-	Guild,
-	GuildMember
+	type ChatInputCommandInteraction,
+	type Guild,
+	type GuildMember
 } from "discord.js";
 
 import { CommandNames } from "@enums";
 import {
 	Api,
+	Embed,
 	assertMayor,
 	buildCongratsMessage,
-	Embed,
 	getInteractionOptionValue,
 	readFool
 } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const concedeCommand: ISlashCommand = {
 	name: CommandNames.concede,

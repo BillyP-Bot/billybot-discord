@@ -1,9 +1,9 @@
-import { IBet } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import type { IBet } from "btbot-types";
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { Api, Embed, getInteractionOptionValue } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const betCommand: ISlashCommand = {
 	name: CommandNames.bet,

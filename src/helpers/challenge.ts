@@ -1,8 +1,8 @@
-import { IUser } from "btbot-types";
+import type { IUser } from "btbot-types";
 
 import { CommandNames } from "@enums";
 import { Api, Embed, mentionCommand } from "@helpers";
-import { BetAggregate, IChallengeResponse } from "@types";
+import type { BetAggregate, IChallengeResponse } from "@types";
 
 export const getCurrentChallenge = async (server_id: string) => {
 	const response = await Api.get<IChallengeResponse>(

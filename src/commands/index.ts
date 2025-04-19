@@ -1,4 +1,4 @@
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 import { albumCommand } from "./album";
 import { allowanceCommand } from "./allowance";

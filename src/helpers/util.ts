@@ -1,4 +1,4 @@
-import { ISOTimestamp } from "btbot-types";
+import type { ISOTimestamp } from "btbot-types";
 
 export const formatDateMMDD = (birthday: ISOTimestamp) => {
 	return new Date(birthday).toLocaleDateString().slice(0, -5);

@@ -1,4 +1,4 @@
-import { MessageReaction } from "discord.js";
+import type { MessageReaction } from "discord.js";
 
 import { Api } from "@helpers";
 

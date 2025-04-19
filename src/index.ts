@@ -4,14 +4,14 @@ import {
 	Client,
 	Events,
 	GatewayIntentBits,
-	MessageReaction
+	type MessageReaction
 } from "discord.js";
 
 import { commandsLookup, configureGuildUsers, postFeature } from "@commands";
 import { Channels, Emotes } from "@enums";
 import {
-	config,
 	Embed,
+	config,
 	isBlackjackReact,
 	isConnectFourReact,
 	isDealOrNoDealReact,
@@ -58,8 +58,8 @@ client.on(Events.InteractionCreate, async int => {
 		if (int.channel.id !== Channels.botTesting && !config.IS_PROD) return;
 		if (int.isChatInputCommand()) {
 			const command = commandsLookup[int.commandName];
-			if (command) return await command.handler(int);
-			else throw "Command not supported yet! Check back soon.";
+			if (!command) throw "Command not supported yet! Check back soon.";
+			return await command.handler(int);
 		}
 		if (int.isModalSubmit()) {
 			if (int.customId === "featureModal") return await postFeature(int);
@@ -112,6 +112,7 @@ client.on(Events.MessageReactionAdd, async (msgReact, user) => {
 		}
 	} catch (error) {
 		console.error({ error });
+		// @ts-ignore
 		await msgReact.message.channel.send({ embeds: [Embed.error(error)] });
 	}
 });

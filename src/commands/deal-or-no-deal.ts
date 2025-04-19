@@ -2,13 +2,13 @@ import type { IDealOrNoDeal, IUser } from "btbot-types";
 import { DealOrNoDealReacts } from "btbot-types";
 import {
 	ApplicationCommandOptionType,
-	ChatInputCommandInteraction,
-	MessageReaction
+	type ChatInputCommandInteraction,
+	type MessageReaction
 } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { Api, Embed, getInteractionOptionValue, mentionCommand } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const dealOrNoDealCommand: ISlashCommand = {
 	name: CommandNames.dealornodeal,

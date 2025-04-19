@@ -1,4 +1,4 @@
-import { Message, TextChannel } from "discord.js";
+import type { Message, TextChannel } from "discord.js";
 
 import { Channels } from "@enums";
 import { Api, assertDeveloper } from "@helpers";

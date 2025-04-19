@@ -1,4 +1,4 @@
-import { ApplicationCommand, Client, REST, Routes } from "discord.js";
+import { type ApplicationCommand, type Client, REST, Routes } from "discord.js";
 
 import { commands, commandsLookup } from "@commands";
 import { config } from "@helpers";

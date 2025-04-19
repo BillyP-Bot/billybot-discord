@@ -1,5 +1,5 @@
-import { IBet, ICard, IChallenge, IUser } from "btbot-types";
-import {
+import type { IBet, ICard, IChallenge, IUser } from "btbot-types";
+import type {
 	ApplicationCommandOption,
 	ApplicationCommandType,
 	ChatInputCommandInteraction,

@@ -1,9 +1,13 @@
-import { ISportsBet, ISportsBetUpcomingGame, IUser, SportKey } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction, userMention } from "discord.js";
+import { type ISportsBet, type ISportsBetUpcomingGame, type IUser, SportKey } from "btbot-types";
+import {
+	ApplicationCommandOptionType,
+	type ChatInputCommandInteraction,
+	userMention
+} from "discord.js";
 
 import { CommandNames, SportEmoji } from "@enums";
-import { Api, Embed, formatDateET, mentionCommand, PaginatedEmbed, pluralIfNotOne } from "@helpers";
-import { ISlashCommand } from "@types";
+import { Api, Embed, PaginatedEmbed, formatDateET, mentionCommand, pluralIfNotOne } from "@helpers";
+import type { ISlashCommand } from "@types";
 
 export const sportsBettingCommand: ISlashCommand = {
 	name: CommandNames.sportsbet,

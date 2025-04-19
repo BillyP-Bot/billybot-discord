@@ -1,9 +1,9 @@
-import { IStock } from "btbot-types";
-import { ApplicationCommandOptionType, ChatInputCommandInteraction } from "discord.js";
+import type { IStock } from "btbot-types";
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { Api, Embed, getInteractionOptionValue } from "@helpers";
-import { ISlashCommand } from "@types";
+import type { ISlashCommand } from "@types";
 
 export const stockCommand: ISlashCommand = {
 	name: CommandNames.stock,

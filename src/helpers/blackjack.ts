@@ -1,9 +1,9 @@
-import { BlackjackReacts, CardSuit, ICard } from "btbot-types";
-import { MessageReaction } from "discord.js";
+import { BlackjackReacts, CardSuit, type ICard } from "btbot-types";
+import type { MessageReaction } from "discord.js";
 
 import { CommandNames } from "@enums";
 import { mentionCommand } from "@helpers";
-import { BlackJackGameResponse } from "@types";
+import type { BlackJackGameResponse } from "@types";
 
 export const suitLookup: Record<CardSuit, string> = {
 	[CardSuit.clubs]: "♣️",

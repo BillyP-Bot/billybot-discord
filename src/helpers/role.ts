@@ -1,4 +1,4 @@
-import { Guild, GuildMember } from "discord.js";
+import type { Guild, GuildMember } from "discord.js";
 
 import { Roles } from "@enums";
 

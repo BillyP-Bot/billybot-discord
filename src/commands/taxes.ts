@@ -1,9 +1,9 @@
-import { IUser } from "btbot-types";
-import { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import type { IUser } from "btbot-types";
+import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
 
 import { Channels, CommandNames } from "@enums";
-import { Api, assertMayor, Embed, mentionChannel } from "@helpers";
-import { ISlashCommand } from "@types";
+import { Api, Embed, assertMayor, mentionChannel } from "@helpers";
+import type { ISlashCommand } from "@types";
 
 export const taxesCommand: ISlashCommand = {
 	name: CommandNames.taxes,
