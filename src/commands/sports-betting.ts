@@ -123,7 +123,7 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 	);
 	let output = "";
 	let currentEmbedLength = 0;
-	upcomingGames.forEach(game => {
+	for (const game of upcomingGames) {
 		const awayTeamOdds = game.bookmakers[0].markets[0].outcomes.find(
 			o => o.name === game.away_team
 		).price;
@@ -140,7 +140,7 @@ const getUpcomingGames = async (sport: string, sport_key: SportKey) => {
 		}
 		output += newOutput;
 		currentEmbedLength += newOutput.length;
-	});
+	}
 
 	if (upcomingGames.length === 0) {
 		output += "No upcoming games found!";
@@ -170,7 +170,7 @@ const betOnGame = async (
 	bet_on_home_team: boolean,
 	amount: number
 ) => {
-	const { team, bet_amount, odds, bucks } = await Api.post<ISportsBet>(`sportsbetting/bet`, {
+	const { team, bet_amount, odds, bucks } = await Api.post<ISportsBet>("sportsbetting/bet", {
 		server_id,
 		user_id,
 		sport_key,

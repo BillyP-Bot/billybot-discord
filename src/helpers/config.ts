@@ -4,7 +4,7 @@ export const config = {
 	BILLY_BACKEND: Bun.env.BILLY_BACKEND,
 	BILLY_BACKEND_TOKEN: Bun.env.BILLY_BACKEND_TOKEN,
 	DASHBOARD_URL:
-		Bun.env.NODE_ENV == "production"
+		Bun.env.NODE_ENV === "production"
 			? "https://billybot.vercel.app/server"
 			: "http://localhost:3000/server"
 };

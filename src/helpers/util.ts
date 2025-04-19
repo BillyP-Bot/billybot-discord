@@ -45,7 +45,7 @@ export const formatDateET = (date: Date) =>
 export const getLottoDrawDateString = () => {
 	const now = new Date(Date.now());
 	const drawDate = getNextDayOfWeek(now, 5);
-	if (drawDate.getDate() == now.getDate() && drawDate.getUTCHours() >= 16) {
+	if (drawDate.getDate() === now.getDate() && drawDate.getUTCHours() >= 16) {
 		drawDate.setDate(drawDate.getDate() + 7);
 	}
 	drawDate.setUTCHours(16);

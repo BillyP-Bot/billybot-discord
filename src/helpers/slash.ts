@@ -12,9 +12,9 @@ export const registerSlashCommands = async (client: Client) => {
 		const applicationCommands = (await DiscordApi.get(
 			Routes.applicationCommands(client.user.id)
 		)) as ApplicationCommand[];
-		applicationCommands.forEach(({ name, id }) => {
+		for (const { name, id } of applicationCommands) {
 			commandsLookup[name].id = id;
-		});
+		}
 	} catch (error) {
 		throw `Error registering slash commands: ${error}`;
 	}

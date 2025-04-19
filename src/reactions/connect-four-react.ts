@@ -11,7 +11,7 @@ export async function connectFourReact(react: MessageReaction, sender_id: string
 	if (Object.entries(game).length === 0) return;
 	if (!game.is_accepted || game.is_complete || game.to_move !== sender_id) return;
 
-	let move;
+	let move: number;
 	switch (react.emoji.toString()) {
 		case ConnectFourReacts.one:
 			move = 0;

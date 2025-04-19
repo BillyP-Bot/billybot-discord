@@ -67,6 +67,7 @@ export const sendConnectFourResponseMessage = async (
 	response: string,
 	data: IConnectFour
 ) => {
+	// @ts-ignore
 	const message = await channel.send(response);
 	if (data.is_accepted && !data.is_complete) await reactWithConnectFourMoves(message);
 };

@@ -58,8 +58,7 @@ const concede = async (targetUserId: string, member: GuildMember, guild: Guild) 
 		currentFool?.roles.remove(foolRole)
 	]);
 	return Embed.success(
-		`<@${newMayor.user.id}> is now the mayor!\n<@${newFool.user.id}> is the new fool!\n\n` +
-			buildCongratsMessage(results),
+		`<@${newMayor.user.id}> is now the mayor!\n<@${newFool.user.id}> is the new fool!\n\n${buildCongratsMessage(results)}`,
 		"Mayoral Decree!"
 	);
 };

@@ -101,8 +101,8 @@ export class PaginatedEmbed {
 		const pages: EmbedItems[] = [];
 
 		while (colours.length > 0 || descriptions.length > 0 || fields?.length > 0) {
-			let pageDescriptions;
-			let pageFields;
+			let pageDescriptions: string[];
+			let pageFields: string[] | APIEmbedField[];
 
 			if (this.options.paginationType === "field") {
 				if (
@@ -178,7 +178,7 @@ export class PaginatedEmbed {
 						: pages[pages.length - 1]?.thumbnails || [undefined]
 			};
 
-			pages.push(page);
+			pages.push(page as EmbedItems);
 		}
 
 		this.pages = pages;
@@ -203,7 +203,7 @@ export class PaginatedEmbed {
 
 		if (this.options.descriptions) {
 			this.messageEmbed.setDescription(
-				this.pages[this.currentPage - 1].descriptions!.join("\n")
+				this.pages[this.currentPage - 1].descriptions.join("\n")
 			);
 		}
 
@@ -211,34 +211,34 @@ export class PaginatedEmbed {
 			this.messageEmbed.spliceFields(
 				0,
 				this.messageEmbed.data.fields?.length || 0,
-				...this.pages[this.currentPage - 1].fields!
+				...this.pages[this.currentPage - 1].fields
 			);
 		}
 
 		if (this.options.authors) {
-			const author = this.pages[this.currentPage - 1].authors![0];
+			const author = this.pages[this.currentPage - 1].authors[0];
 			if (author) {
 				this.messageEmbed.setAuthor(author);
 			}
 		}
 
 		if (this.options.titles) {
-			const title = this.pages[this.currentPage - 1].titles![0];
+			const title = this.pages[this.currentPage - 1].titles[0];
 			if (title) {
 				this.messageEmbed.setTitle(title);
 			}
 		}
 
 		if (this.options.urls) {
-			this.messageEmbed.setURL(this.pages[this.currentPage - 1].urls![0] || undefined);
+			this.messageEmbed.setURL(this.pages[this.currentPage - 1].urls[0] || undefined);
 		}
 
 		if (this.options.thumbnails) {
-			this.messageEmbed.setThumbnail(this.pages[this.currentPage - 1].thumbnails![0]);
+			this.messageEmbed.setThumbnail(this.pages[this.currentPage - 1].thumbnails[0]);
 		}
 
 		if (this.options.images) {
-			this.messageEmbed.setImage(this.pages[this.currentPage - 1].images![0]);
+			this.messageEmbed.setImage(this.pages[this.currentPage - 1].images[0]);
 		}
 	}
 
@@ -428,7 +428,7 @@ export class PaginatedEmbed {
 						ephemeral
 					})) as Message;
 				} else {
-					msg = (await interaction!.reply({
+					msg = (await interaction.reply({
 						content: message,
 						embeds: [this.messageEmbed],
 						components: this.paginate
@@ -534,7 +534,10 @@ export class PaginatedEmbed {
 
 		collector.on("end", (i, reason) => {
 			if (reason === "messageDelete") return;
-			i.forEach(int => int.editReply({ components: [] }));
+			for (const int of i) {
+				// @ts-ignore
+				int.editReply({ components: [] });
+			}
 		});
 
 		this.embedMsg = msg;

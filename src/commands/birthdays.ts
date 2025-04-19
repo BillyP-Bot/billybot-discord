@@ -43,13 +43,11 @@ const birthdays = async (guild: Guild) => {
 			const guildMemberExists = guildMemberLookup.has(user.user_id);
 			if (!guildMemberExists) return acc;
 			return user.birthday
-				? acc +
-						`${guildMemberLookup.get(user.user_id).displayName}: ${formatDateMMDD(
-							user.birthday
-						)}\n`
+				? `${acc}${guildMemberLookup.get(user.user_id).displayName}: ${formatDateMMDD(
+						user.birthday
+					)}\n`
 				: acc;
 		}, "") || "No birthdays registered!\n";
-	const fullOutput =
-		output + `\nRun ${mentionCommand(CommandNames.birthday)} to set your own birthday!`;
+	const fullOutput = `${output}\nRun ${mentionCommand(CommandNames.birthday)} to set your own birthday!`;
 	return Embed.success(fullOutput, "Upcoming Birthdays");
 };

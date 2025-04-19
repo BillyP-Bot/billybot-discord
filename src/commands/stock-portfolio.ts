@@ -34,7 +34,7 @@ const portfolio = async (server_id: string, user_id: string) => {
 	const { stocks, bucks } = res;
 	let output = "";
 	let net = 0;
-	stocks.forEach(({ amount_worth, amount, price_current, price_bought, symbol, currency }) => {
+	for (const { amount_worth, amount, price_current, price_bought, symbol, currency } of stocks) {
 		const amountDiff = amount_worth - amount;
 		net += amountDiff;
 		const priceDiff = price_current - price_bought;
@@ -48,7 +48,7 @@ const portfolio = async (server_id: string, user_id: string) => {
 		output += `Current Value: \`${amount_worth} BillyBuck${pluralIfNotOne(amount_worth)}\`\n`;
 		output += `Avg Price Bought At: \`${price_bought} ${currency}\`\n`;
 		output += `Current Price: \`${price_current} ${currency}\`\n\n`;
-	});
+	}
 	output += `Uninvested Cash: \`${bucks} BillyBuck${pluralIfNotOne(bucks)}\``;
 	return Embed.success(
 		output,

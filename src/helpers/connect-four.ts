@@ -15,22 +15,22 @@ export const buildConnectFourChallengeResponse = (data: IConnectFour) => {
 
 export const buildConnectFourMoveResponse = (data: IConnectFour) => {
 	const { board, red_user_id, yellow_user_id, to_move, is_complete, wager } = data;
-	let message =
+	let message = `${
 		ConnectFourReacts.one +
 		ConnectFourReacts.two +
 		ConnectFourReacts.three +
 		ConnectFourReacts.four +
 		ConnectFourReacts.five +
 		ConnectFourReacts.six +
-		ConnectFourReacts.seven +
-		"\n\n";
+		ConnectFourReacts.seven
+	}\n\n`;
 	for (let i = 5; i >= 0; i--) {
 		for (let j = 0; j < 7; j++) {
 			const pos = board[j][i];
 			message +=
-				pos == ConnectFourColor.red
+				pos === ConnectFourColor.red
 					? ConnectFourColor.red
-					: pos == ConnectFourColor.yellow
+					: pos === ConnectFourColor.yellow
 						? ConnectFourColor.yellow
 						: ConnectFourColor.empty;
 		}

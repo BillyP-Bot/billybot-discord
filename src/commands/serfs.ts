@@ -18,7 +18,8 @@ export const serfsCommand: ISlashCommand = {
 const serfs = async (server_id: string) => {
 	const users = await Api.get<IUser[]>(`bucks/serfs/${server_id}`);
 	const description = users.reduce((acc, { user_id, billy_bucks }, i) => {
-		return (acc += `**${i + 1}.** <@${user_id}> ${billy_bucks} BillyBucks\n\n`);
+		const newAcc = `${acc}**${i + 1}.** <@${user_id}> ${billy_bucks} BillyBucks\n\n`;
+		return newAcc;
 	}, "");
 	return Embed.success(description, "Serfs");
 };

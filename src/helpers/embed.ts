@@ -4,6 +4,7 @@ import { type ColorResolvable, EmbedBuilder, type TextChannel } from "discord.js
 import { Colors } from "@enums";
 import { PaginatedEmbed } from "@helpers";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: we use this class literally everywhere
 export class Embed {
 	static success(description?: string, title?: string, color?: ColorResolvable) {
 		const embed = new EmbedBuilder();

@@ -69,11 +69,13 @@ export const dealOrNoDealCommand: ISlashCommand = {
 					: `<@${game.user_id}>\n\n**NO DEAL!** You stubbornly reject BillyP's generous offer of \`${game.offer} BillyBucks\`.\n\nThere are only two unopened cases left, so you automatically win the contents of your own case: \`${winnings} BillyBucks\`!\n\nYou now have ${billy_bucks} BillyBucks.`,
 				"Deal or No Deal"
 			);
+			// @ts-ignore
 			await react.message.channel.send({ embeds: [embed] });
 			return;
 		}
 		const msg = buildStatusMessage(game, true);
 		const embed = buildEmbed(game, msg);
+		// @ts-ignore
 		await react.message.channel.send({ embeds: [embed] });
 	}
 };
@@ -114,11 +116,10 @@ const buildStatusMessage = (game: IDealOrNoDeal, justRejectedOffer?: boolean) =>
 
 	msg += `Your case: **${selected_case}** 🔒\n\n`;
 
-	if (openedAmountsSorted.length > 0)
-		msg += "Opened:\n" + openedAmountsSorted.join(", ") + "\n\n";
+	if (openedAmountsSorted.length > 0) msg += `Opened:\n${openedAmountsSorted.join(", ")}\n\n`;
 
 	if (remainingAmountsSorted.length > 0)
-		msg += "Remaining:\n" + remainingAmountsSorted.join(", ") + "\n\n";
+		msg += `Remaining:\n${remainingAmountsSorted.join(", ")}\n\n`;
 	return msg;
 };
 

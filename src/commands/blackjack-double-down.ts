@@ -14,6 +14,7 @@ export const blackjackDoubleDownCommand: ISlashCommand = {
 	},
 	reactHandler: async (react: MessageReaction, sender_id: string) => {
 		const embed = await doubleDown(react.message.guild.id, sender_id);
+		// @ts-ignore
 		await react.message.channel.send({ embeds: [embed] });
 	}
 };

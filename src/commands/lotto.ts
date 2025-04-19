@@ -31,6 +31,8 @@ const lotto = async (server_id: string) => {
 	body += `Base Lottery Jackpot: ${base_lottery_jackpot}\n`;
 	body += `Current Jackpot: ${jackpot}\n`;
 	body += `Entrants: ${entrants.length}\n\n`;
-	entrants.forEach(({ user_id }) => (body += `<@${user_id}>\n`));
+	for (const { user_id } of entrants) {
+		body += `<@${user_id}>\n`;
+	}
 	return Embed.success(body, "Weekly Lottery");
 };

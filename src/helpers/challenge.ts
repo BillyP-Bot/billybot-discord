@@ -27,10 +27,11 @@ export const postCurrentChallenge = async (server_id: string) => {
 export const buildCongratsMessage = (results: IUser[]) => {
 	if (results.length <= 0) return "No one bet correctly!";
 	let content = "Congratulations to:\n";
-	results.forEach(({ user_id }) => {
+	for (const { user_id } of results) {
 		content += `<@${user_id}>\n`;
-	});
-	return (content += "\nfor their wise bets!");
+	}
+	content += "\nfor their wise bets!";
+	return content;
 };
 
 export const buildCurrentBetsMessage = (results: BetAggregate) => {
@@ -40,7 +41,7 @@ export const buildCurrentBetsMessage = (results: BetAggregate) => {
 		const userBets = bets.map(({ user_id, amount }) => {
 			return `• <@${user_id}>:\t${amount}`;
 		});
-		return `<@${bets[0].participant_id}>\n` + userBets.join("\n") + "\n";
+		return `<@${bets[0].participant_id}>\n${userBets.join("\n")}\n`;
 	});
 	content += participants.join("\n\n");
 	return content;
