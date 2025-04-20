@@ -1,31 +1,35 @@
 # syntax = docker/dockerfile:1
 
-# use bun image for throw-away build stage
-FROM oven/bun:latest AS build
+# Adjust BUN_VERSION as desired
+ARG BUN_VERSION=latest
+FROM oven/bun:${BUN_VERSION} AS base
 
+LABEL fly_launch_runtime="Bun"
+
+# Bun app lives here
 WORKDIR /app
 
-# install packages needed to build dependencies
-RUN apt-get update -qq
-RUN apt-get install -y build-essential pkg-config python-is-python3
+# Throw-away build stage to reduce size of final image
+FROM base AS build
 
-# copy application code
-COPY --link bun.lock package.json ./
+# Install packages needed to build node modules
+RUN apt-get update -qq && \
+    apt-get install -y build-essential pkg-config python-is-python3
+
+# Copy application code
+COPY --link bun.lockb package.json ./
 COPY --link . .
 
-# install dependencies, lint project, build frontend, and compile backend
-RUN bun install --ignore-scripts --frozen-lockfile
-RUN bun run biome ci .
-RUN bun run compile
+# Install production dependencies only
+RUN rm -rf node_modules && \
+    bun i --frozen-lockfile --production
 
-# minimalist final stage for app image
-FROM gcr.io/distroless/base
+# Final stage for app image
+FROM base
 
-# copy built application
-COPY --from=build /app/main /app/main
+# Copy built application
+COPY --from=build /app /app
 
-WORKDIR /app
-
-# start the server
+# Start the server by default, this can be overwritten at runtime
 EXPOSE 8080
-ENTRYPOINT ["./main"]
+CMD [ "bun", "start" ]
