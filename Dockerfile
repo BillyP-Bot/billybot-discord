@@ -22,7 +22,7 @@ COPY --link . .
 
 # Install production dependencies only
 RUN rm -rf node_modules && \
-    bun i --frozen-lockfile --production
+    bun install --ignore-scripts --frozen-lockfile --production
 
 # Final stage for app image
 FROM base
