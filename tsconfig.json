@@ -3,22 +3,24 @@
     "lib": ["esnext"],
     "module": "esnext",
     "target": "esnext",
-    "types": ["bun-types"],
+    "types": ["@types/bun"],
     "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "noEmit": true,
     "allowImportingTsExtensions": true,
-    "moduleDetection": "force",
+    "resolveJsonModule": true,
     "allowJs": true,
+    "checkJs": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "strict": true,
+    "incremental": false,
     "paths": {
-      "@commands": ["src/commands"],
-      "@helpers": ["src/helpers"],
-      "@reactions": ["src/reactions"],
-      "@types": ["src/types"],
-      "@enums": ["src/types/enums"]
+      "*": ["./*"],
+      "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules"]
 }

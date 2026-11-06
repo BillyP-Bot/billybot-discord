@@ -1,28 +1,29 @@
-import type { IUser } from "btbot-types";
-import type { ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder, userMention } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import type { SlashCommand, UserLookup } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const allowanceCommand: ISlashCommand = {
-	name: CommandNames.allowance,
-	description: "Collect your weekly BillyBuck allowance (only available once a week)",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const embed = await allowance(int.guild.id, int.user.id);
-		await int.editReply({ embeds: [embed] });
-	}
+export const allowance: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.allowance)
+    .setDescription("Collect your weekly BillyBuck allowance (only available once a week)"),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const embed = await collectAllowance(interaction.guildId, interaction.user.id);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const allowance = async (server_id: string, user_id: string) => {
-	const data = await Api.post("bucks/allowance", {
-		server_id,
-		user_id
-	});
-	const { billy_bucks } = data[user_id] as IUser;
-	return Embed.success(
-		`Here's your allowance, <@${user_id}>! You now have ${billy_bucks} BillyBucks.`,
-		"+200"
-	);
+const collectAllowance = async (serverId: string, userId: string) => {
+  const data = await Api.post<UserLookup>("bucks/allowance", {
+    server_id: serverId,
+    user_id: userId,
+  });
+  const { billy_bucks } = data[userId];
+  return Embed.success(
+    `Here's your allowance, ${userMention(userId)}! You now have ${billy_bucks} BillyBucks.`,
+    "+200",
+  );
 };

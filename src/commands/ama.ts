@@ -1,34 +1,38 @@
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import type { IOpenAiCompletion } from "btbot-types";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, getInteractionOptionValue } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { truncate } from "@/helpers/util";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const amaCommand: ISlashCommand = {
-	name: CommandNames.ama,
-	description: "Ask BillyP anything",
-	options: [
-		{
-			name: "prompt",
-			description: "What would you like to ask BillyP?",
-			type: ApplicationCommandOptionType.String,
-			max_length: 950,
-			required: true
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const prompt = getInteractionOptionValue<string>("prompt", int);
-		const output = await ama(int.guild.id, int.user.id, prompt);
-		await int.editReply(`> *${prompt}*\n\n${output}`);
-	}
+// discord rejects messages longer than this
+const MAX_MESSAGE_LENGTH = 2000;
+
+export const ama: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.ama)
+    .setDescription("Ask BillyP anything")
+    .addStringOption(option =>
+      option
+        .setName("prompt")
+        .setDescription("What would you like to ask BillyP?")
+        .setMaxLength(950)
+        .setRequired(true),
+    ),
+  async execute(interaction) {
+    const prompt = interaction.options.getString("prompt", true);
+    await interaction.deferReply();
+    const output = await askBilly(interaction.guildId, interaction.user.id, prompt);
+    await interaction.editReply(truncate(`> *${prompt}*\n\n${output}`, MAX_MESSAGE_LENGTH));
+  },
 };
 
-const ama = async (server_id: string, user_id: string, prompt: string) => {
-	const { output } = await Api.post<{ output: string }>("completions", {
-		prompt,
-		user_id,
-		server_id
-	});
-	return output;
+const askBilly = async (serverId: string, userId: string, prompt: string) => {
+  const { output } = await Api.post<IOpenAiCompletion>("completions", {
+    prompt,
+    user_id: userId,
+    server_id: serverId,
+  });
+  return output;
 };

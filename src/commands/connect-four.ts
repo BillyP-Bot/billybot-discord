@@ -1,96 +1,54 @@
-import { ConnectFourReacts, type IConnectFour } from "btbot-types";
-import {
-	ApplicationCommandOptionType,
-	type ChatInputCommandInteraction,
-	type Message
-} from "discord.js";
+import type { IConnectFour } from "btbot-types";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import {
-	Api,
-	buildConnectFourChallengeResponse,
-	buildConnectFourMoveResponse,
-	getInteractionOptionValue,
-	mentionChannel
-} from "@helpers";
-import type { DiscordChannel, ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { buildConnectFourResponse, reactWithConnectFourMoves } from "@/helpers/connect-four";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const connectFourCommand: ISlashCommand = {
-	name: CommandNames.connectfour,
-	description: "Play a game of Connect Four against another user",
-	options: [
-		{
-			name: "user",
-			description:
-				"The user you want to send a new challenge to or accept an existing challenge from",
-			type: ApplicationCommandOptionType.User,
-			required: true
-		},
-		{
-			name: "bet",
-			description: "The number of BillyBucks to bet on the game",
-			type: ApplicationCommandOptionType.Integer,
-			min_value: 1
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const targetUserId = getInteractionOptionValue<string>("user", int);
-		const bet = getInteractionOptionValue<number>("bet", int);
-		const { response, data } = await connectFour(int.guild.id, int.user.id, targetUserId, bet);
-		await sendConnectFourResponse(int, response, data);
-	}
+export const connectFour: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.connectfour)
+    .setDescription("Play a game of Connect Four against another user")
+    .addUserOption(option =>
+      option
+        .setName("user")
+        .setDescription(
+          "The user you want to send a new challenge to or accept an existing challenge from",
+        )
+        .setRequired(true),
+    )
+    .addIntegerOption(option =>
+      option
+        .setName("bet")
+        .setDescription("The number of BillyBucks to bet on the game")
+        .setMinValue(1),
+    ),
+  async execute(interaction) {
+    const opponent = interaction.options.getUser("user", true);
+    const bet = interaction.options.getInteger("bet") ?? 0;
+    await interaction.deferReply();
+    const game = await challengeOrAccept(
+      interaction.guildId,
+      interaction.user.id,
+      opponent.id,
+      bet,
+    );
+    const reply = await interaction.editReply(buildConnectFourResponse(game));
+    await reactWithConnectFourMoves(reply, game);
+  },
 };
 
-const connectFour = async (
-	server_id: string,
-	user_id: string,
-	mentioned_user_id: string,
-	bet: number
-) => {
-	if (bet && bet < 0) throw "The `bet` option must be a positive integer if specified!";
-	const data = await Api.post<IConnectFour>("gamble/connectfour/challenge", {
-		server_id,
-		user_id,
-		mentioned_user_id,
-		wager: bet || 0
-	});
-	return {
-		response: data.is_accepted
-			? buildConnectFourMoveResponse(data)
-			: buildConnectFourChallengeResponse(data),
-		data
-	};
-};
-
-export const sendConnectFourResponseMessage = async (
-	channel: DiscordChannel,
-	response: string,
-	data: IConnectFour
-) => {
-	if (!channel.isSendable()) throw `${mentionChannel(channel.id)} is not sendable!`;
-	const message = await channel.send(response);
-	if (data.is_accepted && !data.is_complete) await reactWithConnectFourMoves(message);
-};
-
-const sendConnectFourResponse = async (
-	int: ChatInputCommandInteraction,
-	response: string,
-	data: IConnectFour
-) => {
-	const replyInt = await int.editReply(response);
-	if (data.is_accepted && !data.is_complete) {
-		await reactWithConnectFourMoves(replyInt);
-	}
-};
-
-const reactWithConnectFourMoves = async (msg: Message) =>
-	Promise.all([
-		msg.react(ConnectFourReacts.one),
-		msg.react(ConnectFourReacts.two),
-		msg.react(ConnectFourReacts.three),
-		msg.react(ConnectFourReacts.four),
-		msg.react(ConnectFourReacts.five),
-		msg.react(ConnectFourReacts.six),
-		msg.react(ConnectFourReacts.seven)
-	]);
+// challenges the other user, or accepts their challenge (starting the game) if they sent one first
+const challengeOrAccept = async (
+  serverId: string,
+  userId: string,
+  opponentId: string,
+  bet: number,
+) =>
+  Api.post<IConnectFour>("gamble/connectfour/challenge", {
+    server_id: serverId,
+    user_id: userId,
+    mentioned_user_id: opponentId,
+    wager: bet,
+  });

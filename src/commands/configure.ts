@@ -1,45 +1,52 @@
 import type { IUser } from "btbot-types";
-import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { type Guild, SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, assertDeveloper } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { getErrorMessage, logUnexpectedError } from "@/helpers/error";
+import { assertDeveloper } from "@/helpers/role";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const configureCommand: ISlashCommand = {
-	name: CommandNames.configure,
-	description: "Command for admins to prep the server",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		await assertDeveloper(int.member as GuildMember);
-		let message = `Creating server record for ${int.guild.name}...\n`;
-		try {
-			await assertCreateNewServerRecord(int.guildId, int.guild.name, int.guild.icon);
-			message += "Server record created\n";
-		} catch (error) {
-			message += `${error}\n`;
-		}
-		const users = await configureGuildUsers(int.member as GuildMember);
-		message += `${users.length} user(s) configured`;
-		await int.editReply(message);
-	}
+export const configure: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.configure)
+    .setDescription("Command for admins to prep the server"),
+  async execute(interaction) {
+    // checked before deferring so that the error reply is only visible to the caller
+    assertDeveloper(interaction.member);
+    await interaction.deferReply();
+    const message = await configureServer(interaction.guild);
+    await interaction.editReply(message);
+  },
 };
 
-const assertCreateNewServerRecord = async (server_id: string, name: string, icon_hash: string) => {
-	return Api.post("server", { server_id, name, icon_hash });
+const configureServer = async (guild: Guild) => {
+  let message = `Creating server record for ${guild.name}...\n`;
+  try {
+    await Api.post("server", { server_id: guild.id, name: guild.name, icon_hash: guild.icon });
+    message += "Server record created\n";
+  } catch (error) {
+    // most likely "Server already exists", which is fine: carry on and sync the users anyway
+    logUnexpectedError("/configure", error);
+    message += `${getErrorMessage(error)}\n`;
+  }
+  const users = await configureGuildUsers(guild);
+  message += `${users.length} user(s) configured`;
+  return message;
 };
 
-export const configureGuildUsers = async (member: GuildMember) => {
-	const guildMembers = await member.guild.members.fetch();
-	const users = guildMembers.reduce((acc, { user }) => {
-		if (user.bot) return acc;
-		acc.push({
-			server_id: member.guild.id,
-			user_id: user.id,
-			username: user.username,
-			discriminator: user.discriminator,
-			avatar_hash: user.avatar
-		});
-		return acc;
-	}, [] as Partial<IUser>[]);
-	return Api.post<IUser[]>("users", users);
+// creates a user record for each (non-bot) guild member, or updates it if it already exists
+// (also run whenever a new member joins the server)
+export const configureGuildUsers = async (guild: Guild) => {
+  const members = await guild.members.fetch();
+  const users = members
+    .filter(member => !member.user.bot)
+    .map(({ user }) => ({
+      server_id: guild.id,
+      user_id: user.id,
+      username: user.username,
+      discriminator: user.discriminator,
+      avatar_hash: user.avatar,
+    }));
+  return Api.post<IUser[]>("users", users);
 };

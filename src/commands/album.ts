@@ -1,40 +1,36 @@
 import type { IOpenAiImage } from "btbot-types";
-import {
-	ApplicationCommandOptionType,
-	type ChatInputCommandInteraction,
-	type TextChannel
-} from "discord.js";
+import { SlashCommandBuilder, userMention } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, getInteractionOptionValue, sendPaginatedImageList } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { sendPaginatedImageList } from "@/helpers/embed";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const albumCommand: ISlashCommand = {
-	name: CommandNames.album,
-	description: "View an album of your (or another user's) previously generated images",
-	options: [
-		{
-			name: "user",
-			description: "The user whose album you want to view (runs on self if omitted)",
-			type: ApplicationCommandOptionType.User
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const userId = getInteractionOptionValue<string>("user", int, int.user.id);
-		const onSelf = int.user.id === userId;
-		const res = await album(int.guild.id, userId);
-		if (!res || res.length === 0) {
-			await int.editReply(
-				`${onSelf ? "You have" : `<@${userId}> has`} not generated any images yet!`
-			);
-			return;
-		}
-		await int.editReply(`${onSelf ? "Your" : `<@${userId}>'s`} Images:`);
-		await sendPaginatedImageList(res, int.channel as TextChannel);
-	}
+export const album: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.album)
+    .setDescription("View an album of your (or another user's) previously generated images")
+    .addUserOption(option =>
+      option
+        .setName("user")
+        .setDescription("The user whose album you want to view (runs on self if omitted)"),
+    ),
+  async execute(interaction) {
+    const user = interaction.options.getUser("user") ?? interaction.user;
+    const onSelf = user.id === interaction.user.id;
+    await interaction.deferReply();
+    const images = await getAlbum(interaction.guildId, user.id);
+    if (images.length === 0) {
+      await interaction.editReply(
+        `${onSelf ? "You have" : `${userMention(user.id)} has`} not generated any images yet!`,
+      );
+      return;
+    }
+    await interaction.editReply(`${onSelf ? "Your" : `${userMention(user.id)}'s`} Images:`);
+    if (!interaction.channel) throw new Error("Channel not found");
+    await sendPaginatedImageList(images, interaction.channel);
+  },
 };
 
-const album = async (server_id: string, user_id: string) => {
-	return Api.get<IOpenAiImage[]>(`images?server_id=${server_id}&user_id=${user_id}`);
-};
+const getAlbum = async (serverId: string, userId: string) =>
+  Api.get<IOpenAiImage[]>(`images?server_id=${serverId}&user_id=${userId}`);

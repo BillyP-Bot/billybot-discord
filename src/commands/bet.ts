@@ -1,48 +1,50 @@
 import type { IBet } from "btbot-types";
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder, userMention } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, getInteractionOptionValue } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const betCommand: ISlashCommand = {
-	name: CommandNames.bet,
-	description: "Bet on a participant of the current mayoral challenge",
-	options: [
-		{
-			name: "participant",
-			description: "The challenge participant to bet on",
-			type: ApplicationCommandOptionType.User,
-			required: true
-		},
-		{
-			name: "amount",
-			description: "The number of BillyBucks to bet",
-			type: ApplicationCommandOptionType.Integer,
-			required: true,
-			min_value: 1
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const participantId = getInteractionOptionValue<string>("participant", int);
-		const amount = getInteractionOptionValue<number>("amount", int);
-		const embed = await bet(int.guild.id, int.user.id, participantId, amount);
-		await int.editReply({ embeds: [embed] });
-	}
+export const bet: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.bet)
+    .setDescription("Bet on a participant of the current mayoral challenge")
+    .addUserOption(option =>
+      option
+        .setName("participant")
+        .setDescription("The challenge participant to bet on")
+        .setRequired(true),
+    )
+    .addIntegerOption(option =>
+      option
+        .setName("amount")
+        .setDescription("The number of BillyBucks to bet")
+        .setRequired(true)
+        .setMinValue(1),
+    ),
+  async execute(interaction) {
+    const participant = interaction.options.getUser("participant", true);
+    const amount = interaction.options.getInteger("amount", true);
+    await interaction.deferReply();
+    const embed = await placeBet(interaction.guildId, interaction.user.id, participant.id, amount);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const bet = async (server_id: string, user_id: string, participant_id: string, amount: number) => {
-	const { billy_bucks } = await Api.post<{ bet: IBet & { billy_bucks: number } }>(
-		"/challenges/bet",
-		{
-			server_id,
-			user_id,
-			participant_id,
-			amount
-		}
-	);
-	return Embed.success(
-		`You bet ${amount} BillyBucks on <@${participant_id}>!\n\nYou now have ${billy_bucks} BillyBucks.`
-	);
+const placeBet = async (
+  serverId: string,
+  userId: string,
+  participantId: string,
+  amount: number,
+) => {
+  const { billy_bucks } = await Api.post<{ bet: IBet; billy_bucks: number }>("challenges/bet", {
+    server_id: serverId,
+    user_id: userId,
+    participant_id: participantId,
+    amount,
+  });
+  return Embed.success(
+    `You bet ${amount} BillyBucks on ${userMention(participantId)}!\n\nYou now have ${billy_bucks} BillyBucks.`,
+  );
 };

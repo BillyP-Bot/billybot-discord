@@ -1,12 +1,11 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import type { ISlashCommand } from "@types";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const bingCommand: ISlashCommand = {
-	name: CommandNames.bing,
-	description: "bong?",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.reply("bong");
-	}
+export const bing: SlashCommand = {
+  data: new SlashCommandBuilder().setName(CommandNames.bing).setDescription("bong?"),
+  async execute(interaction) {
+    await interaction.reply("bong");
+  },
 };

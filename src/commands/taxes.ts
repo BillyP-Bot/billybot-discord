@@ -1,35 +1,39 @@
 import type { IUser } from "btbot-types";
-import type { ChatInputCommandInteraction, GuildMember } from "discord.js";
+import { channelMention, SlashCommandBuilder, userMention } from "discord.js";
 
-import { Channels, CommandNames } from "@enums";
-import { Api, Embed, assertMayor, mentionChannel } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import { UserError } from "@/helpers/error";
+import { assertMayor } from "@/helpers/role";
+import type { SlashCommand } from "@/types";
+import { Channels, CommandNames } from "@/types/enums";
 
-export const taxesCommand: ISlashCommand = {
-	name: CommandNames.taxes,
-	description: "The current mayor collects taxes from all middle and upper-class citizens",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const embed = await taxes(int.member as GuildMember, int.channelId);
-		await int.editReply({ embeds: [embed] });
-	}
+export const taxes: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.taxes)
+    .setDescription("The current mayor collects taxes from all middle and upper-class citizens"),
+  async execute(interaction) {
+    // checked before deferring so that the error reply is only visible to the caller
+    assertMayor(interaction.member);
+    if (interaction.channelId !== Channels.general)
+      throw new UserError(
+        `Taxes can only be collected in the ${channelMention(Channels.general)} channel, coward!`,
+      );
+    await interaction.deferReply();
+    const embed = await collectTaxes(interaction.guildId, interaction.user.id);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const taxes = async (member: GuildMember, channelId: string) => {
-	await assertMayor(member);
-	if (channelId !== Channels.general)
-		throw `Taxes can only be collected in the ${mentionChannel(Channels.general)} channel, coward!`;
-	const data = await Api.post<{
-		payout: number;
-		tax_rate: number;
-		charged_users: number;
-		user: IUser;
-	}>("bucks/taxes", {
-		server_id: member.guild.id,
-		user_id: member.user.id
-	});
-	let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
-	text += `Collection Payout: +${data.payout}\n`;
-	text += `Mayor <@${member.user.id}> now has ${data.user.billy_bucks} BillyBucks.`;
-	return Embed.success(text, "Tax Time!");
+const collectTaxes = async (serverId: string, mayorId: string) => {
+  const data = await Api.post<{
+    payout: number;
+    tax_rate: number;
+    charged_users: number;
+    user: IUser;
+  }>("bucks/taxes", { server_id: serverId, user_id: mayorId });
+  let text = `${data.tax_rate} BillyBucks have been collected from ${data.charged_users} citizens!\n`;
+  text += `Collection Payout: +${data.payout}\n`;
+  text += `Mayor ${userMention(mayorId)} now has ${data.user.billy_bucks} BillyBucks.`;
+  return Embed.success(text, "Tax Time!");
 };

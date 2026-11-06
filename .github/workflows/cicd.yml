@@ -2,19 +2,18 @@ name: cicd
 
 on:
   push:
-    branches: ["*"]
+    branches: [ "*" ]
   pull_request:
-    branches: ["*"]
+    branches: [ "*" ]
 
 jobs:
-  lint:
-    name: lint
+  cicd:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install --ignore-scripts --frozen-lockfile
-      - run: bun run biome ci .
-      - run: bun run compile
+      - run: bun biome ci .
+      - run: bun tsc

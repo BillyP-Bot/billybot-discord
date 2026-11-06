@@ -1,39 +1,39 @@
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, buildBlackjackResponse, getInteractionOptionValue } from "@helpers";
-import type { BlackJackGameResponse, ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { buildBlackjackResponse, reactWithBlackjackMoves } from "@/helpers/blackjack";
+import { Embed } from "@/helpers/embed";
+import type { BlackJackGameResponse, SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const blackjackCommand: ISlashCommand = {
-	name: CommandNames.blackjack,
-	description: "Play a hand of blackjack",
-	options: [
-		{
-			name: "bet",
-			description: "The number of BillyBucks to bet",
-			type: ApplicationCommandOptionType.Integer,
-			required: true,
-			min_value: 10
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const bet = getInteractionOptionValue<number>("bet", int);
-		const { embed, is_complete } = await blackjack(int.guild.id, int.user.id, bet);
-		const replyInt = await int.editReply({ embeds: [embed] });
-		if (!is_complete) {
-			const replyMsg = await replyInt.fetch();
-			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨"), replyMsg.react("🟦")]);
-		}
-	}
+export const blackjack: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.blackjack)
+    .setDescription("Play a hand of blackjack")
+    .addIntegerOption(option =>
+      option
+        .setName("bet")
+        .setDescription("The number of BillyBucks to bet")
+        .setRequired(true)
+        .setMinValue(10),
+    ),
+  async execute(interaction) {
+    const bet = interaction.options.getInteger("bet", true);
+    await interaction.deferReply();
+    const { embed, isComplete } = await startHand(interaction.guildId, interaction.user.id, bet);
+    const reply = await interaction.editReply({ embeds: [embed] });
+    if (!isComplete) await reactWithBlackjackMoves(reply, true);
+  },
 };
 
-const blackjack = async (server_id: string, user_id: string, wager: number) => {
-	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
-		server_id,
-		user_id,
-		wager
-	});
-	const response = buildBlackjackResponse(data, user_id);
-	return { embed: Embed.success(response), is_complete: data.is_complete };
+const startHand = async (serverId: string, userId: string, wager: number) => {
+  const data = await Api.post<BlackJackGameResponse>("gamble/blackjack", {
+    server_id: serverId,
+    user_id: userId,
+    wager,
+  });
+  return {
+    embed: Embed.success(buildBlackjackResponse(data, userId)),
+    isComplete: data.is_complete,
+  };
 };

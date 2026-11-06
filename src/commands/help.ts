@@ -1,36 +1,37 @@
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import { ApplicationCommandOptionType, SlashCommandBuilder } from "discord.js";
 
-import { commands } from "@commands";
-import { CommandNames } from "@enums";
-import { PaginatedEmbed, mentionCommand, sortArrayByField } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Commands } from "@/commands";
+import { mentionCommand } from "@/helpers/command";
+import { PaginatedEmbed } from "@/helpers/pagination";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const helpCommand: ISlashCommand = {
-	name: CommandNames.help,
-	description: "Show a complete list of supported commands for this server",
-	handler: async (int: ChatInputCommandInteraction) => {
-		const sortedCommands = sortArrayByField(commands, "name");
-		const descriptions = sortedCommands.reduce((acc, command) => {
-			const { name, description, options } = command;
-			const subcommands =
-				options?.filter(
-					option => option.type === ApplicationCommandOptionType.Subcommand
-				) ?? [];
-			for (const subcommand of subcommands) {
-				const { name: subCommandName, description: subCommandDescription } = subcommand;
-				acc.push(`${mentionCommand(name, subCommandName)}\n${subCommandDescription}\n`);
-			}
-			if (subcommands.length === 0) acc.push(`${mentionCommand(name)}\n${description}\n`);
-			return acc;
-		}, [] as string[]);
-		const pagEmbed = new PaginatedEmbed({
-			itemsPerPage: 10,
-			paginationType: "description",
-			showFirstLastBtns: true,
-			useEmoji: true
-		})
-			.setDescriptions(descriptions)
-			.setTitles(["Commands"]);
-		await pagEmbed.send({ options: { interaction: int } });
-	}
+export const help: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.help)
+    .setDescription("Show a complete list of supported commands for this server"),
+  async execute(interaction) {
+    const pagEmbed = new PaginatedEmbed({
+      itemsPerPage: 10,
+      paginationType: "description",
+      showFirstLastBtns: true,
+      useEmoji: true,
+    })
+      .setDescriptions(buildCommandDescriptions())
+      .setTitles(["Commands"]);
+    await pagEmbed.send({ options: { interaction } });
+  },
 };
+
+// one entry per command, or per subcommand for commands that have them, sorted by name
+const buildCommandDescriptions = () =>
+  Commands.map(command => command.data.toJSON())
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .flatMap(({ name, description, options }) => {
+      const subcommands =
+        options?.filter(option => option.type === ApplicationCommandOptionType.Subcommand) ?? [];
+      if (subcommands.length === 0) return [`${mentionCommand(name)}\n${description}\n`];
+      return subcommands.map(
+        subcommand => `${mentionCommand(name, subcommand.name)}\n${subcommand.description}\n`,
+      );
+    });

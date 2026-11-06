@@ -1,27 +1,29 @@
-import type { IUser } from "btbot-types";
-import type { ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, getLottoDrawDateString } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import { getLottoDrawDateString } from "@/helpers/util";
+import type { SlashCommand, UserLookup } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const buyTicketCommand: ISlashCommand = {
-	name: CommandNames.ticket,
-	description: "Buy a ticket for a chance to win this week's lottery",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const embed = await ticket(int.guild.id, int.user.id);
-		await int.editReply({ embeds: [embed] });
-	}
+// the user's updated balance is keyed by their user id alongside the ticket cost
+type TicketPurchase = { ticket_cost: number; [userId: string]: number | UserLookup[string] };
+
+export const buyTicket: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.ticket)
+    .setDescription("Buy a ticket for a chance to win this week's lottery"),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const embed = await purchaseTicket(interaction.guildId, interaction.user.id);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const ticket = async (server_id: string, user_id: string) => {
-	const data = await Api.post<{ ticket_cost: number }>("lottery", {
-		server_id,
-		user_id
-	});
-	const { billy_bucks } = data[user_id] as IUser;
-	let body = `You bought a lottery ticket for ${data.ticket_cost} BillyBucks!\n\n`;
-	body += `You now have ${billy_bucks} BillyBucks. A winner will be picked on ${getLottoDrawDateString()}!`;
-	return Embed.success(body, "Lottery Ticket Purchased");
+const purchaseTicket = async (serverId: string, userId: string) => {
+  const data = await Api.post<TicketPurchase>("lottery", { server_id: serverId, user_id: userId });
+  const { billy_bucks } = data[userId] as UserLookup[string];
+  let body = `You bought a lottery ticket for ${data.ticket_cost} BillyBucks!\n\n`;
+  body += `You now have ${billy_bucks} BillyBucks. A winner will be picked on ${getLottoDrawDateString()}!`;
+  return Embed.success(body, "Lottery Ticket Purchased");
 };

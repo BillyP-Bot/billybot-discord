@@ -1,35 +1,35 @@
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import type { IOpenAiImage } from "btbot-types";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, getInteractionOptionValue } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const imageCommand: ISlashCommand = {
-	name: CommandNames.image,
-	description: "Get an AI-generated image based on your input",
-	options: [
-		{
-			name: "prompt",
-			description: "The word or phrase to generate the image based on",
-			type: ApplicationCommandOptionType.String,
-			max_length: 950,
-			required: true
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const prompt = getInteractionOptionValue<string>("prompt", int);
-		const embed = await image(int.guild.id, int.user.id, prompt);
-		await int.editReply({ embeds: [embed] });
-	}
+export const image: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.image)
+    .setDescription("Get an AI-generated image based on your input")
+    .addStringOption(option =>
+      option
+        .setName("prompt")
+        .setDescription("The word or phrase to generate the image based on")
+        .setMaxLength(950)
+        .setRequired(true),
+    ),
+  async execute(interaction) {
+    const prompt = interaction.options.getString("prompt", true);
+    await interaction.deferReply();
+    const embed = await generateImage(interaction.guildId, interaction.user.id, prompt);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const image = async (server_id: string, user_id: string, prompt: string) => {
-	if (prompt.length > 950) throw "Prompt must be no more than 950 characters in length!";
-	const res = await Api.post<{ permalink: string }>("images", {
-		prompt,
-		user_id,
-		server_id
-	});
-	return Embed.success(null, prompt).setImage(res.permalink);
+const generateImage = async (serverId: string, userId: string, prompt: string) => {
+  const { permalink } = await Api.post<IOpenAiImage>("images", {
+    prompt,
+    user_id: userId,
+    server_id: serverId,
+  });
+  return Embed.success(undefined, prompt).setImage(permalink);
 };

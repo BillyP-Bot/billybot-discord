@@ -1,32 +1,16 @@
-import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { Colors, CommandNames } from "@enums";
-import { Api, Embed, buildBlackjackResponse, mentionChannel } from "@helpers";
-import type { BlackJackGameResponse, ISlashCommand } from "@types";
+import { hitBlackjack } from "@/helpers/blackjack";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const blackjackDoubleDownCommand: ISlashCommand = {
-	name: CommandNames.doubledown,
-	description: "Double down in your current blackjack hand",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const embed = await doubleDown(int.guild.id, int.user.id);
-		await int.editReply({ embeds: [embed] });
-	},
-	reactHandler: async (react: MessageReaction, sender_id: string) => {
-		const embed = await doubleDown(react.message.guild.id, sender_id);
-		if (!react.message.channel.isSendable())
-			throw `${mentionChannel(react.message.channel.id)} is not sendable!`;
-		await react.message.channel.send({ embeds: [embed] });
-	}
-};
-
-const doubleDown = async (server_id: string, user_id: string) => {
-	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/hit", {
-		server_id,
-		user_id,
-		double_down: true
-	});
-	const response = buildBlackjackResponse(data, user_id);
-	const color = !data.won && data.is_complete ? Colors.red : Colors.green;
-	return Embed.success(response, null, color);
+export const blackjackDoubleDown: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.doubledown)
+    .setDescription("Double down in your current blackjack hand"),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const { embed } = await hitBlackjack(interaction.guildId, interaction.user.id, true);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };

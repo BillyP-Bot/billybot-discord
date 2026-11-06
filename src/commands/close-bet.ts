@@ -1,27 +1,41 @@
 import type { IParticipant } from "btbot-types";
-import type { ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder, userMention } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, buildCurrentBetsMessage } from "@helpers";
-import type { BetAggregate, ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import type { BetAggregate, SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const closeBetCommand: ISlashCommand = {
-	name: CommandNames.closebet,
-	description: "Close betting on the current mayoral challenge",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const embed = await closeBet(int.guild.id, int.user.id);
-		await int.editReply({ embeds: [embed] });
-	}
+export const closeBet: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.closebet)
+    .setDescription("Close betting on the current mayoral challenge"),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const embed = await closeBetting(interaction.guildId, interaction.user.id);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const closeBet = async (server_id: string, author_id: string) => {
-	const { participants, bets_aggregate } = await Api.put<{
-		participants: IParticipant[];
-		bets_aggregate: BetAggregate;
-	}>("/challenges/close", { server_id, author_id });
-	const betsMessage = buildCurrentBetsMessage(bets_aggregate);
-	return Embed.success(
-		`Closed betting on the current challenge between <@${participants[0].user_id}> and <@${participants[1].user_id}>\n\n${betsMessage}`
-	);
+// only a participant of the current challenge can close betting on it
+const closeBetting = async (serverId: string, authorId: string) => {
+  const { participants, bets_aggregate } = await Api.put<{
+    participants: IParticipant[];
+    bets_aggregate: BetAggregate;
+  }>("challenges/close", { server_id: serverId, author_id: authorId });
+  return Embed.success(
+    `Closed betting on the current challenge between ${userMention(participants[0].user_id)} and ${userMention(participants[1].user_id)}\n\n${buildCurrentBetsMessage(bets_aggregate)}`,
+  );
+};
+
+// lists the bets placed on each participant
+const buildCurrentBetsMessage = (results: BetAggregate) => {
+  if (results.length <= 0) return "No one placed any bets!";
+  let content = "The current bets are:\n\n";
+  const participants = results.map(({ bets }) => {
+    const userBets = bets.map(({ user_id, amount }) => `• ${userMention(user_id)}:\t${amount}`);
+    return `${userMention(bets[0].participant_id)}\n${userBets.join("\n")}\n`;
+  });
+  content += participants.join("\n\n");
+  return content;
 };

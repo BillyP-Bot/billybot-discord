@@ -1,52 +1,30 @@
-import { ConnectFourReacts, type IConnectFour } from "btbot-types";
-import type { MessageReaction } from "discord.js";
+import type { IConnectFour } from "btbot-types";
+import type { Message } from "discord.js";
 
-import { sendConnectFourResponseMessage } from "@commands";
-import { Api, buildConnectFourMoveResponse } from "@helpers";
+import { Api } from "@/helpers/api";
+import {
+  buildMoveResponse,
+  connectFourReacts,
+  reactWithConnectFourMoves,
+} from "@/helpers/connect-four";
 
-export async function connectFourReact(react: MessageReaction, sender_id: string) {
-	const game = await Api.get<IConnectFour>(
-		`gamble/connectfour/server/${react.message.guild.id}?user_id=${sender_id}`
-	);
-	if (Object.entries(game).length === 0) return;
-	if (!game.is_accepted || game.is_complete || game.to_move !== sender_id) return;
+// drops a piece in the reacted column if it's the reacting user's turn in their active game
+export const connectFourReact = async (message: Message<true>, emoji: string, userId: string) => {
+  const game = await Api.get<Partial<IConnectFour>>(
+    `gamble/connectfour/server/${message.guildId}?user_id=${userId}`,
+  );
+  // the backend responds with an empty object if the user has no active game
+  if (Object.keys(game).length === 0) return;
+  if (!game.is_accepted || game.is_complete || game.to_move !== userId) return;
 
-	let move: number;
-	switch (react.emoji.toString()) {
-		case ConnectFourReacts.one:
-			move = 0;
-			break;
-		case ConnectFourReacts.two:
-			move = 1;
-			break;
-		case ConnectFourReacts.three:
-			move = 2;
-			break;
-		case ConnectFourReacts.four:
-			move = 3;
-			break;
-		case ConnectFourReacts.five:
-			move = 4;
-			break;
-		case ConnectFourReacts.six:
-			move = 5;
-			break;
-		case ConnectFourReacts.seven:
-			move = 6;
-			break;
-		default:
-			return;
-	}
+  const move = connectFourReacts.indexOf(emoji);
+  if (move < 0) return;
 
-	const data = await Api.post<IConnectFour>("gamble/connectfour/move", {
-		server_id: react.message.guild.id,
-		user_id: sender_id,
-		move
-	});
-
-	await sendConnectFourResponseMessage(
-		react.message.channel,
-		buildConnectFourMoveResponse(data),
-		data
-	);
-}
+  const data = await Api.post<IConnectFour>("gamble/connectfour/move", {
+    server_id: message.guildId,
+    user_id: userId,
+    move,
+  });
+  const reply = await message.channel.send(buildMoveResponse(data));
+  await reactWithConnectFourMoves(reply, data);
+};

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.6.5/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -8,18 +8,20 @@
   },
   "linter": {
     "enabled": true,
-    "rules": { "recommended": true }
+    "rules": { "preset": "recommended" },
+    "includes": ["**"]
   },
   "formatter": {
     "enabled": true,
     "attributePosition": "auto",
     "bracketSpacing": true,
     "formatWithErrors": true,
-    "indentStyle": "tab",
-    "indentWidth": 4,
+    "indentStyle": "space",
+    "indentWidth": 2,
     "lineEnding": "lf",
     "lineWidth": 100,
-    "useEditorconfig": false
+    "useEditorconfig": false,
+    "includes": ["**"]
   },
   "javascript": {
     "formatter": {
@@ -29,15 +31,16 @@
       "quoteStyle": "double",
       "quoteProperties": "asNeeded",
       "semicolons": "always",
-      "trailingCommas": "none"
+      "trailingCommas": "all"
     }
   },
-  "organizeImports": { "enabled": true },
-  "overrides": [
-    {
-      "include": ["*.json", "*.yml", "*.yaml", "*.toml"],
-      "formatter": { "indentStyle": "space", "indentWidth": 2 }
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
     },
-    { "include": ["*.cmd", "*.bat"], "formatter": { "lineEnding": "crlf" } }
-  ]
+    "includes": ["**"]
+  },
+  "overrides": [{ "includes": ["**/*.cmd", "**/*.bat"], "formatter": { "lineEnding": "crlf" } }]
 }

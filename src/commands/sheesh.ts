@@ -1,66 +1,49 @@
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { getInteractionOptionValue } from "@helpers";
-import type { ISlashCommand } from "@types";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const sheeshCommand: ISlashCommand = {
-	name: CommandNames.sheesh,
-	description: "Sometimes you just need a sheeeeeeeeessshhh...",
-	options: [
-		{
-			name: "intensity",
-			description: "How intense will your sheesh be?",
-			type: ApplicationCommandOptionType.Integer,
-			required: false,
-			choices: [
-				{
-					name: "wimpy",
-					value: 1
-				},
-				{
-					name: "modest",
-					value: 2
-				},
-				{
-					name: "firm",
-					value: 3
-				},
-				{
-					name: "vigorous",
-					value: 4
-				},
-				{
-					name: "⚠️ unstable ⚠️",
-					value: 5
-				}
-			]
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		const intensity = getInteractionOptionValue<number>("intensity", int);
-		await int.reply(sheesh(intensity));
-	}
+export const sheesh: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.sheesh)
+    .setDescription("Sometimes you just need a sheeeeeeeeessshhh...")
+    .addIntegerOption(option =>
+      option
+        .setName("intensity")
+        .setDescription("How intense will your sheesh be?")
+        .setRequired(false)
+        .addChoices(
+          { name: "wimpy", value: 1 },
+          { name: "modest", value: 2 },
+          { name: "firm", value: 3 },
+          { name: "vigorous", value: 4 },
+          { name: "⚠️ unstable ⚠️", value: 5 },
+        ),
+    ),
+  async execute(interaction) {
+    const intensity = interaction.options.getInteger("intensity");
+    await interaction.reply(buildSheesh(intensity));
+  },
 };
 
-const sheesh = (intensity: number) => {
-	switch (intensity) {
-		case 1:
-			return "Sheeeeeeeesh...";
-		case 2:
-			return "Sheeeeeeeeeeeesssshhhh...";
-		case 3:
-			return "Sheeeeeeeeeeeeeeeeeessssssssshhhhhhhh...";
-		case 4:
-			return "Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssshhhhhh...";
-		case 5:
-			return (
-				"SHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
-				"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
-				"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
-				"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHHHHHHHHH..."
-			);
-		default:
-			return "Sheeeeeeeesh...";
-	}
+const buildSheesh = (intensity: number | null) => {
+  switch (intensity) {
+    case 1:
+      return "Sheeeeeeeesh...";
+    case 2:
+      return "Sheeeeeeeeeeeesssshhhh...";
+    case 3:
+      return "Sheeeeeeeeeeeeeeeeeessssssssshhhhhhhh...";
+    case 4:
+      return "Sheeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssshhhhhh...";
+    case 5:
+      return (
+        "SHEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
+        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
+        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" +
+        "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEESSSSSSSSSSSSSSSSSSSSSSHHHHHHHHHHHHHHHHHHHHHHHHHHHH..."
+      );
+    default:
+      return "Sheeeeeeeesh...";
+  }
 };

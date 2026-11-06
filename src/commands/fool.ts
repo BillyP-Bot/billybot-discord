@@ -1,51 +1,40 @@
-import {
-	ApplicationCommandOptionType,
-	type ChatInputCommandInteraction,
-	type GuildMember
-} from "discord.js";
+import { type Guild, SlashCommandBuilder, userMention } from "discord.js";
 
-import { CommandNames } from "@enums";
-import { Api, Embed, assertMayor, getInteractionOptionValue, readFool } from "@helpers";
-import type { ISlashCommand } from "@types";
+import { Api } from "@/helpers/api";
+import { Embed } from "@/helpers/embed";
+import { UserError } from "@/helpers/error";
+import { assertMayor, readFool } from "@/helpers/role";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const foolCommand: ISlashCommand = {
-	name: CommandNames.fool,
-	description: "Run by the current mayor to make another user the fool",
-	options: [
-		{
-			name: "user",
-			description: "The user to make the new fool",
-			type: ApplicationCommandOptionType.User,
-			required: true
-		}
-	],
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const targetUserId = getInteractionOptionValue<string>("user", int);
-		const embed = await fool(int.member as GuildMember, targetUserId);
-		await int.editReply({ embeds: [embed] });
-	}
+export const fool: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.fool)
+    .setDescription("Run by the current mayor to make another user the fool")
+    .addUserOption(option =>
+      option.setName("user").setDescription("The user to make the new fool").setRequired(true),
+    ),
+  async execute(interaction) {
+    const target = interaction.options.getUser("user", true);
+    // checked before deferring so that the error reply is only visible to the caller
+    assertMayor(interaction.member);
+    await interaction.deferReply();
+    const embed = await makeFool(interaction.guild, interaction.user.id, target.id);
+    await interaction.editReply({ embeds: [embed] });
+  },
 };
 
-const fool = async (member: GuildMember, targetUserId: string) => {
-	await assertMayor(member);
-	const { foolRole, currentFool } = await readFool(member.guild);
-	if (targetUserId === currentFool?.user.id) throw `<@${targetUserId}> is already the fool!`;
-	if (targetUserId === member.user.id) throw "You cannot set yourself as the fool!";
-	const server_id = member.guild.id;
-	await Api.put("users", [
-		{
-			server_id,
-			user_id: targetUserId,
-			is_fool: true
-		},
-		{
-			server_id,
-			user_id: currentFool?.user.id,
-			is_fool: false
-		}
-	]);
-	const targetUser = await member.guild.members.fetch(targetUserId);
-	await Promise.all([targetUser.roles.add(foolRole), currentFool?.roles.remove(foolRole)]);
-	return Embed.success(`<@${targetUserId}> is now the fool!`, "Mayoral Decree!");
+const makeFool = async (guild: Guild, mayorId: string, targetUserId: string) => {
+  const { foolRole, currentFool } = await readFool(guild);
+  if (targetUserId === currentFool?.id)
+    throw new UserError(`${userMention(targetUserId)} is already the fool!`);
+  if (targetUserId === mayorId) throw new UserError("You cannot set yourself as the fool!");
+  await Api.put("users", [
+    { server_id: guild.id, user_id: targetUserId, is_fool: true },
+    // there may not be a current fool to demote
+    ...(currentFool ? [{ server_id: guild.id, user_id: currentFool.id, is_fool: false }] : []),
+  ]);
+  const target = await guild.members.fetch(targetUserId);
+  await Promise.all([target.roles.add(foolRole), currentFool?.roles.remove(foolRole)]);
+  return Embed.success(`${userMention(targetUserId)} is now the fool!`, "Mayoral Decree!");
 };

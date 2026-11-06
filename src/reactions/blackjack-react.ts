@@ -1,21 +1,33 @@
 import { BlackjackReacts } from "btbot-types";
-import type { MessageReaction } from "discord.js";
+import type { Message } from "discord.js";
 
-import { blackjackDoubleDownCommand, blackjackHitCommand, blackjackStandCommand } from "@commands";
-import { Api } from "@helpers";
-import type { BlackJackGameResponse } from "@types";
+import { Api } from "@/helpers/api";
+import { hitBlackjack, reactWithBlackjackMoves, standBlackjack } from "@/helpers/blackjack";
+import type { BlackJackGameResponse } from "@/types";
 
-export async function blackjackReact(react: MessageReaction, sender_id: string) {
-	const game = await Api.get<BlackJackGameResponse>(
-		`gamble/blackjack/server/${react.message.guild.id}?user_id=${sender_id}`
-	);
-	if (Object.entries(game).length === 0) return;
-	switch (react.emoji.toString()) {
-		case BlackjackReacts.hit:
-			return await blackjackHitCommand.reactHandler(react, sender_id);
-		case BlackjackReacts.stand:
-			return await blackjackStandCommand.reactHandler(react, sender_id);
-		case BlackjackReacts.doubleDown:
-			return await blackjackDoubleDownCommand.reactHandler(react, sender_id);
-	}
-}
+// plays a move in the reacting user's active hand (if any), posting the result in the channel
+export const blackjackReact = async (message: Message<true>, emoji: string, userId: string) => {
+  const game = await Api.get<Partial<BlackJackGameResponse>>(
+    `gamble/blackjack/server/${message.guildId}?user_id=${userId}`,
+  );
+  // the backend responds with an empty object if the user has no active hand
+  if (Object.keys(game).length === 0) return;
+  switch (emoji) {
+    case BlackjackReacts.hit: {
+      const { embed, isComplete } = await hitBlackjack(message.guildId, userId, false);
+      const reply = await message.channel.send({ embeds: [embed] });
+      if (!isComplete) await reactWithBlackjackMoves(reply, false);
+      return;
+    }
+    case BlackjackReacts.stand: {
+      const embed = await standBlackjack(message.guildId, userId);
+      await message.channel.send({ embeds: [embed] });
+      return;
+    }
+    case BlackjackReacts.doubleDown: {
+      const { embed } = await hitBlackjack(message.guildId, userId, true);
+      await message.channel.send({ embeds: [embed] });
+      return;
+    }
+  }
+};

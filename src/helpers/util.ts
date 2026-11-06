@@ -1,56 +1,39 @@
 import type { ISOTimestamp } from "btbot-types";
 
-export const formatDateMMDD = (birthday: ISOTimestamp) => {
-	return new Date(birthday).toLocaleDateString().slice(0, -5);
-};
-
-export const isValidURL = (str: string) => {
-	const pattern = new RegExp(
-		"^(https?:\\/\\/)?" +
-			"((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
-			"((\\d{1,3}\\.){3}\\d{1,3}))" +
-			"(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-			"(\\?[;&a-z\\d%_.~+=-]*)?" +
-			"(\\#[-a-z\\d_]*)?$",
-		"i"
-	);
-	return !!pattern.test(str);
-};
-
-export const sortArrayByField = <T>(arr: T[], field: keyof T) => {
-	return arr.sort((a, b) => {
-		if (a[field] < b[field]) return -1;
-		if (a[field] > b[field]) return 1;
-		return 0;
-	});
-};
-
-export const getNextDayOfWeek = (date: Date, dayOfWeek: number) => {
-	const resultDate = new Date(date.getTime());
-	resultDate.setDate(date.getDate() + ((7 + dayOfWeek - date.getDay()) % 7));
-	return resultDate;
-};
+// e.g. "5/17" (uses the bot's locale and timezone, like the original bot did)
+export const formatDateMMDD = (date: ISOTimestamp) =>
+  new Date(date).toLocaleDateString().slice(0, -5);
 
 export const formatDateET = (date: Date) =>
-	date.toLocaleTimeString("en-US", {
-		timeZone: "America/New_York",
-		timeZoneName: "short",
-		weekday: "long",
-		month: "short",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit"
-	});
+  date.toLocaleTimeString("en-US", {
+    timeZone: "America/New_York",
+    timeZoneName: "short",
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
+// the lottery is drawn every friday at 16:00 UTC (see the backend's lottery cron). this is all
+// computed in UTC so that the result doesn't depend on the host's timezone
 export const getLottoDrawDateString = () => {
-	const now = new Date(Date.now());
-	const drawDate = getNextDayOfWeek(now, 5);
-	if (drawDate.getDate() === now.getDate() && drawDate.getUTCHours() >= 16) {
-		drawDate.setDate(drawDate.getDate() + 7);
-	}
-	drawDate.setUTCHours(16);
-	drawDate.setMinutes(0);
-	return formatDateET(drawDate);
+  const now = new Date();
+  const drawDate = new Date(now);
+  drawDate.setUTCDate(now.getUTCDate() + ((7 + 5 - now.getUTCDay()) % 7));
+  drawDate.setUTCHours(16, 0, 0, 0);
+  // this week's draw already happened
+  if (drawDate.getTime() <= now.getTime()) drawDate.setUTCDate(drawDate.getUTCDate() + 7);
+  return formatDateET(drawDate);
 };
 
-export const mentionChannel = (channelId: string) => `<#${channelId}>`;
+export const pluralIfNotOne = (amount: number) => (amount === 1 ? "" : "s");
+
+export const plusSignIfNotNegative = (amount: number) => (amount >= 0 ? "+" : "");
+
+export const withPlusSignIfPositive = (amount: number) => (amount > 0 ? `+${amount}` : `${amount}`);
+
+export const getTrendEmoji = (delta: number) => (delta > 0 ? "📈" : delta < 0 ? "📉" : "");
+
+export const truncate = (text: string, maxLength: number) =>
+  text.length <= maxLength ? text : `${text.slice(0, maxLength - 1)}…`;

@@ -1,37 +1,21 @@
-import type { ChatInputCommandInteraction, MessageReaction } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 
-import { Colors, CommandNames } from "@enums";
-import { Api, Embed, buildBlackjackResponse, mentionChannel } from "@helpers";
-import type { BlackJackGameResponse, ISlashCommand } from "@types";
+import { hitBlackjack, reactWithBlackjackMoves } from "@/helpers/blackjack";
+import type { SlashCommand } from "@/types";
+import { CommandNames } from "@/types/enums";
 
-export const blackjackHitCommand: ISlashCommand = {
-	name: CommandNames.hit,
-	description: "Hit in your current blackjack hand",
-	handler: async (int: ChatInputCommandInteraction) => {
-		await int.deferReply();
-		const { embed, is_complete } = await hit(int.guild.id, int.user.id);
-		const replyInt = await int.editReply({ embeds: [embed] });
-		if (!is_complete) {
-			const replyMsg = await replyInt.fetch();
-			await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨")]);
-		}
-	},
-	reactHandler: async (react: MessageReaction, sender_id: string) => {
-		const { embed, is_complete } = await hit(react.message.guild.id, sender_id);
-		if (!react.message.channel.isSendable())
-			throw `${mentionChannel(react.message.channel.id)} is not sendable!`;
-		const replyMsg = await react.message.channel.send({ embeds: [embed] });
-		if (!is_complete) await Promise.all([replyMsg.react("🟩"), replyMsg.react("🟨")]);
-	}
-};
-
-const hit = async (server_id: string, user_id: string) => {
-	const data = await Api.post<BlackJackGameResponse>("gamble/blackjack/hit", {
-		server_id,
-		user_id,
-		double_down: false
-	});
-	const response = buildBlackjackResponse(data, user_id);
-	const color = !data.won && data.is_complete ? Colors.red : Colors.green;
-	return { embed: Embed.success(response, null, color), is_complete: data.is_complete };
+export const blackjackHit: SlashCommand = {
+  data: new SlashCommandBuilder()
+    .setName(CommandNames.hit)
+    .setDescription("Hit in your current blackjack hand"),
+  async execute(interaction) {
+    await interaction.deferReply();
+    const { embed, isComplete } = await hitBlackjack(
+      interaction.guildId,
+      interaction.user.id,
+      false,
+    );
+    const reply = await interaction.editReply({ embeds: [embed] });
+    if (!isComplete) await reactWithBlackjackMoves(reply, false);
+  },
 };

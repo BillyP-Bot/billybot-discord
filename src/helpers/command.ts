@@ -1,17 +1,17 @@
-import type { ChatInputCommandInteraction } from "discord.js";
+import { chatInputApplicationCommandMention, inlineCode } from "discord.js";
 
-import { commandsLookup } from "@commands";
+// populated on startup, once the commands have been registered with discord
+const commandIds = new Map<string, string>();
 
-export const getInteractionOptionValue = <T>(
-	optionName: string,
-	int: ChatInputCommandInteraction,
-	defaultValue?: T
-) => {
-	return (int.options.get(optionName)?.value ?? defaultValue) as T;
+export const setCommandIds = (commands: Iterable<{ name: string; id: string }>) => {
+  for (const { name, id } of commands) commandIds.set(name, id);
 };
 
-export const mentionCommand = (name: string, subcommandName?: string) => {
-	const id = commandsLookup[name].id;
-	if (!id) return `\`/${name}${subcommandName ? ` ${subcommandName}` : ""}\``;
-	return `</${name}${subcommandName ? ` ${subcommandName}` : ""}:${id}>`;
+// renders a clickable command mention, or just the command name if its id is not known yet
+export const mentionCommand = (name: string, subcommand?: string) => {
+  const id = commandIds.get(name);
+  if (!id) return inlineCode(`/${subcommand ? `${name} ${subcommand}` : name}`);
+  return subcommand
+    ? chatInputApplicationCommandMention(name, subcommand, id)
+    : chatInputApplicationCommandMention(name, id);
 };
